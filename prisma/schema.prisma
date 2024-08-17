@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UnitTypeEnum {
+  kg  @map("kg")
+  pc  @map("pc")
+}
+
+enum AdminTypeEnum {
+  admin  @map("admin")
+  super  @map("super")
+}
+
+enum PaymentTypeEnum {
+  sum      @map("sum")
+  percent  @map("percent")
+}
+
+
+
+model Admin {
+  id         String         @map("id")          @db.Uuid       @default(dbgenerated("GEN_RANDOM_UUID()"))
+  type       AdminTypeEnum                                     @default(admin)
+  isMain     Boolean        @map("is_main")     @db.Boolean    @default(false) 
+  username   String         @map("username")    @db.VarChar() 
+  password   String         @map("password")    @db.VarChar()
+  fullName   String         @map("full_name")   @db.VarChar() 
+  createdAt  DateTime       @map("created_at")  @db.Timestamp  @default(now())
+  updatedAt  DateTime       @map("updated_at")  @db.Timestamp  @updatedAt
+  deletedAt  DateTime?      @map("deleted_at")  @db.Timestamp
+
+  @@id([ id ])
+  @@map("admin")
+}
+
+model Shop {
+  id           String     @map("id")               @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
+  name         String     @map("name")             @db.VarChar() 
+  phone        String     @map("phone")            @db.VarChar() 
+  address      String     @map("address")          @db.VarChar() 
+  manager      String     @map("manager")          @db.VarChar() 
+  password     String     @map("password")         @db.VarChar()
+  username     String     @map("username")         @db.VarChar() 
+  director     String     @map("director")         @db.VarChar() 
+  isActive     Boolean    @map("is_active")        @db.Boolean       @default(true)
+  paymentDay   Int        @map("payment_day")      @db.Integer       @default(5)
+  monthlyPay   Int        @map("monthly_payment")  @db.Integer
+  accountable  String     @map("accountable")      @db.VarChar()     
+  secondPhone  String     @map("second_phone")     @db.VarChar()     @default("")
+  createdAt    DateTime   @map("created_at")       @db.Timestamp     @default(now())
+  updatedAt    DateTime   @map("updated_at")       @db.Timestamp     @updatedAt
+  deletedAt    DateTime?  @map("deleted_at")       @db.Timestamp
+
+  clients        Client[]
+  payments       Payment[]
+  notifications  Notification[]
+
+  @@id([ id ])
+  @@map("shop")
+}
+
+model Payment {
+  id          String     @map("id")               @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
+  sum         Int        @map("sum")              @db.Integer
+  shopId      String     @map("shop_id")          @db.Uuid
+  forMonth    DateTime   @map("for_month")        @db.Date
+  monthlyPay  Int        @map("monthly_payment")  @db.Integer
+  createdAt   DateTime   @map("created_at")       @db.Timestamp     @default(now())
+  updatedAt   DateTime   @map("updated_at")       @db.Timestamp     @updatedAt
+  deletedAt   DateTime?  @map("deleted_at")       @db.Timestamp
+
+  shop  Shop  @relation(fields: [ shopId ], references: [ id ], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([ id ])
+  @@map("payment")
+}
+
+model Notification {
+  id         String     @map("id")          @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
+  read       Boolean    @map("read")        @db.Boolean       @default(false) 
+  title      String     @map("title")       @db.VarChar()     
+  shopId     String     @map("shop_id")     @db.Uuid          
+  subtitle   String     @map("subtitle")    @db.VarChar()     @default("")
+  createdAt  DateTime   @map("created_at")  @db.Timestamp     @default(now())
+  updatedAt  DateTime   @map("updated_at")  @db.Timestamp     @updatedAt
+  deletedAt  DateTime?  @map("deleted_at")  @db.Timestamp
+
+  shop  Shop  @relation(fields: [ shopId ], references: [ id ], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([ id ])
+  @@map("notification")
+}
+
+model Client {
+  id             String     @map("id")              @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
+  phone          String     @map("phone")           @db.VarChar()     
+  rating         Int        @map("rating")          @db.Integer       @default(0)
+  address        String     @map("address")         @db.VarChar()     @default("")
+  passport       String     @map("passport")        @db.VarChar() 
+  birthday       DateTime   @map("birthday")        @db.Date
+  isActive       Boolean    @map("is_active")       @db.Boolean       @default(true) 
+  lastName       String     @map("last_name")       @db.VarChar() 
+  firstName      String     @map("first_name")      @db.VarChar() 
+  secondAddress  String     @map("second_address")  @db.VarChar()     @default("")
+  createdAt      DateTime   @map("created_at")      @db.Timestamp     @default(now())
+  updatedAt      DateTime   @map("updated_at")      @db.Timestamp     @updatedAt
+  deletedAt      DateTime?  @map("deleted_at")      @db.Timestamp
+
+  shops  Shop[]
+
+  @@id([ id ])
+  @@map("client")
+}
+
+model Contract {
+  id            String           @map("id")             @db.Uuid       @default(dbgenerated("GEN_RANDOM_UUID()"))
+  clientId      String           @map("client_id")      @db.Uuid
+  monthCount    Int              @map("month_count")    @db.Integer
+  paymentType   PaymentTypeEnum                                        @default(percent)
+  paymentValue  Int              @map("payment_value")  @db.Integer    @default(0)
+  createdAt     DateTime         @map("created_at")     @db.Timestamp  @default(now())
+  updatedAt     DateTime         @map("updated_at")     @db.Timestamp  @updatedAt
+  deletedAt     DateTime?        @map("deleted_at")     @db.Timestamp
+
+  products  ContractProduct[]
+
+  @@id([ id ])
+  @@map("contract")
+}
+
+model ContractProduct {
+  id            String        @map("id")           @db.Uuid       @default(dbgenerated("GEN_RANDOM_UUID()"))
+  name          String        @map("name")         @db.VarChar()
+  price         Int           @map("price")        @db.Integer    @default(0)
+  count         Int           @map("count")        @db.Integer    @default(1)
+  unitType      UnitTypeEnum                                      @default(pc)
+  contractId    String        @map("contract_id")  @db.Uuid
+  createdAt     DateTime      @map("created_at")   @db.Timestamp  @default(now())
+  updatedAt     DateTime      @map("updated_at")   @db.Timestamp  @updatedAt
+  deletedAt     DateTime?     @map("deleted_at")   @db.Timestamp
+
+  contract  Contract  @relation(fields: [ contractId ], references: [ id ], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([ id ])
+  @@map("contract_product")
+}
+
+
+
+
+
+
+
+
