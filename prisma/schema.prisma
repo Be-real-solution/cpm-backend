@@ -58,18 +58,19 @@ model Shop {
   deletedAt    DateTime?  @map("deleted_at")       @db.Timestamp
 
   clients        Client[]
-  payments       Payment[]
+  payments       ShopPayment[]
   notifications  Notification[]
 
   @@id([ id ])
   @@map("shop")
 }
 
-model Payment {
+model ShopPayment {
   id          String     @map("id")               @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
-  sum         Int        @map("sum")              @db.Integer
   shopId      String     @map("shop_id")          @db.Uuid
-  forMonth    DateTime   @map("for_month")        @db.Date
+  forMonth    Int        @map("for_month")        @db.Integer
+  forYear     Int        @map("for_year")         @db.Integer
+  isPaidFull  Boolean    @map("is_paid_full")     @db.Boolean       @default(false)
   monthlyPay  Int        @map("monthly_payment")  @db.Integer
   createdAt   DateTime   @map("created_at")       @db.Timestamp     @default(now())
   updatedAt   DateTime   @map("updated_at")       @db.Timestamp     @updatedAt
@@ -77,9 +78,43 @@ model Payment {
 
   shop  Shop  @relation(fields: [ shopId ], references: [ id ], onDelete: Cascade, onUpdate: NoAction)
 
+  paymentParts  PaymentPart[]
+
+  @@id([ id ])
+  @@map("shop_payment")
+}
+
+model Payment {
+  id          String     @map("id")               @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
+  sum         Int        @map("sum")              @db.Integer
+  shopId      String     @map("shop_id")          @db.Uuid
+  createdAt   DateTime   @map("created_at")       @db.Timestamp     @default(now())
+  updatedAt   DateTime   @map("updated_at")       @db.Timestamp     @updatedAt
+  deletedAt   DateTime?  @map("deleted_at")       @db.Timestamp
+
+  paymentParts  PaymentPart[]
+
   @@id([ id ])
   @@map("payment")
 }
+
+model PaymentPart {
+  id             String     @map("id")               @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
+  sum            Int        @map("sum")              @db.Integer
+  paymentId      String     @map("payment_id")       @db.Uuid
+  shopPaymentId  String     @map("shop_payment_id")  @db.Uuid
+  createdAt      DateTime   @map("created_at")       @db.Timestamp     @default(now())
+  updatedAt      DateTime   @map("updated_at")       @db.Timestamp     @updatedAt
+  deletedAt      DateTime?  @map("deleted_at")       @db.Timestamp
+
+  payment      Payment      @relation(fields: [ paymentId     ], references: [ id ], onDelete: Cascade, onUpdate: NoAction)
+  shopPayment  ShopPayment  @relation(fields: [ shopPaymentId ], references: [ id ], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([ id ])
+  @@map("payment_part")
+}
+
+
 
 model Notification {
   id         String     @map("id")          @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
