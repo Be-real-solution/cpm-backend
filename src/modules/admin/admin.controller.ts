@@ -2,7 +2,7 @@ import { AdminGetAllResponseDto, AdminGetOneResponseDto } from './dtos/response.
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common'
 import { AdminService } from './admin.service'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { AuthGuard, MutationResponseDto, PAGE_NUMBER, PAGE_SIZE, PAGINATION } from '../../common'
+import { AuthGuard, MutationResponseDto, PAGE_NUMBER, PAGE_SIZE, PAGINATION, UserIdInAccess } from '../../common'
 import { AdminCreateRequestDto, AdminDeleteRequestDto, AdminGetAllRequestDto, AdminGetOneByIdRequestDto, AdminUpdateRequestDto } from './dtos'
 import { AdminGetAllResponse, AdminGetOneResponse } from './interfaces'
 import { MutationResponse } from '../../interfaces'
@@ -43,13 +43,13 @@ export class AdminController {
 
 	@Patch(':id')
 	@ApiResponse({ type: MutationResponseDto })
-	update(@Param() param: AdminGetOneByIdRequestDto, @Body() payload: AdminUpdateRequestDto): Promise<MutationResponse> {
-		return this.service.update(param, payload)
+	update(@UserIdInAccess() userId: string, @Param() param: AdminGetOneByIdRequestDto, @Body() payload: AdminUpdateRequestDto): Promise<MutationResponse> {
+		return this.service.update(param, payload, userId)
 	}
 
 	@Delete(':id')
 	@ApiResponse({ type: MutationResponseDto })
-	delete(@Param() param: AdminDeleteRequestDto): Promise<MutationResponse> {
-		return this.service.delete(param)
+	delete(@UserIdInAccess() userId: string, @Param() param: AdminDeleteRequestDto): Promise<MutationResponse> {
+		return this.service.delete(param, userId)
 	}
 }

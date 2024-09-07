@@ -45,7 +45,7 @@ export class PaymentService {
 		return this.repo.create({ ...payload })
 	}
 
-	@Cron('0 0 5,15,25 * *')
+	@Cron('0 0 1-9 * *')
 	async checkAndCreate() {
 		await this.repo.createEveryTenDay().catch((e) => {
 			console.log(e)

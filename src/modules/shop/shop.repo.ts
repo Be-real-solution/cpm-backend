@@ -165,7 +165,7 @@ export class ShopRepo {
 				secondPhone: payload.secondPhone,
 			},
 		})
-		return shop
+		return { id: shop.id }
 	}
 
 	async update(payload: ShopUpdateRequest & ShopGetOneByIdRequest): Promise<MutationResponse> {
@@ -186,7 +186,7 @@ export class ShopRepo {
 				isActive: payload.isActive,
 			},
 		})
-		return shop
+		return { id: shop.id }
 	}
 
 	async delete(payload: ShopDeleteRequest): Promise<MutationResponse> {

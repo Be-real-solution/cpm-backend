@@ -43,12 +43,28 @@ export class AdminService {
 		if (candidate) {
 			throw new BadRequestException('username already exists')
 		}
+		let isMain = false
+		const adminExists = await this.getOne({})
+		if (!adminExists) {
+			isMain = true
+		}
 		const password = await bcrypt.hash(payload.password, 7)
-
-		return this.repo.create({ ...payload, password: password })
+		return this.repo.create({ ...payload, password: password, isMain: isMain })
 	}
 
-	async update(param: AdminGetOneByIdRequest, payload: AdminUpdateRequest): Promise<MutationResponse> {
+	async update(param: AdminGetOneByIdRequest, payload: AdminUpdateRequest, userId: string): Promise<MutationResponse> {
+		const admin = await this.getOneById(param)
+		const adminUser = await this.getOneById({ id: userId })
+		if (adminUser.type === 'admin' && adminUser.id !== param.id) {
+			throw new BadRequestException('You are not allowed to update admin')
+		}
+		if (adminUser.type === 'super' && admin.type === 'super') {
+			throw new BadRequestException('You cannot update super admin')
+		}
+		if (admin.isMain) {
+			throw new BadRequestException('You cannot update this admin')
+		}
+
 		if (payload.username) {
 			const candidate = await this.getOne({ username: payload.username })
 			if (candidate && candidate.id !== param.id) {
@@ -60,7 +76,18 @@ export class AdminService {
 		return this.repo.update({ ...param, ...payload, password: password })
 	}
 
-	async delete(payload: AdminDeleteRequest): Promise<MutationResponse> {
+	async delete(payload: AdminDeleteRequest, userId: string): Promise<MutationResponse> {
+		const admin = await this.getOneById(payload)
+		const adminUser = await this.getOneById({ id: userId })
+		if (adminUser.type === 'admin' && adminUser.id !== payload.id) {
+			throw new BadRequestException('You are not allowed to delete admin')
+		}
+		if (adminUser.type === 'super' && admin.type === 'super') {
+			throw new BadRequestException('You cannot remove super admin')
+		}
+		if (admin.isMain) {
+			throw new BadRequestException('You cannot delete this admin')
+		}
 		return this.repo.delete(payload)
 	}
 }

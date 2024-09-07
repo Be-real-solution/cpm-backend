@@ -120,9 +120,29 @@ export class PaymentRepo {
 				break
 			}
 		}
+
+		const lastPayment = await this.prisma.shopPayment.findFirst({
+			where: {
+				deletedAt: null,
+				shopId: payload.shopId,
+			},
+			select: {
+				id: true,
+				forMonth: true,
+				forYear: true,
+				isPaidFull: true,
+				monthlyPay: true,
+				paymentParts: { select: { id: true, sum: true } },
+			},
+			orderBy: [{ forYear: 'desc' }, { forMonth: 'desc' }],
+		})
+
 		if (totalMoney) {
-			let lastYear = shopPayments[shopPayments.length - 1].forYear
-			let lastMonth = shopPayments[shopPayments.length - 1].forMonth
+			let lastYear = shopPayments[shopPayments.length - 1]?.forYear || lastPayment?.forYear || shop.createdAt.getFullYear()
+			let lastMonth =
+				shopPayments[shopPayments.length - 1]?.forMonth || lastPayment?.forMonth || shop.createdAt.getDate() > 10
+					? shop.createdAt.getMonth() + 1
+					: shop.createdAt.getMonth()
 			const forMonth = Math.ceil(totalMoney / shop.monthlyPay)
 			for (let i = 0; i < forMonth; i++) {
 				if (lastMonth === 12) {
@@ -153,7 +173,7 @@ export class PaymentRepo {
 
 		await Promise.all(promises)
 
-		return payment0
+		return { id: payment0.id }
 	}
 
 	async createEveryTenDay(): Promise<void> {

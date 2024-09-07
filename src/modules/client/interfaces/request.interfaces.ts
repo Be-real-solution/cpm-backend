@@ -8,6 +8,7 @@ export declare interface ClientGetAllRequest extends PaginationRequest {
 	lastName?: string
 	firstName?: string
 	secondAddress?: string
+	shopId?: string
 }
 
 export declare interface ClientGetOneByIdRequest {
@@ -24,6 +25,7 @@ export declare interface ClientGetOneRequest {
 	firstName?: string
 	secondAddress?: string
 	rating?: number
+	shopId?: string
 }
 
 export declare interface ClientCreateRequest {
@@ -34,6 +36,7 @@ export declare interface ClientCreateRequest {
 	lastName: string
 	firstName: string
 	secondAddress: string
+	shopId: string
 }
 
 export declare interface ClientUpdateRequest {

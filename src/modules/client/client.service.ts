@@ -40,12 +40,23 @@ export class ClientService {
 	async create(payload: ClientCreateRequest): Promise<MutationResponse> {
 		const candidate = await this.getOne({ passport: payload.passport })
 		if (candidate) {
-			throw new BadRequestException('passport already exists')
+			const shopExists = await candidate.shops.find((sh) => sh.shop.id === payload.shopId)
+			if (shopExists) {
+				throw new BadRequestException('client already exists')
+			} else {
+				await this.repo.createShopClient({ shopId: payload.shopId, clientId: candidate.id })
+				return { id: candidate.id }
+			}
 		}
-		return this.repo.create(payload)
+		const client = await this.repo.create(payload)
+		await this.repo.createShopClient({ shopId: payload.shopId, clientId: client.id })
+
+		return client
 	}
 
 	async update(param: ClientGetOneByIdRequest, payload: ClientUpdateRequest): Promise<MutationResponse> {
+		await this.getOneById(param)
+
 		if (payload.passport) {
 			const candidate = await this.getOne({ passport: payload.passport })
 			if (candidate && candidate.id !== param.id) {
@@ -56,6 +67,8 @@ export class ClientService {
 	}
 
 	async delete(payload: ClientDeleteRequest): Promise<MutationResponse> {
+		await this.getOneById(payload)
+
 		return this.repo.delete(payload)
 	}
 }

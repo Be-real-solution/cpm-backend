@@ -2,6 +2,16 @@ import { PaginationResponse } from '../../../interfaces'
 
 export declare type ClientGetAllResponse = PaginationResponse<ClientGetOneResponse>
 
+export declare interface ClientShop {
+	id: string
+	name: string
+}
+
+export declare interface ClientStatus {
+	shop: ClientShop
+	isActive: boolean
+}
+
 export declare interface ClientGetOneResponse {
 	id: string
 	phone: string
@@ -14,4 +24,5 @@ export declare interface ClientGetOneResponse {
 	firstName: string
 	secondAddress: string
 	createdAt: Date
+	shops: ClientStatus[]
 }

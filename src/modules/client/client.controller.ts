@@ -38,7 +38,7 @@ export class ClientController {
 	@Post()
 	@ApiResponse({ type: MutationResponseDto })
 	create(@Body() payload: ClientCreateRequestDto): Promise<MutationResponse> {
-		return this.service.create(payload)
+		return this.service.create({ ...payload, birthday: new Date(payload.birthday) })
 	}
 
 	@Patch(':id')

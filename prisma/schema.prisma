@@ -57,7 +57,7 @@ model Shop {
   updatedAt    DateTime   @map("updated_at")       @db.Timestamp     @updatedAt
   deletedAt    DateTime?  @map("deleted_at")       @db.Timestamp
 
-  clients        Client[]
+  clients        ShopClient[]
   payments       ShopPayment[]
   notifications  ShopNotification[]
 
@@ -162,10 +162,26 @@ model Client {
   updatedAt      DateTime   @map("updated_at")      @db.Timestamp     @updatedAt
   deletedAt      DateTime?  @map("deleted_at")      @db.Timestamp
 
-  shops  Shop[]
+  shops  ShopClient[]
 
   @@id([ id ])
   @@map("client")
+}
+
+model ShopClient {
+  id         String     @map("id")          @db.Uuid       @default(dbgenerated("GEN_RANDOM_UUID()"))
+  shopId     String     @map("shop_id")     @db.Uuid          
+  clientId   String     @map("client_id")   @db.Uuid   
+  isActive   Boolean    @map("is_active")   @db.Boolean    @default(true)   
+  createdAt  DateTime   @map("created_at")  @db.Timestamp  @default(now())
+  updatedAt  DateTime   @map("updated_at")  @db.Timestamp  @updatedAt
+  deletedAt  DateTime?  @map("deleted_at")  @db.Timestamp    
+
+  shop    Shop    @relation(fields: [ shopId   ], references: [ id ], onDelete: Cascade, onUpdate: NoAction)
+  client  Client  @relation(fields: [ clientId ], references: [ id ], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([ id ])
+  @@map("shop_client")
 }
 
 model Contract {

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaginationResponseDto } from '../../../common'
-import { ClientGetAllResponse, ClientGetOneResponse } from '../interfaces'
+import { ClientGetAllResponse, ClientGetOneResponse, ClientStatus } from '../interfaces'
 
 export class ClientGetOneResponseDto implements ClientGetOneResponse {
 	id: string
@@ -14,6 +14,7 @@ export class ClientGetOneResponseDto implements ClientGetOneResponse {
 	rating: number
 	secondAddress: string
 	createdAt: Date
+	shops: ClientStatus[]
 }
 export class ClientGetAllResponseDto extends PaginationResponseDto implements ClientGetAllResponse {
 	@ApiProperty({ type: ClientGetOneResponseDto, isArray: true })

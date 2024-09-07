@@ -38,6 +38,7 @@ export class ClientRepo {
 				phone: { contains: payload.phone, mode: 'insensitive' },
 				passport: { contains: payload.passport, mode: 'insensitive' },
 				isActive: payload.isActive,
+				shops: { some: { shopId: payload.shopId } },
 			},
 			select: {
 				id: true,
@@ -51,6 +52,7 @@ export class ClientRepo {
 				rating: true,
 				secondAddress: true,
 				createdAt: true,
+				shops: { select: { shop: { select: { id: true, name: true } }, isActive: true }, where: { deletedAt: null } },
 			},
 			...paginationOptions,
 			orderBy: [{ createdAt: 'desc' }],
@@ -67,6 +69,7 @@ export class ClientRepo {
 					phone: { contains: payload.phone, mode: 'insensitive' },
 					passport: { contains: payload.passport, mode: 'insensitive' },
 					isActive: payload.isActive,
+					shops: { some: { shopId: payload.shopId } },
 				},
 			})
 
@@ -95,6 +98,7 @@ export class ClientRepo {
 				rating: true,
 				secondAddress: true,
 				createdAt: true,
+				shops: { select: { shop: { select: { id: true, name: true } }, isActive: true }, where: { deletedAt: null } },
 			},
 		})
 
@@ -114,6 +118,7 @@ export class ClientRepo {
 				secondAddress: payload.secondAddress,
 				isActive: payload.isActive,
 				rating: payload.rating,
+				shops: { some: { shopId: payload.shopId } },
 			},
 			select: {
 				id: true,
@@ -127,6 +132,7 @@ export class ClientRepo {
 				rating: true,
 				secondAddress: true,
 				createdAt: true,
+				shops: { select: { shop: { select: { id: true, name: true } }, isActive: true }, where: { deletedAt: null } },
 			},
 		})
 
@@ -145,7 +151,7 @@ export class ClientRepo {
 				secondAddress: payload.secondAddress,
 			},
 		})
-		return client
+		return { id: client.id }
 	}
 
 	async update(payload: ClientUpdateRequest & ClientGetOneByIdRequest): Promise<MutationResponse> {
@@ -162,7 +168,8 @@ export class ClientRepo {
 				isActive: payload.isActive,
 			},
 		})
-		return client
+
+		return { id: client.id }
 	}
 
 	async delete(payload: ClientDeleteRequest): Promise<MutationResponse> {
@@ -172,5 +179,14 @@ export class ClientRepo {
 		})
 
 		return payload
+	}
+
+	async createShopClient(payload: { shopId: string; clientId: string }): Promise<void> {
+		await this.prisma.shopClient.create({
+			data: {
+				clientId: payload.clientId,
+				shopId: payload.shopId,
+			},
+		})
 	}
 }
