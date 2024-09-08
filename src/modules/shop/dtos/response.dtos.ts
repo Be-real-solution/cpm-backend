@@ -38,6 +38,9 @@ export class ShopGetOneResponseDto implements ShopGetOneResponse {
 	@ApiProperty({ type: String })
 	username: string
 
+	@ApiProperty({ type: String })
+	contractFile: string
+
 	@ApiProperty({ type: Date, example: new Date() })
 	createdAt: Date
 }

@@ -15,5 +15,6 @@ export declare interface ShopGetOneResponse {
 	monthlyPay: number
 	accountable: string
 	secondPhone: string
+	contractFile: string
 	createdAt: Date
 }

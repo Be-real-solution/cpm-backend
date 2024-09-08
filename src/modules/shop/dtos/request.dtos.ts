@@ -95,6 +95,7 @@ export class ShopCreateRequestDto implements ShopCreateRequest {
 	@ApiProperty({ type: Number })
 	@IsNumber()
 	@IsNotEmpty()
+	@Type(() => Number)
 	monthlyPay: number
 
 	@ApiProperty({ type: String })
@@ -110,6 +111,7 @@ export class ShopCreateRequestDto implements ShopCreateRequest {
 	@ApiProperty({ type: Number })
 	@IsNumber()
 	@IsNotEmpty()
+	@Type(() => Number)
 	paymentDay: number
 
 	@ApiProperty({ type: String })
@@ -126,6 +128,9 @@ export class ShopCreateRequestDto implements ShopCreateRequest {
 	@IsString()
 	@IsNotEmpty()
 	username: string
+
+	@ApiProperty({ type: 'string', format: 'binary' })
+	contractFile: any
 }
 
 export class ShopUpdateRequestDto implements ShopUpdateRequest {
@@ -158,6 +163,7 @@ export class ShopUpdateRequestDto implements ShopUpdateRequest {
 	@ApiPropertyOptional({ type: Number })
 	@IsNumber()
 	@IsOptional()
+	@Type(() => Number)
 	monthlyPay?: number
 
 	@ApiPropertyOptional({ type: String })
@@ -173,6 +179,7 @@ export class ShopUpdateRequestDto implements ShopUpdateRequest {
 	@ApiPropertyOptional({ type: Number })
 	@IsNumber()
 	@IsOptional()
+	@Type(() => Number)
 	paymentDay?: number
 
 	@ApiPropertyOptional({ type: String })
@@ -189,6 +196,9 @@ export class ShopUpdateRequestDto implements ShopUpdateRequest {
 	@IsString()
 	@IsOptional()
 	username?: string
+
+	@ApiPropertyOptional({ type: 'string', format: 'binary' })
+	contractFile?: any
 }
 
 export class ShopDeleteRequestDto implements ShopDeleteRequest {

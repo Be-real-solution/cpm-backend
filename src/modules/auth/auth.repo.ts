@@ -43,6 +43,7 @@ export class AuthRepo {
 				paymentDay: true,
 				phone: true,
 				username: true,
+				contractFile: true,
 				secondPhone: true,
 			},
 		})

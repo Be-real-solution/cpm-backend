@@ -56,6 +56,7 @@ export class ShopRepo {
 				paymentDay: true,
 				secondPhone: true,
 				username: true,
+				contractFile: true,
 				createdAt: true,
 			},
 			...paginationOptions,
@@ -106,6 +107,7 @@ export class ShopRepo {
 				paymentDay: true,
 				secondPhone: true,
 				username: true,
+				contractFile: true,
 				createdAt: true,
 			},
 		})
@@ -142,6 +144,7 @@ export class ShopRepo {
 				paymentDay: true,
 				secondPhone: true,
 				username: true,
+				contractFile: true,
 				createdAt: true,
 			},
 		})
@@ -163,6 +166,7 @@ export class ShopRepo {
 				username: payload.username,
 				paymentDay: payload.paymentDay,
 				secondPhone: payload.secondPhone,
+				contractFile: payload.contractFile,
 			},
 		})
 		return { id: shop.id }
@@ -184,6 +188,7 @@ export class ShopRepo {
 				paymentDay: payload.paymentDay,
 				secondPhone: payload.secondPhone,
 				isActive: payload.isActive,
+				contractFile: payload.contractFile,
 			},
 		})
 		return { id: shop.id }

@@ -40,22 +40,23 @@ model Admin {
 }
 
 model Shop {
-  id           String     @map("id")               @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
-  name         String     @map("name")             @db.VarChar() 
-  phone        String     @map("phone")            @db.VarChar() 
-  address      String     @map("address")          @db.VarChar() 
-  manager      String     @map("manager")          @db.VarChar() 
-  password     String     @map("password")         @db.VarChar()
-  username     String     @map("username")         @db.VarChar() 
-  director     String     @map("director")         @db.VarChar() 
-  isActive     Boolean    @map("is_active")        @db.Boolean       @default(true)
-  paymentDay   Int        @map("payment_day")      @db.Integer       @default(5)
-  monthlyPay   Int        @map("monthly_payment")  @db.Integer
-  accountable  String     @map("accountable")      @db.VarChar()     
-  secondPhone  String     @map("second_phone")     @db.VarChar()     @default("")
-  createdAt    DateTime   @map("created_at")       @db.Timestamp     @default(now())
-  updatedAt    DateTime   @map("updated_at")       @db.Timestamp     @updatedAt
-  deletedAt    DateTime?  @map("deleted_at")       @db.Timestamp
+  id            String     @map("id")               @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
+  name          String     @map("name")             @db.VarChar() 
+  phone         String     @map("phone")            @db.VarChar() 
+  address       String     @map("address")          @db.VarChar() 
+  manager       String     @map("manager")          @db.VarChar() 
+  password      String     @map("password")         @db.VarChar()
+  username      String     @map("username")         @db.VarChar() 
+  director      String     @map("director")         @db.VarChar() 
+  isActive      Boolean    @map("is_active")        @db.Boolean       @default(true)
+  paymentDay    Int        @map("payment_day")      @db.Integer       @default(5)
+  monthlyPay    Int        @map("monthly_payment")  @db.Integer
+  accountable   String     @map("accountable")      @db.VarChar()     
+  secondPhone   String     @map("second_phone")     @db.VarChar()     @default("")
+  contractFile  String     @map("contract_file")    @db.VarChar()     @default("")
+  createdAt     DateTime   @map("created_at")       @db.Timestamp     @default(now())
+  updatedAt     DateTime   @map("updated_at")       @db.Timestamp     @updatedAt
+  deletedAt     DateTime?  @map("deleted_at")       @db.Timestamp
 
   clients        ShopClient[]
   payments       ShopPayment[]

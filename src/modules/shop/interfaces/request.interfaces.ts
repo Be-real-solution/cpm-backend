@@ -45,6 +45,7 @@ export declare interface ShopCreateRequest {
 	monthlyPay: number
 	accountable: string
 	secondPhone: string
+	contractFile: string
 }
 
 export declare interface ShopUpdateRequest {
@@ -60,6 +61,7 @@ export declare interface ShopUpdateRequest {
 	accountable?: string
 	secondPhone?: string
 	isActive?: boolean
+	contractFile?: string
 }
 
 export declare interface ShopDeleteRequest {
