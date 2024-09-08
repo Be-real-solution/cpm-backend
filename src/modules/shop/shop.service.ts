@@ -49,6 +49,8 @@ export class ShopService {
 	}
 
 	async update(param: ShopGetOneByIdRequest, payload: ShopUpdateRequest): Promise<MutationResponse> {
+		await this.getOneById(param)
+
 		if (payload.username) {
 			const candidate = await this.getOne({ username: payload.username })
 			if (candidate && candidate.id !== param.id) {
@@ -61,6 +63,7 @@ export class ShopService {
 	}
 
 	async delete(payload: ShopDeleteRequest): Promise<MutationResponse> {
+		await this.getOneById(payload)
 		return this.repo.delete(payload)
 	}
 }
