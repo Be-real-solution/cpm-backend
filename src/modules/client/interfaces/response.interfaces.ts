@@ -27,5 +27,5 @@ export declare interface ClientGetOneResponse {
 	jshshir: string
 	passportAddress: string
 	createdAt: Date
-	shops: ClientStatus[]
+	shops?: ClientStatus[]
 }
