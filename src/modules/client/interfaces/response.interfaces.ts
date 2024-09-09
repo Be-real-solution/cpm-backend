@@ -23,6 +23,9 @@ export declare interface ClientGetOneResponse {
 	lastName: string
 	firstName: string
 	secondAddress: string
+	fathersName: string
+	jshshir: string
+	passportAddress: string
 	createdAt: Date
 	shops: ClientStatus[]
 }

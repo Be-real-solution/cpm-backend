@@ -7,6 +7,9 @@ export declare interface ClientGetAllRequest extends PaginationRequest {
 	isActive?: boolean
 	lastName?: string
 	firstName?: string
+	fathersName?: string
+	jshshir?: string
+	passportAddress?: string
 	secondAddress?: string
 	shopId?: string
 }
@@ -24,6 +27,9 @@ export declare interface ClientGetOneRequest {
 	lastName?: string
 	firstName?: string
 	secondAddress?: string
+	fathersName?: string
+	jshshir?: string
+	passportAddress?: string
 	rating?: number
 	shopId?: string
 }
@@ -36,6 +42,9 @@ export declare interface ClientCreateRequest {
 	lastName: string
 	firstName: string
 	secondAddress: string
+	fathersName: string
+	jshshir: string
+	passportAddress: string
 	shopId: string
 }
 
@@ -47,6 +56,9 @@ export declare interface ClientUpdateRequest {
 	lastName?: string
 	firstName?: string
 	secondAddress?: string
+	fathersName?: string
+	jshshir?: string
+	passportAddress?: string
 	isActive?: boolean
 }
 

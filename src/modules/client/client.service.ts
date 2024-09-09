@@ -48,6 +48,17 @@ export class ClientService {
 				return { id: candidate.id }
 			}
 		}
+
+		const candidate2 = await this.getOne({ jshshir: payload.jshshir })
+		if (candidate2) {
+			const shopExists = await candidate2.shops.find((sh) => sh.shop.id === payload.shopId)
+			if (shopExists) {
+				throw new BadRequestException('client already exists')
+			} else {
+				await this.repo.createShopClient({ shopId: payload.shopId, clientId: candidate2.id })
+				return { id: candidate2.id }
+			}
+		}
 		const client = await this.repo.create(payload)
 		await this.repo.createShopClient({ shopId: payload.shopId, clientId: client.id })
 
@@ -63,6 +74,14 @@ export class ClientService {
 				throw new BadRequestException('passport already exists')
 			}
 		}
+
+		if (payload.passport) {
+			const candidate = await this.getOne({ jshshir: payload.jshshir })
+			if (candidate && candidate.id !== param.id) {
+				throw new BadRequestException('jshshir already exists')
+			}
+		}
+
 		return this.repo.update({ ...param, ...payload })
 	}
 

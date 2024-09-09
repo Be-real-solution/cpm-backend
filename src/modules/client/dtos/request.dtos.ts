@@ -43,6 +43,21 @@ export class ClientGetAllRequestDto extends PaginationRequestDto implements Clie
 	@IsUUID('4')
 	@IsOptional()
 	shopId?: string
+
+	@ApiPropertyOptional({ type: String })
+	@IsString()
+	@IsOptional()
+	fathersName?: string
+
+	@ApiPropertyOptional({ type: String })
+	@IsString()
+	@IsOptional()
+	jshshir?: string
+
+	@ApiPropertyOptional({ type: String })
+	@IsString()
+	@IsOptional()
+	passportAddress?: string
 }
 
 export class ClientGetOneByIdRequestDto implements ClientGetOneByIdRequest {
@@ -92,6 +107,21 @@ export class ClientCreateRequestDto implements ClientCreateRequest {
 	@IsUUID('4')
 	@IsNotEmpty()
 	shopId: string
+
+	@ApiProperty({ type: String })
+	@IsString()
+	@IsNotEmpty()
+	fathersName: string
+
+	@ApiProperty({ type: String })
+	@IsString()
+	@IsNotEmpty()
+	jshshir: string
+
+	@ApiProperty({ type: String })
+	@IsString()
+	@IsNotEmpty()
+	passportAddress: string
 }
 
 export class ClientUpdateRequestDto implements ClientUpdateRequest {
@@ -134,6 +164,21 @@ export class ClientUpdateRequestDto implements ClientUpdateRequest {
 	@IsString()
 	@IsOptional()
 	secondAddress?: string
+
+	@ApiPropertyOptional({ type: String })
+	@IsString()
+	@IsOptional()
+	fathersName?: string
+
+	@ApiPropertyOptional({ type: String })
+	@IsString()
+	@IsOptional()
+	jshshir?: string
+
+	@ApiPropertyOptional({ type: String })
+	@IsString()
+	@IsOptional()
+	passportAddress?: string
 }
 
 export class ClientDeleteRequestDto implements ClientDeleteRequest {

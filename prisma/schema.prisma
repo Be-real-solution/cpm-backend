@@ -12,6 +12,13 @@ enum UnitTypeEnum {
   pc  @map("pc")
 }
 
+enum ContractStatusEnum {
+  active     @map("active")
+  cancelled  @map("cancelled")
+  closed     @map("closed")
+}
+
+
 enum AdminTypeEnum {
   admin  @map("admin")
   super  @map("super")
@@ -149,19 +156,22 @@ model ShopNotification {
 }
 
 model Client {
-  id             String     @map("id")              @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
-  phone          String     @map("phone")           @db.VarChar()     
-  rating         Int        @map("rating")          @db.Integer       @default(0)
-  address        String     @map("address")         @db.VarChar()     @default("")
-  passport       String     @map("passport")        @db.VarChar() 
-  birthday       DateTime   @map("birthday")        @db.Date
-  isActive       Boolean    @map("is_active")       @db.Boolean       @default(true) 
-  lastName       String     @map("last_name")       @db.VarChar() 
-  firstName      String     @map("first_name")      @db.VarChar() 
-  secondAddress  String     @map("second_address")  @db.VarChar()     @default("")
-  createdAt      DateTime   @map("created_at")      @db.Timestamp     @default(now())
-  updatedAt      DateTime   @map("updated_at")      @db.Timestamp     @updatedAt
-  deletedAt      DateTime?  @map("deleted_at")      @db.Timestamp
+  id               String     @map("id")              @db.Uuid          @default(dbgenerated("GEN_RANDOM_UUID()"))
+  phone            String     @map("phone")           @db.VarChar()     
+  rating           Int        @map("rating")          @db.Integer       @default(0)
+  address          String     @map("address")         @db.VarChar()     @default("")
+  passport         String     @map("passport")        @db.VarChar() 
+  jshshir          String     @map("jshshir")         @db.VarChar()     @default("")
+  passportAddress  String     @map("passportAddress") @db.VarChar()     @default("")
+  birthday         DateTime   @map("birthday")        @db.Date
+  isActive         Boolean    @map("is_active")       @db.Boolean       @default(true) 
+  lastName         String     @map("last_name")       @db.VarChar() 
+  firstName        String     @map("first_name")      @db.VarChar() 
+  fathersName      String     @map("fathers_name")    @db.VarChar()     @default("")
+  secondAddress    String     @map("second_address")  @db.VarChar()     @default("")
+  createdAt        DateTime   @map("created_at")      @db.Timestamp     @default(now())
+  updatedAt        DateTime   @map("updated_at")      @db.Timestamp     @updatedAt
+  deletedAt        DateTime?  @map("deleted_at")      @db.Timestamp
 
   shops  ShopClient[]
 
@@ -187,9 +197,11 @@ model ShopClient {
 
 model Contract {
   id            String           @map("id")             @db.Uuid       @default(dbgenerated("GEN_RANDOM_UUID()"))
+  name          String           @map("name")           @db.VarChar()
   clientId      String           @map("client_id")      @db.Uuid
   monthCount    Int              @map("month_count")    @db.Integer
   paymentType   PaymentTypeEnum                                        @default(percent)
+  status        ContractStatusEnum                                     @default(active)
   paymentValue  Int              @map("payment_value")  @db.Integer    @default(0)
   createdAt     DateTime         @map("created_at")     @db.Timestamp  @default(now())
   updatedAt     DateTime         @map("updated_at")     @db.Timestamp  @updatedAt
