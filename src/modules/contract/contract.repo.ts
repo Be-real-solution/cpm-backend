@@ -61,6 +61,16 @@ export class ContractRepo {
 						createdAt: true,
 					},
 				},
+				products: {
+					select: {
+						id: true,
+						count: true,
+						name: true,
+						price: true,
+						unitType: true,
+						createdAt: true,
+					},
+				},
 				createdAt: true,
 			},
 			...paginationOptions,
@@ -116,6 +126,16 @@ export class ContractRepo {
 						createdAt: true,
 					},
 				},
+				products: {
+					select: {
+						id: true,
+						count: true,
+						name: true,
+						price: true,
+						unitType: true,
+						createdAt: true,
+					},
+				},
 				createdAt: true,
 			},
 		})
@@ -154,6 +174,16 @@ export class ContractRepo {
 						passport: true,
 						rating: true,
 						secondAddress: true,
+						createdAt: true,
+					},
+				},
+				products: {
+					select: {
+						id: true,
+						count: true,
+						name: true,
+						price: true,
+						unitType: true,
 						createdAt: true,
 					},
 				},

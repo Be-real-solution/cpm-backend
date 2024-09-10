@@ -33,7 +33,29 @@ export class PaymentRepo {
 
 		const payments = await this.prisma.payment.findMany({
 			where: { deletedAt: null, shopId: payload.shopId },
-			select: { id: true, sum: true, shopId: true, createdAt: true },
+			select: {
+				id: true,
+				sum: true,
+				createdAt: true,
+				shop: {
+					select: {
+						id: true,
+						address: true,
+						isActive: true,
+						phone: true,
+						accountable: true,
+						director: true,
+						manager: true,
+						monthlyPay: true,
+						name: true,
+						paymentDay: true,
+						secondPhone: true,
+						username: true,
+						contractFile: true,
+						createdAt: true,
+					},
+				},
+			},
 			...paginationOptions,
 			orderBy: [{ createdAt: 'desc' }],
 		})
@@ -56,7 +78,29 @@ export class PaymentRepo {
 	async getOneById(payload: PaymentGetOneByIdRequest): Promise<PaymentGetOneResponse> {
 		const payment = await this.prisma.payment.findFirst({
 			where: { deletedAt: null, id: payload.id },
-			select: { id: true, shopId: true, sum: true, createdAt: true },
+			select: {
+				id: true,
+				sum: true,
+				createdAt: true,
+				shop: {
+					select: {
+						id: true,
+						address: true,
+						isActive: true,
+						phone: true,
+						accountable: true,
+						director: true,
+						manager: true,
+						monthlyPay: true,
+						name: true,
+						paymentDay: true,
+						secondPhone: true,
+						username: true,
+						contractFile: true,
+						createdAt: true,
+					},
+				},
+			},
 		})
 
 		return payment
@@ -65,7 +109,29 @@ export class PaymentRepo {
 	async getOne(payload: PaymentGetOneRequest): Promise<PaymentGetOneResponse> {
 		const payment = await this.prisma.payment.findFirst({
 			where: { deletedAt: null, shopId: payload.shopId },
-			select: { id: true, sum: true, shopId: true, createdAt: true },
+			select: {
+				id: true,
+				sum: true,
+				createdAt: true,
+				shop: {
+					select: {
+						id: true,
+						address: true,
+						isActive: true,
+						phone: true,
+						accountable: true,
+						director: true,
+						manager: true,
+						monthlyPay: true,
+						name: true,
+						paymentDay: true,
+						secondPhone: true,
+						username: true,
+						contractFile: true,
+						createdAt: true,
+					},
+				},
+			},
 		})
 
 		return payment
@@ -229,9 +295,26 @@ export class PaymentRepo {
 				forMonth: true,
 				forYear: true,
 				monthlyPay: true,
-				shopId: true,
 				paymentParts: { select: { sum: true } },
 				createdAt: true,
+				shop: {
+					select: {
+						id: true,
+						address: true,
+						isActive: true,
+						phone: true,
+						accountable: true,
+						director: true,
+						manager: true,
+						monthlyPay: true,
+						name: true,
+						paymentDay: true,
+						secondPhone: true,
+						username: true,
+						contractFile: true,
+						createdAt: true,
+					},
+				},
 			},
 			...paginationOptions,
 			orderBy: [{ createdAt: 'desc' }],
@@ -266,9 +349,26 @@ export class PaymentRepo {
 				forMonth: true,
 				forYear: true,
 				monthlyPay: true,
-				shopId: true,
 				paymentParts: { select: { sum: true } },
 				createdAt: true,
+				shop: {
+					select: {
+						id: true,
+						address: true,
+						isActive: true,
+						phone: true,
+						accountable: true,
+						director: true,
+						manager: true,
+						monthlyPay: true,
+						name: true,
+						paymentDay: true,
+						secondPhone: true,
+						username: true,
+						contractFile: true,
+						createdAt: true,
+					},
+				},
 			},
 		})
 
@@ -289,9 +389,26 @@ export class PaymentRepo {
 				forMonth: true,
 				forYear: true,
 				monthlyPay: true,
-				shopId: true,
 				paymentParts: { select: { sum: true } },
 				createdAt: true,
+				shop: {
+					select: {
+						id: true,
+						address: true,
+						isActive: true,
+						phone: true,
+						accountable: true,
+						director: true,
+						manager: true,
+						monthlyPay: true,
+						name: true,
+						paymentDay: true,
+						secondPhone: true,
+						username: true,
+						contractFile: true,
+						createdAt: true,
+					},
+				},
 			},
 		})
 

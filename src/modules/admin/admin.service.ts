@@ -58,10 +58,10 @@ export class AdminService {
 		if (adminUser.type === 'admin' && adminUser.id !== param.id) {
 			throw new BadRequestException('You are not allowed to update admin')
 		}
-		if (adminUser.type === 'super' && admin.type === 'super') {
+		if (adminUser.type === 'super' && admin.type === 'super' && adminUser.id !== param.id) {
 			throw new BadRequestException('You cannot update super admin')
 		}
-		if (admin.isMain) {
+		if (admin.isMain && adminUser.id !== param.id) {
 			throw new BadRequestException('You cannot update this admin')
 		}
 

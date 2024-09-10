@@ -3,6 +3,8 @@ import { PaginationResponseDto } from '../../../common'
 import { ContractGetAllResponse, ContractGetOneResponse } from '../interfaces'
 import { ClientGetOneResponse } from '../../client/interfaces'
 import { ClientGetOneResponseDto } from '../../client/dtos'
+import { ContractProductGetOneResponse } from '../../contract-product/interfaces'
+import { ContractProductGetOneResponseDto } from '../../contract-product/dtos'
 
 export class ContractGetOneResponseDto implements ContractGetOneResponse {
 	@ApiProperty({ type: String })
@@ -28,6 +30,9 @@ export class ContractGetOneResponseDto implements ContractGetOneResponse {
 
 	@ApiProperty({ type: Date, example: new Date() })
 	createdAt: Date
+
+	@ApiProperty({ type: ContractProductGetOneResponseDto, isArray: true })
+	products?: ContractProductGetOneResponse[]
 }
 export class ContractGetAllResponseDto extends PaginationResponseDto implements ContractGetAllResponse {
 	@ApiProperty({ type: ContractGetOneResponseDto, isArray: true })

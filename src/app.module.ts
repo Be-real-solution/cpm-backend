@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import { PrismaModule } from './prisma'
 import { databaseConfig } from './configs'
 import { JwtModule } from '@nestjs/jwt'
-import { AdminModule, AuthModule, ClientModule, ContractModule, NotificationModule, PaymentModule, ShopModule } from './modules'
+import { AdminModule, AuthModule, ClientModule, ContractModule, ContractProductModule, NotificationModule, PaymentModule, ShopModule } from './modules'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 
@@ -21,6 +21,7 @@ import { join } from 'path'
 		AuthModule,
 		ClientModule,
 		ContractModule,
+		ContractProductModule,
 		NotificationModule,
 		PaymentModule,
 		ShopModule,
