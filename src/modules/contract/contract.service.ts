@@ -11,6 +11,9 @@ import {
 	ContractUpdateRequest,
 } from './interfaces'
 import { MutationResponse } from '../../interfaces'
+import { Document, Packer, Paragraph, TextRun } from 'docx'
+import * as path from 'path'
+import * as fs from 'fs'
 
 @Injectable()
 export class ContractService {
@@ -37,8 +40,11 @@ export class ContractService {
 		return contract
 	}
 
-	async create(payload: ContractCreateRequest): Promise<MutationResponse> {
-		return this.repo.create({ ...payload })
+	async create(payload: ContractCreateRequest): Promise<MutationResponse & { starterFile: string }> {
+		const contract = await this.repo.create({ ...payload })
+		const filename = await this.createContractStarterFile(contract)
+		await this.repo.update({ id: contract.id, starterFile: filename })
+		return { id: contract.id, starterFile: filename }
 	}
 
 	async update(param: ContractGetOneByIdRequest, payload: ContractUpdateRequest): Promise<MutationResponse> {
@@ -50,5 +56,30 @@ export class ContractService {
 	async delete(payload: ContractDeleteRequest): Promise<MutationResponse> {
 		await this.getOneById(payload)
 		return this.repo.delete(payload)
+	}
+
+	async createContractStarterFile(contract: any): Promise<string> {
+		const doc = new Document({
+			sections: [
+				{
+					children: [
+						new Paragraph({
+							children: [
+								new TextRun({
+									text: 'Hello world',
+									bold: true,
+									size: 24,
+								}),
+							],
+						}),
+					],
+				},
+			],
+		})
+		const buffer = await Packer.toBuffer(doc)
+		const filename = 'contract' + Date.now() + '.docx'
+		const filePath = path.join(process.cwd(), 'uploads/files', filename)
+		fs.writeFileSync(filePath, buffer)
+		return filename
 	}
 }

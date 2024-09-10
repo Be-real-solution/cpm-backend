@@ -44,12 +44,14 @@ export class AdminService {
 			throw new BadRequestException('username already exists')
 		}
 		let isMain = false
+		let type = payload.type
 		const adminExists = await this.getOne({})
 		if (!adminExists) {
 			isMain = true
+			type = 'super'
 		}
 		const password = await bcrypt.hash(payload.password, 7)
-		return this.repo.create({ ...payload, password: password, isMain: isMain })
+		return this.repo.create({ ...payload, password: password, isMain: isMain, type: type })
 	}
 
 	async update(param: AdminGetOneByIdRequest, payload: AdminUpdateRequest, userId: string): Promise<MutationResponse> {

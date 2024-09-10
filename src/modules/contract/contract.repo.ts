@@ -38,6 +38,8 @@ export class ContractRepo {
 			},
 			select: {
 				id: true,
+				ID: true,
+				starterFile: true,
 				monthCount: true,
 				name: true,
 				paymentMethod: true,
@@ -104,6 +106,8 @@ export class ContractRepo {
 			select: {
 				id: true,
 				monthCount: true,
+				ID: true,
+				starterFile: true,
 				name: true,
 				paymentMethod: true,
 				paymentValue: true,
@@ -155,6 +159,8 @@ export class ContractRepo {
 			select: {
 				id: true,
 				monthCount: true,
+				ID: true,
+				starterFile: true,
 				name: true,
 				paymentMethod: true,
 				paymentValue: true,
@@ -194,7 +200,7 @@ export class ContractRepo {
 		return contract
 	}
 
-	async create(payload: ContractCreateRequest): Promise<MutationResponse> {
+	async create(payload: ContractCreateRequest): Promise<ContractGetOneResponse> {
 		const contract = await this.prisma.contract.create({
 			data: {
 				monthCount: payload.monthCount,
@@ -203,8 +209,47 @@ export class ContractRepo {
 				paymentMethod: payload.paymentMethod,
 				paymentValue: payload.paymentValue,
 			},
+			select: {
+				id: true,
+				monthCount: true,
+				ID: true,
+				starterFile: true,
+				name: true,
+				paymentMethod: true,
+				paymentValue: true,
+				status: true,
+				client: {
+					select: {
+						id: true,
+						address: true,
+						birthday: true,
+						fathersName: true,
+						firstName: true,
+						isActive: true,
+						phone: true,
+						passportAddress: true,
+						jshshir: true,
+						lastName: true,
+						passport: true,
+						rating: true,
+						secondAddress: true,
+						createdAt: true,
+					},
+				},
+				products: {
+					select: {
+						id: true,
+						count: true,
+						name: true,
+						price: true,
+						unitType: true,
+						createdAt: true,
+					},
+				},
+				createdAt: true,
+			},
 		})
-		return { id: contract.id }
+		return contract
 	}
 
 	async update(payload: ContractUpdateRequest & ContractGetOneByIdRequest): Promise<MutationResponse> {
@@ -217,6 +262,7 @@ export class ContractRepo {
 				paymentMethod: payload.paymentMethod,
 				paymentValue: payload.paymentValue,
 				status: payload.status,
+				starterFile: payload.starterFile,
 			},
 		})
 		return { id: contract.id }

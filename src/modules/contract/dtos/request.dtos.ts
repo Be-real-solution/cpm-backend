@@ -1,9 +1,11 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional, OmitType } from '@nestjs/swagger'
 import { PaginationRequestDto } from '../../../common'
 import { ContractCreateRequest, ContractDeleteRequest, ContractGetAllRequest, ContractGetOneByIdRequest, ContractUpdateRequest } from '../interfaces'
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator'
 import { Type } from 'class-transformer'
 import { $Enums, ContractStatusEnum, PaymentMethodEnum } from '@prisma/client'
+import { ContractProductCreateRequest } from '../../contract-product/interfaces'
+import { ContractProductCreateRequestDto } from '../../contract-product/dtos'
 
 export class ContractGetAllRequestDto extends PaginationRequestDto implements ContractGetAllRequest {
 	@ApiPropertyOptional({ type: String })
@@ -65,6 +67,9 @@ export class ContractCreateRequestDto implements ContractCreateRequest {
 	@IsNumber()
 	@IsNotEmpty()
 	paymentValue: number
+
+	@ApiPropertyOptional({ type: OmitType(ContractProductCreateRequestDto, ['contractId']), isArray: true })
+	products: Omit<ContractProductCreateRequest, 'contractId'>[]
 }
 
 export class ContractUpdateRequestDto implements ContractUpdateRequest {

@@ -10,11 +10,17 @@ export class ContractGetOneResponseDto implements ContractGetOneResponse {
 	@ApiProperty({ type: String })
 	id: string
 
+	@ApiProperty({ type: String })
+	starterFile: string
+
 	@ApiProperty({ type: ClientGetOneResponseDto })
 	client: ClientGetOneResponse
 
 	@ApiProperty({ type: Number })
 	monthCount: number
+
+	@ApiProperty({ type: Number })
+	ID: number
 
 	@ApiProperty({ type: String })
 	name: string

@@ -1,5 +1,6 @@
 import { ContractStatusEnum, PaymentMethodEnum } from '@prisma/client'
 import { PaginationRequest } from '../../../interfaces'
+import { ContractProductCreateRequest } from '../../contract-product/interfaces'
 
 export declare interface ContractGetAllRequest extends PaginationRequest {
 	name?: string
@@ -20,6 +21,7 @@ export declare interface ContractGetOneRequest {
 	monthCount?: number
 	paymentMethod?: PaymentMethodEnum
 	status?: ContractStatusEnum
+	ID?: string
 }
 
 export declare interface ContractCreateRequest {
@@ -28,6 +30,7 @@ export declare interface ContractCreateRequest {
 	monthCount: number
 	paymentMethod: PaymentMethodEnum
 	paymentValue: number
+	products: Omit<ContractProductCreateRequest, 'contractId'>[]
 }
 
 export declare interface ContractUpdateRequest {
@@ -37,6 +40,7 @@ export declare interface ContractUpdateRequest {
 	paymentMethod?: PaymentMethodEnum
 	status?: ContractStatusEnum
 	paymentValue?: number
+	starterFile?: string
 }
 
 export declare interface ContractDeleteRequest {

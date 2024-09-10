@@ -6,6 +6,8 @@ export declare type ContractGetAllResponse = PaginationResponse<ContractGetOneRe
 
 export declare interface ContractGetOneResponse {
 	id: string
+	ID: number
+	starterFile: string
 	name: string
 	client: ClientGetOneResponse
 	monthCount: number

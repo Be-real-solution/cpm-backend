@@ -201,7 +201,9 @@ model ShopClient {
 
 model Contract {
   id            String           @map("id")             @db.Uuid       @default(dbgenerated("GEN_RANDOM_UUID()"))
+  ID            Int              @map("ID")             @db.Integer    @default(autoincrement())
   name          String           @map("name")           @db.VarChar()
+  starterFile   String?          @map("starter_file")   @db.VarChar()  @default("")
   clientId      String           @map("client_id")      @db.Uuid
   monthCount    Int              @map("month_count")    @db.Integer
   paymentMethod PaymentMethodEnum                                      @default(percent)
