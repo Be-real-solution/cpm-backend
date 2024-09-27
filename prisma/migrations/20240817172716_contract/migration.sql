@@ -21,7 +21,7 @@ ALTER COLUMN "second_phone" SET DEFAULT '';
 
 -- CreateTable
 CREATE TABLE "contract" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "client_id" UUID NOT NULL,
     "month_count" INTEGER NOT NULL,
     "paymentType" "PaymentTypeEnum" NOT NULL DEFAULT 'percent',
@@ -35,7 +35,7 @@ CREATE TABLE "contract" (
 
 -- CreateTable
 CREATE TABLE "contract_product" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "name" VARCHAR NOT NULL,
     "price" INTEGER NOT NULL DEFAULT 0,
     "count" INTEGER NOT NULL DEFAULT 1,
