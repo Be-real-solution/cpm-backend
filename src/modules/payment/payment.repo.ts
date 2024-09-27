@@ -372,7 +372,7 @@ export class PaymentRepo {
 			},
 		})
 
-		return { ...payment, sum: payment.paymentParts.reduce((a, b) => a + b.sum, 0) }
+		return { ...payment, sum: payment.paymentParts.reduce((a: any, b: { sum: any }) => a + b.sum, 0) }
 	}
 
 	async getOneMonthly(payload: PaymentMonthlyGetOneRequest): Promise<PaymentMonthlyGetOneResponse> {
@@ -412,6 +412,6 @@ export class PaymentRepo {
 			},
 		})
 
-		return { ...payment, sum: payment.paymentParts.reduce((a, b) => a + b.sum, 0) }
+		return { ...payment, sum: payment.paymentParts.reduce((a: any, b: { sum: any }) => a + b.sum, 0) }
 	}
 }
