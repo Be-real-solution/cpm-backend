@@ -15,7 +15,7 @@ DROP TABLE "_ClientToShop";
 
 -- CreateTable
 CREATE TABLE "shop_client" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "shop_id" UUID NOT NULL,
     "client_id" UUID NOT NULL,
     "is_active" BOOLEAN NOT NULL DEFAULT true,

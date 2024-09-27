@@ -16,7 +16,7 @@ DROP COLUMN "shop_id";
 
 -- CreateTable
 CREATE TABLE "shop_payment" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "shop_id" UUID NOT NULL,
     "for_month" DATE NOT NULL,
     "monthly_payment" INTEGER NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE "shop_payment" (
 
 -- CreateTable
 CREATE TABLE "payment_part" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "sum" INTEGER NOT NULL,
     "payment_id" UUID NOT NULL,
     "shop_payment_id" UUID NOT NULL,

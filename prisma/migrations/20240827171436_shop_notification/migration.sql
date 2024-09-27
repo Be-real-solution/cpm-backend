@@ -14,7 +14,7 @@ DROP COLUMN "shop_id";
 
 -- CreateTable
 CREATE TABLE "shop_notification" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "read" BOOLEAN NOT NULL DEFAULT false,
     "shop_id" UUID NOT NULL,
     "notification_id" UUID NOT NULL,
