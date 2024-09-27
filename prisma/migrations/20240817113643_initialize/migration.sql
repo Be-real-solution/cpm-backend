@@ -1,9 +1,12 @@
 -- CreateEnum
 CREATE TYPE "AdminTypeEnum" AS ENUM ('admin', 'super');
+-- Create extension that helps to generate uuid
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 
 -- CreateTable
 CREATE TABLE "admin" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "type" "AdminTypeEnum" NOT NULL,
     "is_main" BOOLEAN NOT NULL DEFAULT false,
     "full_name" VARCHAR NOT NULL,
@@ -18,7 +21,7 @@ CREATE TABLE "admin" (
 
 -- CreateTable
 CREATE TABLE "shop" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "name" VARCHAR NOT NULL,
     "phone" VARCHAR NOT NULL,
     "address" VARCHAR NOT NULL,
@@ -40,7 +43,7 @@ CREATE TABLE "shop" (
 
 -- CreateTable
 CREATE TABLE "payment" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "shop_id" UUID NOT NULL,
     "sum" INTEGER NOT NULL,
     "monthly_payment" INTEGER NOT NULL,
@@ -54,7 +57,7 @@ CREATE TABLE "payment" (
 
 -- CreateTable
 CREATE TABLE "notification" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "title" VARCHAR NOT NULL,
     "subtitle" VARCHAR NOT NULL,
     "shop_id" UUID NOT NULL,
@@ -68,7 +71,7 @@ CREATE TABLE "notification" (
 
 -- CreateTable
 CREATE TABLE "client" (
-    "id" UUID NOT NULL DEFAULT GEN_RANDOM_UUID(),
+    "id" UUID NOT NULL DEFAULT uuid_generate_v4(),
     "first_name" VARCHAR NOT NULL,
     "last_name" VARCHAR NOT NULL,
     "phone" VARCHAR NOT NULL,
