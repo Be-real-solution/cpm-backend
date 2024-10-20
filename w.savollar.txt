@@ -1,0 +1,1 @@
+1. Hamma do'konlarni ko'rish qismidagi search nimalar bo'yicha qidiradi. 

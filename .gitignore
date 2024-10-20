@@ -1,11 +1,15 @@
 # compiled output
 /dist
 /node_modules
+
+#folders
+/uploads
+
+#security files
 .env
-/uploads/*
 
 # Logs
-logs
+/logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -15,4 +19,23 @@ lerna-debug.log*
 
 # OS
 .DS_Store
-.npmrc
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
