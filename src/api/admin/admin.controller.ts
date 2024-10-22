@@ -12,14 +12,21 @@ import { CreateAdminDto } from "./dto/create-admin.dto";
 import { UpdateAdminDto } from "./dto/update-admin.dto";
 
 @ApiTags("Admin")
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller("admin")
 export class AdminController {
 	constructor(private readonly adminService: AdminService) {}
 
+	@ApiOperation({ summary: "create admin api for test" })
+	@ApiResponse({ status: 201, type: AdminEntity, description: "admin create data" })
+	@Post("/create-super-admin")
+	public createSuperAdmin(@Body() dto: CreateAdminDto, @CurrentLanguage() lang: string) {
+		return this.adminService.createAdmin(dto, lang);
+	}
+
 	@ApiOperation({ summary: "create admin api for super admin" })
 	@ApiResponse({ status: 201, type: AdminEntity, description: "admin create data" })
 	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard, RolesGuard)
 	@RolesDecorator(Roles.SUPER_ADMIN)
 	@Post("/create")
 	public create(@Body() dto: CreateAdminDto, @CurrentLanguage() lang: string) {
@@ -29,6 +36,7 @@ export class AdminController {
 	@ApiOperation({ summary: "find all admin api for super admin" })
 	@ApiResponse({ status: 200, type: [AdminEntity], description: "return found data" })
 	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard, RolesGuard)
 	@RolesDecorator(Roles.SUPER_ADMIN)
 	@Get()
 	public findAll(@CurrentLanguage() lang: string) {
@@ -41,6 +49,7 @@ export class AdminController {
 	@ApiOperation({ summary: "find self info for admin" })
 	@ApiResponse({ status: 200, type: AdminEntity, description: "return found data" })
 	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard, RolesGuard)
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Get("get-self-info")
 	public findSelfInfo(@CurrentLanguage() lang: string, @CurrentUser() admin: AdminEntity) {
@@ -50,6 +59,7 @@ export class AdminController {
 	@ApiOperation({ summary: "find one admin api for super admin" })
 	@ApiResponse({ status: 200, type: AdminEntity, description: "return found data" })
 	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard, RolesGuard)
 	@RolesDecorator(Roles.SUPER_ADMIN)
 	@Get(":id")
 	public findOne(@Param("id") id: string, @CurrentLanguage() lang: string) {
@@ -59,6 +69,7 @@ export class AdminController {
 	@ApiOperation({ summary: "update admin api for super admin" })
 	@ApiResponse({ status: 200, description: "return updated data" })
 	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard, RolesGuard)
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Patch(":id")
 	public update(
@@ -73,6 +84,7 @@ export class AdminController {
 	@ApiOperation({ summary: "remove admin api for super admin" })
 	@ApiResponse({ status: 200, description: "return success message" })
 	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard, RolesGuard)
 	@RolesDecorator(Roles.SUPER_ADMIN)
 	@Delete(":id")
 	public remove(@Param("id") id: string, @CurrentLanguage() lang: string) {
