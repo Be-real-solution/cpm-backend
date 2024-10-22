@@ -1,35 +1,27 @@
 import {
-	Controller,
-	Get,
-	Post,
 	Body,
-	Patch,
-	Param,
+	Controller,
 	Delete,
-	UseGuards,
+	Get,
+	Param,
+	Patch,
+	Post,
 	Query,
+	UseGuards,
 } from "@nestjs/common";
-import { StoreService } from "./store.service";
-import { BlockingOrUnblockingDto, CreateStoreDto, UpdateStoreDto } from "./dto";
-import {
-	ApiBearerAuth,
-	ApiBody,
-	ApiOperation,
-	ApiQuery,
-	ApiResponse,
-	ApiTags,
-} from "@nestjs/swagger";
-import { AdminEntity, StoreEntity } from "src/core/entity";
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Roles } from "src/common/database/Enums";
 import { CurrentLanguage } from "src/common/decorator/current-language";
-import { JwtAuthGuard } from "../auth/user/AuthGuard";
+import { CurrentUser } from "src/common/decorator/current-user";
+import { AdminEntity, StoreEntity } from "src/core/entity";
 import { RolesGuard } from "../auth/roles/RoleGuard";
 import { RolesDecorator } from "../auth/roles/RolesDecorator";
-import { Roles } from "src/common/database/Enums";
-import { CurrentUser } from "src/common/decorator/current-user";
+import { JwtAuthGuard } from "../auth/user/AuthGuard";
+import { BlockingOrUnblockingDto, CreateStoreDto, UpdateStoreDto } from "./dto";
+import { StoreService } from "./store.service";
 
 @ApiTags("Store")
 @UseGuards(JwtAuthGuard, RolesGuard)
-@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 @Controller("store")
 export class StoreController {
 	constructor(private readonly storeService: StoreService) {}
@@ -37,6 +29,7 @@ export class StoreController {
 	@ApiOperation({ summary: "create store api for admins" })
 	@ApiResponse({ status: 201, type: StoreEntity, description: "return created data" })
 	@ApiBearerAuth()
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Post()
 	public create(
 		@Body() dto: CreateStoreDto,
@@ -49,6 +42,7 @@ export class StoreController {
 	@ApiOperation({ summary: "find all stores api for admins" })
 	@ApiResponse({ status: 200, type: [StoreEntity], description: "return found data" })
 	@ApiBearerAuth()
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Get()
 	public findAll(@CurrentLanguage() lang: string) {
 		return this.storeService.findAll(lang, {
@@ -57,9 +51,19 @@ export class StoreController {
 		});
 	}
 
+	@ApiOperation({ summary: "find self info api for stores" })
+	@ApiResponse({ status: 200, type: StoreEntity, description: "return found data" })
+	@ApiBearerAuth()
+	@RolesDecorator(Roles.STORE_ADMIN)
+	@Get("find-self-info")
+	public findSelfInfo(@CurrentLanguage() lang: string, @CurrentUser() store: StoreEntity) {
+		return this.storeService.findOneById(store.id, lang, { where: { is_deleted: false } });
+	}
+
 	@ApiOperation({ summary: "find one stores api for admins" })
 	@ApiResponse({ status: 200, type: StoreEntity, description: "return found data" })
 	@ApiBearerAuth()
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Get(":id")
 	public findOne(@Param("id") id: string, @CurrentLanguage() lang: string) {
 		return this.storeService.findOneById(id, lang, { where: { is_deleted: false } });
@@ -74,6 +78,7 @@ export class StoreController {
 		description: "true or false value required",
 	})
 	@ApiBearerAuth()
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Patch("blocking-or-unblocking/:id")
 	public blockingOrUnblocking(
 		@Param("id") id: string,
@@ -86,6 +91,7 @@ export class StoreController {
 	@ApiOperation({ summary: "update store api for admins" })
 	@ApiResponse({ status: 200, type: StoreEntity, description: "return updated data" })
 	@ApiBearerAuth()
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Patch(":id")
 	public update(
 		@Param("id") id: string,
@@ -101,6 +107,7 @@ export class StoreController {
 		description: "return success message and empty data",
 	})
 	@ApiBearerAuth()
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Delete(":id")
 	public remove(@Param("id") id: string, @CurrentLanguage() lang: string) {
 		return this.storeService.delete(id, lang);

@@ -3,7 +3,9 @@ import { StoreClientService } from "./store-client.service";
 import { CreateStoreClientDto } from "./dto/create-store-client.dto";
 import { UpdateStoreClientDto } from "./dto/update-store-client.dto";
 import { CurrentLanguage } from "src/common/decorator/current-language";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("Store Clients. Not complated")
 @Controller("store-client")
 export class StoreClientController {
 	constructor(private readonly storeClientService: StoreClientService) {}

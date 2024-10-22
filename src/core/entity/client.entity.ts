@@ -3,6 +3,7 @@ import { BaseEntity } from "src/common/database/BaseEntity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { StoreEntity } from "./store.entity";
 import { StoreClientEntity } from "./store-client.entity";
+import { ContractEntity } from "./contract.entity";
 
 @Entity("clients")
 export class ClientEntity extends BaseEntity {
@@ -76,4 +77,7 @@ export class ClientEntity extends BaseEntity {
 
 	@OneToMany(() => StoreClientEntity, (store_client) => store_client.client)
 	public store_clients!: StoreClientEntity[];
+
+	@OneToMany(() => ContractEntity, (contract) => contract.client)
+	public contracts!: ContractEntity[]
 }

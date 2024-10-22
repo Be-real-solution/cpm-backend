@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Roles } from "src/common/database/Enums";
 import { IResponse } from "src/common/type";
-import { AdminEntity } from "src/core/entity";
-import { AdminRepository } from "src/core/repository";
+import { AdminEntity, StoreEntity } from "src/core/entity";
+import { AdminRepository, StoreRepository } from "src/core/repository";
 import { BcryptEncryption } from "src/infrastructure/lib/bcrypt";
 import { JwtToken } from "src/infrastructure/lib/jwt-token";
 import { LoginDto } from "./dto/login.dto";
@@ -15,6 +15,7 @@ import {
 export class AuthService {
 	constructor(
 		@InjectRepository(AdminEntity) private readonly adminRepo: AdminRepository,
+		@InjectRepository(StoreEntity) private readonly storeRepo: StoreRepository,
 		private readonly jwtToken: JwtToken,
 	) {
 	}
@@ -37,6 +38,26 @@ export class AuthService {
 
 		const token = await this.jwtToken.generateToken(admin, Roles.ADMIN);
 		return { status_code: 200, data: { ...admin, token }, message: "success" };
+	}
+
+		/** store login */
+	public async storeLogin(dto: LoginDto): Promise<IResponse<any>> {
+		const store: StoreEntity | null = await this.storeRepo.findOne({
+			where: { username: dto.username },
+		});
+
+		if (!store) {
+			throw new AuthorizationError();
+		}
+
+		const check_pass: Boolean = await BcryptEncryption.compare(dto.password, store.password);
+
+		if (!check_pass) {
+			throw new AuthorizationError();
+		}
+
+		const token = await this.jwtToken.generateToken(store, Roles.ADMIN);
+		return { status_code: 200, data: { ...store, token }, message: "success" };
 	}
 
 

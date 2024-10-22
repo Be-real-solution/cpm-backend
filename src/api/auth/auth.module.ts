@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { JwtModule } from "@nestjs/jwt";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AdminEntity } from "src/core/entity";
+import { AdminEntity, StoreEntity } from "src/core/entity";
 import { JwtToken } from "src/infrastructure/lib/jwt-token";
 import { AdminModule } from "../admin/admin.module";
 import { AuthController } from "./auth.controller";
@@ -10,7 +10,7 @@ import { JwtStrategy } from "./user/AuthStrategy";
 
 @Module({
 	imports: [
-		TypeOrmModule.forFeature([ AdminEntity]),
+		TypeOrmModule.forFeature([ AdminEntity, StoreEntity]),
 		JwtModule,
 		AdminModule,
 	],

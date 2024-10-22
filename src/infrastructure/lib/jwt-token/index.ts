@@ -2,14 +2,14 @@ import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { Roles } from "src/common/database/Enums";
 import { config } from "src/config";
-import { AdminEntity } from "src/core/entity";
+import { AdminEntity, StoreEntity } from "src/core/entity";
 
 @Injectable()
 export class JwtToken {
 	constructor(private readonly jwt: JwtService) {}
 
 	public async generateToken(
-		admin: AdminEntity,
+		admin: AdminEntity | StoreEntity,
 		role: Roles
 	): Promise<{ access_token: string; refresh_token: string }> {
 		const payload = {

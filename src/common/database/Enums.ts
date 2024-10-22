@@ -4,9 +4,9 @@ enum CategorySize {
 }
 
 export enum Roles {
-	SUPER_ADMIN = 'super_admin',
-	ADMIN = 'admin',
-	STORE_ADMIN = 'store_admin',
+	SUPER_ADMIN = "super_admin",
+	ADMIN = "admin",
+	STORE_ADMIN = "store_admin",
 }
 
 export enum OrderStatus {
@@ -14,17 +14,34 @@ export enum OrderStatus {
 	APPROVED = "approved",
 	DELIVERED = "delivered",
 	CANCELLED = "cancelled",
-	FINISHED = "finished"
+	FINISHED = "finished",
 }
 
 export enum PaymentType {
 	CASH = "cash",
-	CARD = "card"
+	CARD = "card",
 }
 
-export enum OrderType {
-	WEB = "web",
-	MOBILE = "mobile"
+export enum ContractStatus {
+	PAID = "paid",
+}
+
+export enum ContractPaymentStatus {
+	PAID = "paid",
+}
+
+export enum ContractInitialPaymentType {
+	PERCENT = "percent",
+	SUMMA = "summa",
+}
+
+export enum ContractProductUnit {
+	PCS = "pcs",
+}
+
+export enum ContractPaymentMethod {
+	CASH = "cash",
+	CARD = "card",
 }
 
 export { CategorySize };

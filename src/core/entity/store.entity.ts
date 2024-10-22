@@ -4,6 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { AdminEntity } from "./admin.entity";
 import { ClientEntity } from "./client.entity";
 import { StoreClientEntity } from "./store-client.entity";
+import { ContractEntity } from "./contract.entity";
 
 @Entity("stores")
 export class StoreEntity extends BaseEntity {
@@ -48,7 +49,7 @@ export class StoreEntity extends BaseEntity {
 		example: "Idea123",
 		description: "username of store",
 	})
-	@Column({ type: "varchar", length: 32 })
+	@Column({ type: "varchar", unique: true, length: 32 })
 	public username!: string;
 
 	@ApiProperty({
@@ -104,8 +105,11 @@ export class StoreEntity extends BaseEntity {
 	public created_by!: AdminEntity;
 
 	@OneToMany(() => ClientEntity, (client) => client.created_by)
-	public clients!: ClientEntity[]
+	public clients!: ClientEntity[];
 
 	@OneToMany(() => StoreClientEntity, (store_client) => store_client.store)
-	public store_clients!: StoreClientEntity[]
+	public store_clients!: StoreClientEntity[];
+
+	@OneToMany(() => ContractEntity, (contract) => contract.client)
+	public contracts!: ContractEntity[];
 }

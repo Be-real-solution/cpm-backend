@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/common/database/Enums';
 import { CurrentLanguage } from 'src/common/decorator/current-language';
 import { CurrentUser } from 'src/common/decorator/current-user';
@@ -11,6 +11,7 @@ import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
+@ApiTags("Clients")
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller("client")
 export class ClientController {

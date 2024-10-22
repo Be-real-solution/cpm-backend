@@ -17,14 +17,24 @@ export class AuthController {
 		return this.authService.refreshToken(token);
 	}
 
-	@ApiOperation({ summary: "login admin api" })
+	@ApiOperation({ summary: "login api for admins" })
 	@ApiResponse({
 		status: 200,
 		description: "return access_token and refresh_token with admin fields",
 	})
-	@Post("login")
-	public login(@Body() dto: LoginDto) {
+	@Post("admin-login")
+	public adminLogin(@Body() dto: LoginDto) {
 		return this.authService.adminLogin(dto);
+	}
+
+	@ApiOperation({ summary: "login api for stores" })
+	@ApiResponse({
+		status: 200,
+		description: "return access_token and refresh_token with admin fields",
+	})
+	@Post("store-login")
+	public storeLogin(@Body() dto: LoginDto) {
+		return this.authService.storeLogin(dto);
 	}
 
 }

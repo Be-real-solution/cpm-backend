@@ -2592,7 +2592,7 @@ export const ERROR_PROMPT_MAP = {
 				"Olib bo'lmaydi, bunday yo'l yo'q!",
 			],
 		},
-		
+
 		invalid_token: {
 			id: 10005,
 			status: "BADREQUEST",
@@ -2634,6 +2634,16 @@ export const ERROR_PROMPT_MAP = {
 			status: "BADREQUEST",
 			code: "USER",
 			labels: ["User not found!", "Пользователь не найден!", "Foydalanuvchi topilmadi!"],
+		},
+		store_already_exists: {
+			id: 10009,
+			status: "BADREQUEST",
+			code: "STORE",
+			labels: [
+				"Store already exists!",
+				"Магазин уже существует!",
+				"Do'kon allaqachon mavjud!",
+			],
 		},
 	},
 };

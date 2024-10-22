@@ -6,6 +6,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { StoreRepository } from "src/core/repository";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
 import { IResponse } from "src/common/type";
+import { StoreAlreadyExists } from "./exception/store-already-exists";
 
 @Injectable()
 export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, StoreEntity> {
@@ -19,6 +20,12 @@ export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, St
 		lang: string,
 		admin: AdminEntity,
 	): Promise<IResponse<StoreEntity>> {
+		const check_store: StoreEntity | null = await this.storeRepo.findOne({where: {username: dto.username}})
+
+		if (!check_store) {
+			throw new StoreAlreadyExists()
+		}
+		
 		let store_order: number | null = await this.storeRepo.maximum("order");
 
 		if (store_order) {
