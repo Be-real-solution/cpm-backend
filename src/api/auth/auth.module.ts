@@ -7,12 +7,14 @@ import { AdminModule } from "../admin/admin.module";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { JwtStrategy } from "./user/AuthStrategy";
+import { StoreModule } from "../store/store.module";
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([ AdminEntity, StoreEntity]),
 		JwtModule,
 		AdminModule,
+		StoreModule,
 	],
 	controllers: [AuthController],
 	providers: [AuthService, JwtToken, JwtStrategy],

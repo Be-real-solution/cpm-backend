@@ -49,6 +49,6 @@ export class ContractProductEntity {
 	public created_at!: number;
 
 	@ManyToOne(() => ContractEntity, (contract) => contract.contract_products)
-	@JoinColumn({name: "contract_id"})
-	public contract!: ContractEntity
+	@JoinColumn({ name: "contract_id" })
+	public contract!: ContractEntity;
 }

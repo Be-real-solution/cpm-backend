@@ -5,6 +5,7 @@ import { AdminEntity } from "./admin.entity";
 import { ClientEntity } from "./client.entity";
 import { StoreClientEntity } from "./store-client.entity";
 import { ContractEntity } from "./contract.entity";
+import { Roles } from "src/common/database/Enums";
 
 @Entity("stores")
 export class StoreEntity extends BaseEntity {
@@ -99,6 +100,14 @@ export class StoreEntity extends BaseEntity {
 	})
 	@Column({ type: "int4" })
 	public order!: number;
+
+	@ApiProperty({
+		name: "role",
+		example: "store_admin",
+		description: "role of store auto created",
+	})
+	@Column({ type: "enum", enum: Roles, default: Roles.STORE_ADMIN })
+	public role!: Roles;
 
 	@ManyToOne(() => AdminEntity, (admin) => admin.stores)
 	@JoinColumn({ name: "created_by" })

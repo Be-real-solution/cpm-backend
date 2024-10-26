@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ContractPaymentMethod, ContractPaymentStatus, ContractProductUnit } from "src/common/database/Enums";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ContractEntity } from "./contract.entity";
 
@@ -9,37 +8,45 @@ export class ContractPaymentTableEntity {
 	public id!: string;
 
 	@ApiProperty({
-		name: "date",
-		example: 1627362737,
-		description: "date of contract payment table",
+		name: "payment_list",
+		example: "object",
+		description: "payment list of contract payment table",
 	})
-	@Column({ type: "bigint", default: Date.now() })
-	public date!: number;
+	@Column({ type: "jsonb", default: [] })
+	public payment_list!: object[];
 
-	@ApiProperty({
-		name: "amount",
-		example: 500000,
-		description: "amount of contract payment table",
-	})
-	@Column({ type: "decimal", scale: 2 })
-	public amount!: number;
+	// @ApiProperty({
+	// 	name: "date",
+	// 	example: 1627362737,
+	// 	description: "date of contract payment table",
+	// })
+	// @Column({ type: "bigint", default: Date.now() })
+	// public date!: number;
 
-	@ApiProperty({
-		name: "method",
-		example: "cash",
-		examples: ContractPaymentMethod,
-		description: "method of contract payment table",
-	})
-	@Column({ type: "enum", enum: ContractPaymentMethod })
-	public method!: ContractPaymentMethod;
+	// @ApiProperty({
+	// 	name: "amount",
+	// 	example: 500000,
+	// 	description: "amount of contract payment table",
+	// })
+	// @Column({ type: "decimal", scale: 2 })
+	// public amount!: number;
 
-	@ApiProperty({
-		name: "status",
-		example: "paid",
-		description: "status of contract payment table",
-	})
-	@Column({ type: "enum", enum: ContractPaymentStatus })
-	public status!: ContractPaymentStatus;
+	// @ApiProperty({
+	// 	name: "method",
+	// 	example: "cash",
+	// 	examples: ContractPaymentMethod,
+	// 	description: "method of contract payment table",
+	// })
+	// @Column({ type: "enum", enum: ContractPaymentMethod, nullable: true })
+	// public method!: ContractPaymentMethod;
+
+	// @ApiProperty({
+	// 	name: "status",
+	// 	example: "paid",
+	// 	description: "status of contract payment table",
+	// })
+	// @Column({ type: "enum", enum: ContractPaymentStatus, default: ContractPaymentStatus.UNPAID })
+	// public status!: ContractPaymentStatus;
 
 	@ApiProperty({
 		name: "created_at",

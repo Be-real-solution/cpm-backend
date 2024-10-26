@@ -8,10 +8,11 @@ import { AuthPayload } from "src/common/type";
 import { config } from "src/config";
 import { AdminEntity, StoreEntity } from "src/core/entity";
 import { AuthorizationError } from "../exception";
+import { StoreService } from "src/api/store/store.service";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
-	constructor(private adminService: AdminService) {
+	constructor(private adminService: AdminService, private storeService: StoreService) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			secretOrKey: config.ACCESS_SECRET_KEY,
@@ -28,11 +29,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
 
 		try {
 			if (payload.role === Roles.STORE_ADMIN) {
-				// user = await this.userService
-				// .findOneBy("en", {
-				// 	where: { id: payload.id, role: payload.role },
-				// })
-				// .then((res) => res.data);
+				user = await this.storeService
+				.findOneBy("en", {
+					where: { id: payload.id },
+				})
+				.then((res) => res.data);
 			} else {
 				user = await this.adminService
 					.findOneBy("en", {

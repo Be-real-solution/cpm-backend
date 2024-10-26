@@ -2645,6 +2645,16 @@ export const ERROR_PROMPT_MAP = {
 				"Do'kon allaqachon mavjud!",
 			],
 		},
+		sent_incorrect_amount: {
+			id: 10017,
+			status: "BADREQUEST",
+			code: "ADMIN",
+			labels: [
+				"Incorrect amount has been sent!",
+				"Отправлена неправильная сумма!",
+				"Noto'g'ri Summa yuborilgan!",
+			],
+		},
 	},
 };
 

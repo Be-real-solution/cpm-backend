@@ -48,14 +48,7 @@ export class CreateContractProductDto {
 }
 
 
-
 export class CreateContractDto {
-	@ApiProperty({
-		name: "status",
-		example: "paid",
-		description: "status of contract",
-	})
-	public status!: ContractStatus;
 
 	@ApiProperty({
 		name: "inn",

@@ -24,10 +24,12 @@ export enum PaymentType {
 
 export enum ContractStatus {
 	PAID = "paid",
+	UNPAID = "unpaid"
 }
 
 export enum ContractPaymentStatus {
 	PAID = "paid",
+	UNPAID = "unpaid"
 }
 
 export enum ContractInitialPaymentType {
@@ -42,6 +44,8 @@ export enum ContractProductUnit {
 export enum ContractPaymentMethod {
 	CASH = "cash",
 	CARD = "card",
+	BANK = "bank",
+	NOT_SELECTED = "not_selected"
 }
 
 export { CategorySize };

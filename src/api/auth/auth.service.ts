@@ -36,7 +36,7 @@ export class AuthService {
 			throw new AuthorizationError();
 		}
 
-		const token = await this.jwtToken.generateToken(admin, Roles.ADMIN);
+		const token = await this.jwtToken.generateToken(admin, admin.role);
 		return { status_code: 200, data: { ...admin, token }, message: "success" };
 	}
 
@@ -56,7 +56,7 @@ export class AuthService {
 			throw new AuthorizationError();
 		}
 
-		const token = await this.jwtToken.generateToken(store, Roles.ADMIN);
+		const token = await this.jwtToken.generateToken(store, Roles.STORE_ADMIN);
 		return { status_code: 200, data: { ...store, token }, message: "success" };
 	}
 

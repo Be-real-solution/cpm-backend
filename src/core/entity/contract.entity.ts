@@ -6,6 +6,7 @@ import { ClientEntity } from "./client.entity";
 import { StoreEntity } from "./store.entity";
 import { ContractProductEntity } from "./contract-product.entity";
 import { ContractPaymentTableEntity } from "./contract-payment-table.entity";
+import { Transform } from "class-transformer";
 
 @Entity("contracts")
 export class ContractEntity extends BaseEntity {
@@ -14,7 +15,7 @@ export class ContractEntity extends BaseEntity {
 		example: "paid",
 		description: "status of contract",
 	})
-	@Column({ type: "enum", enum: ContractStatus })
+	@Column({ type: "enum", enum: ContractStatus, default: ContractStatus.UNPAID })
 	public status!: ContractStatus;
 
 	@ApiProperty({
@@ -30,7 +31,7 @@ export class ContractEntity extends BaseEntity {
 		example: "summa",
 		description: "initial_payment_type of contract",
 	})
-	@Column({ type: "enum", enum: ContractInitialPaymentType})
+	@Column({ type: "enum", enum: ContractInitialPaymentType })
 	public initial_payment_type!: ContractInitialPaymentType;
 
 	@ApiProperty({
@@ -39,6 +40,7 @@ export class ContractEntity extends BaseEntity {
 		description: "initial_payment_amount of contract",
 	})
 	@Column({ type: "decimal", scale: 2 })
+	@Transform(({ value }) => parseFloat(value))
 	public initial_payment_amount!: number;
 
 	@ApiProperty({
@@ -98,8 +100,11 @@ export class ContractEntity extends BaseEntity {
 	public store!: StoreEntity;
 
 	@OneToMany(() => ContractProductEntity, (contract_product) => contract_product.contract)
-	public contract_products!: ContractProductEntity[]
+	public contract_products!: ContractProductEntity[];
 
-	@OneToMany(() => ContractPaymentTableEntity, (contract_payemnt_table) => contract_payemnt_table.contract)
-	public contract_payment_tables!: ContractPaymentTableEntity[]
+	@OneToMany(
+		() => ContractPaymentTableEntity,
+		(contract_payemnt_table) => contract_payemnt_table.contract,
+	)
+	public contract_payment_tables!: ContractPaymentTableEntity[];
 }

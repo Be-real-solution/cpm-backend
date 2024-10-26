@@ -18,7 +18,7 @@ export class ContractController {
 	constructor(private readonly contractService: ContractService) {}
 
 	@ApiOperation({ summary: "Create contract api for stores" })
-	@ApiResponse({ status: 201, type: ContractEntity, description: "return created data" })
+	@ApiResponse({ status: 201, description: "return empty data" })
 	@ApiBearerAuth()
 	@RolesDecorator(Roles.STORE_ADMIN)
 	@Post()
@@ -27,7 +27,19 @@ export class ContractController {
 		@CurrentLanguage() lang: string,
 		@CurrentUser() store: StoreEntity,
 	) {
-		return this.contractService.create(dto, lang);
+		return this.contractService.createContract(dto, lang, store);
+	}
+
+	@ApiOperation({ summary: "Calculate contract payment api for stores" })
+	@ApiResponse({ status: 200, description: "return calculated data" })
+	@ApiBearerAuth()
+	@RolesDecorator(Roles.STORE_ADMIN)
+	@Post("calculate-payment")
+	public calculateContractPayment(
+		@Body() dto: CreateContractDto,
+		@CurrentLanguage() lang: string,
+	) {
+		return this.contractService.calculateContractPayment(dto, lang);
 	}
 
 	@ApiOperation({ summary: "finda all contract api for stores" })
@@ -35,17 +47,24 @@ export class ContractController {
 	@ApiBearerAuth()
 	@RolesDecorator(Roles.STORE_ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Get()
-	public findAll(@CurrentLanguage() lang: string, @CurrentUser() user: StoreEntity | AdminEntity) {
+	public findAll(
+		@CurrentLanguage() lang: string,
+		@CurrentUser() user: StoreEntity | AdminEntity,
+	) {
 		return this.contractService.findAll(lang);
 	}
 
-	@ApiOperation({ summary: "Create contract api for stores" })
-	@ApiResponse({ status: 201, type: ContractEntity, description: "return created data" })
+	@ApiOperation({ summary: "find one contract api for stores and admins" })
+	@ApiResponse({ status: 200, type: ContractEntity, description: "return found data" })
 	@ApiBearerAuth()
 	@RolesDecorator(Roles.STORE_ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Get(":id")
-	public findOne(@Param("id") id: string) {
-		return this.contractService.findOne(+id);
+	public findOne(
+		@Param("id") id: string,
+		@CurrentLanguage() lang: string,
+		@CurrentUser() user: StoreEntity | AdminEntity,
+	) {
+		return this.contractService.findOneContract(id, lang, user);
 	}
 
 	// @Patch(":id")
@@ -53,8 +72,8 @@ export class ContractController {
 	// 	return this.contractService.update(id, updateContractDto);
 	// }
 
-	@Delete(":id")
-	public remove(@Param("id") id: string) {
-		return this.contractService.remove(+id);
-	}
+	// @Delete(":id")
+	// public remove(@Param("id") id: string) {
+	// 	return this.contractService.remove(+id);
+	// }
 }
