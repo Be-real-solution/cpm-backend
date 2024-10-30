@@ -3,6 +3,7 @@ import { BaseEntity } from "src/common/database/BaseEntity";
 import { Roles } from "src/common/database/Enums";
 import { Column, Entity, Index, OneToMany } from "typeorm";
 import { StoreEntity } from "./store.entity";
+import { StorePaymentEntity } from "./store-payment.entity";
 
 @Entity("admins")
 export class AdminEntity extends BaseEntity {
@@ -33,4 +34,7 @@ export class AdminEntity extends BaseEntity {
 
 	@OneToMany(() => StoreEntity, (store) => store.created_by)
 	public stores!: StoreEntity[];
+
+	@OneToMany(() => StorePaymentEntity, (store_payment) => store_payment.created_by)
+	public store_payments!: StorePaymentEntity[]
 }

@@ -9,6 +9,7 @@ import { StoreModule } from './store/store.module';
 import { ClientModule } from './client/client.module';
 import { StoreClientModule } from './store-client/store-client.module';
 import { ContractModule } from './contract/contract.module';
+import { StorePaymentModule } from './store-payment/store-payment.module';
 
 @Module({
 	imports: [
@@ -25,6 +26,7 @@ import { ContractModule } from './contract/contract.module';
 		ClientModule,
 		StoreClientModule,
 		ContractModule,
+		StorePaymentModule,
 	],
 })
 export class AppModule implements NestModule {

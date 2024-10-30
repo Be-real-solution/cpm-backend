@@ -1,15 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from "@nestjs/common";
-import { ContractService } from "./contract.service";
-import { CreateContractDto } from "./dto/create-contract.dto";
-import { UpdateContractDto } from "./dto/update-contract.dto";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { AdminEntity, ContractEntity, StoreEntity } from "src/core/entity";
-import { JwtAuthGuard } from "../auth/user/AuthGuard";
-import { RolesGuard } from "../auth/roles/RoleGuard";
-import { RolesDecorator } from "../auth/roles/RolesDecorator";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Roles } from "src/common/database/Enums";
 import { CurrentLanguage } from "src/common/decorator/current-language";
 import { CurrentUser } from "src/common/decorator/current-user";
+import { AdminEntity, ContractEntity, StoreEntity } from "src/core/entity";
+import { RolesGuard } from "../auth/roles/RoleGuard";
+import { RolesDecorator } from "../auth/roles/RolesDecorator";
+import { JwtAuthGuard } from "../auth/user/AuthGuard";
+import { ContractService } from "./contract.service";
+import { CreateContractDto } from "./dto/create-contract.dto";
 
 @ApiTags("Contracts")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -42,7 +41,7 @@ export class ContractController {
 		return this.contractService.calculateContractPayment(dto, lang);
 	}
 
-	@ApiOperation({ summary: "finda all contract api for stores" })
+	@ApiOperation({ summary: "finda all contract api for stores and admins" })
 	@ApiResponse({ status: 200, type: [ContractEntity], description: "return found data" })
 	@ApiBearerAuth()
 	@RolesDecorator(Roles.STORE_ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN)
@@ -51,7 +50,7 @@ export class ContractController {
 		@CurrentLanguage() lang: string,
 		@CurrentUser() user: StoreEntity | AdminEntity,
 	) {
-		return this.contractService.findAll(lang);
+		return this.contractService.findAllContract(lang, user);
 	}
 
 	@ApiOperation({ summary: "find one contract api for stores and admins" })
@@ -66,14 +65,4 @@ export class ContractController {
 	) {
 		return this.contractService.findOneContract(id, lang, user);
 	}
-
-	// @Patch(":id")
-	// public update(@Param("id") id: string, @Body() updateContractDto: UpdateContractDto, @CurrentUser:) {
-	// 	return this.contractService.update(id, updateContractDto);
-	// }
-
-	// @Delete(":id")
-	// public remove(@Param("id") id: string) {
-	// 	return this.contractService.remove(+id);
-	// }
 }

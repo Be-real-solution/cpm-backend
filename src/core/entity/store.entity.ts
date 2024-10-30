@@ -6,6 +6,7 @@ import { ClientEntity } from "./client.entity";
 import { StoreClientEntity } from "./store-client.entity";
 import { ContractEntity } from "./contract.entity";
 import { Roles } from "src/common/database/Enums";
+import { StorePaymentEntity } from "./store-payment.entity";
 
 @Entity("stores")
 export class StoreEntity extends BaseEntity {
@@ -121,4 +122,7 @@ export class StoreEntity extends BaseEntity {
 
 	@OneToMany(() => ContractEntity, (contract) => contract.client)
 	public contracts!: ContractEntity[];
+
+	@OneToMany(() => StorePaymentEntity, (store_payment) => store_payment.store)
+	public payments!: StorePaymentEntity[]
 }

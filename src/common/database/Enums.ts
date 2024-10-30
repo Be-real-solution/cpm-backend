@@ -1,8 +1,3 @@
-enum CategorySize {
-	BIG = "big",
-	SMALL = "small",
-}
-
 export enum Roles {
 	SUPER_ADMIN = "super_admin",
 	ADMIN = "admin",
@@ -24,12 +19,12 @@ export enum PaymentType {
 
 export enum ContractStatus {
 	PAID = "paid",
-	UNPAID = "unpaid"
+	UNPAID = "unpaid",
 }
 
 export enum ContractPaymentStatus {
 	PAID = "paid",
-	UNPAID = "unpaid"
+	UNPAID = "unpaid",
 }
 
 export enum ContractInitialPaymentType {
@@ -45,7 +40,10 @@ export enum ContractPaymentMethod {
 	CASH = "cash",
 	CARD = "card",
 	BANK = "bank",
-	NOT_SELECTED = "not_selected"
+	NOT_SELECTED = "not_selected",
 }
 
-export { CategorySize };
+export enum StorePaymentStatus {
+	PAID = "paid",
+	UNPAID = "unpaid",
+}
