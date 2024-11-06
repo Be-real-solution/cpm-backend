@@ -2636,7 +2636,7 @@ export const ERROR_PROMPT_MAP = {
 			labels: ["User not found!", "Пользователь не найден!", "Foydalanuvchi topilmadi!"],
 		},
 		store_already_exists: {
-			id: 10009,
+			id: 10010,
 			status: "BADREQUEST",
 			code: "STORE",
 			labels: [
@@ -2646,13 +2646,33 @@ export const ERROR_PROMPT_MAP = {
 			],
 		},
 		sent_incorrect_amount: {
-			id: 10017,
+			id: 10011,
 			status: "BADREQUEST",
 			code: "ADMIN",
 			labels: [
 				"Incorrect amount has been sent!",
 				"Отправлена неправильная сумма!",
 				"Noto'g'ri Summa yuborilgan!",
+			],
+		},
+		sent_incorrect_payment_id: {
+			id: 10012,
+			status: "BADREQUEST",
+			code: "STORE",
+			labels: [
+				"Incorrect payment ID sent!",
+				"Отправлен неправильный идентификатор платежа!",
+				"Noto'g'ri payment id yuborildi!",
+			],
+		},
+		payment_already_paid: {
+			id: 10013,
+			status: "BADREQUEST",
+			code: "STORE",
+			labels: [
+				"Payment already paid!",
+				"Оплата уже произведена!",
+				"To'lov allaqachon to'langan!",
 			],
 		},
 	},

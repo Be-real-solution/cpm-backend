@@ -55,6 +55,7 @@ export class ContractService extends BaseService<
 					unpaid_month: dto.unpaid_month,
 					duty_amount: dto.total_amount,
 					total_amount: dto.total_amount,
+					payment_list: payment_list,
 					client: client,
 					store: store,
 				}),
@@ -76,15 +77,15 @@ export class ContractService extends BaseService<
 
 			/** contract payment table yaratish */
 			// payment_list.payment_data.forEach(async (item) => {
-				await transaction.manager.save(
-					"contract_payment_tables",
-					transaction.manager.create("contract_payment_tables", {
-						// date: item.date,
-						// amount: item.price,
-						payment_list: payment_list,
-						contract: contract,
-					}),
-				);
+				// await transaction.manager.save(
+				// 	"contract_payment_tables",
+				// 	transaction.manager.create("contract_payment_tables", {
+				// 		// date: item.date,
+				// 		// amount: item.price,
+				// 		payment_list: payment_list,
+				// 		contract: contract,
+				// 	}),
+				// );
 			// });
 
 			await transaction.commitTransaction();
@@ -186,7 +187,7 @@ export class ContractService extends BaseService<
 
 		const { data: contract } = await this.findOneById(id, lang, {
 			where,
-			relations: { client: true, contract_products: true, contract_payment_tables: true },
+			relations: { client: true, contract_products: true },
 		});
 
 		return { status_code: 200, data: contract, message: responseByLang("get_one", lang) };

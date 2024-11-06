@@ -1,12 +1,25 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { BaseEntity } from "src/common/database/BaseEntity";
-import { ContractInitialPaymentType, ContractStatus } from "src/common/database/Enums";
+import { ContractInitialPaymentType, ContractPaymentMethod, ContractPaymentStatus, ContractStatus } from "src/common/database/Enums";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { ClientEntity } from "./client.entity";
 import { StoreEntity } from "./store.entity";
 import { ContractProductEntity } from "./contract-product.entity";
-import { ContractPaymentTableEntity } from "./contract-payment-table.entity";
 import { Transform } from "class-transformer";
+import { ContractPaymentEntity } from "./contract-payment.entity";
+
+export type JsonData = {
+	payment_data: {
+		id: number;
+		date: number;
+		price: number;
+		method: ContractPaymentMethod;
+		status: ContractPaymentStatus;
+	}[];
+	first_name: string;
+	last_name: string;
+	total: number;
+};
 
 @Entity("contracts")
 export class ContractEntity extends BaseEntity {
@@ -91,6 +104,14 @@ export class ContractEntity extends BaseEntity {
 	@Column({ type: "decimal", scale: 2 })
 	public total_amount!: number;
 
+	@ApiProperty({
+		name: "payment_list",
+		example: "object",
+		description: "payment list of contract payment table",
+	})
+	@Column({ type: "jsonb", default: {} })
+	public payment_list!: JsonData;
+
 	@ManyToOne(() => ClientEntity, (client) => client.contracts)
 	@JoinColumn({ name: "client_id" })
 	public client!: ClientEntity;
@@ -102,9 +123,6 @@ export class ContractEntity extends BaseEntity {
 	@OneToMany(() => ContractProductEntity, (contract_product) => contract_product.contract)
 	public contract_products!: ContractProductEntity[];
 
-	@OneToMany(
-		() => ContractPaymentTableEntity,
-		(contract_payemnt_table) => contract_payemnt_table.contract,
-	)
-	public contract_payment_tables!: ContractPaymentTableEntity[];
+	@OneToMany(() => ContractPaymentEntity, (contract_payment) => contract_payment.contract)
+	public contract_payments!: ContractPaymentEntity[];
 }

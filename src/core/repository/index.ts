@@ -5,3 +5,4 @@ export { StoreClientRepository } from "./store-client.repository";
 export { ContractRepository } from "./contract.repository";
 export { ContractProductRepository } from "./contract-product.repository";
 export { StorePaymentRepository } from "./store-payment.repository";
+export { ContractPaymentRepository } from "./contract-payment.repository";
