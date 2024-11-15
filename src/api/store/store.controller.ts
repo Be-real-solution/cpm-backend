@@ -19,6 +19,8 @@ import { RolesDecorator } from "../auth/roles/RolesDecorator";
 import { JwtAuthGuard } from "../auth/user/AuthGuard";
 import { BlockingOrUnblockingDto, CreateStoreDto, UpdateStoreDto } from "./dto";
 import { StoreService } from "./store.service";
+import { FilterDto } from "src/common/dto/filter.dto";
+import { FindOptionsWhereProperty, ILike } from "typeorm";
 
 @ApiTags("Store")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -41,13 +43,20 @@ export class StoreController {
 
 	@ApiOperation({ summary: "find all stores api for admins" })
 	@ApiResponse({ status: 200, type: [StoreEntity], description: "return found data" })
+	// @ApiQuery({name: "search", type: String, required: false, description: "for search by store name"})
 	@ApiBearerAuth()
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Get()
-	public findAll(@CurrentLanguage() lang: string) {
-		return this.storeService.findAll(lang, {
-			where: { is_deleted: false },
+	public findAll(@CurrentLanguage() lang: string, @Query() query: FilterDto) {
+		let where_condition: FindOptionsWhereProperty<StoreEntity> = { is_deleted: false };
+		if (query.search) {
+			where_condition = { name: ILike(`%${query.search}%`), is_deleted: false };
+		}
+		return this.storeService.findAllWithPagination(lang, {
+			where: where_condition,
 			order: { order: "DESC" },
+			take: query.page_size,
+			skip: query.page,
 		});
 	}
 
