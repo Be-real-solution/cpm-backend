@@ -22,7 +22,7 @@ export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, St
 	): Promise<IResponse<StoreEntity>> {
 		const check_store: StoreEntity | null = await this.storeRepo.findOne({where: {username: dto.username}})
 
-		if (!check_store) {
+		if (check_store) {
 			throw new StoreAlreadyExists()
 		}
 		
