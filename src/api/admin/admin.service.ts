@@ -13,6 +13,7 @@ import { LoginDto } from "./dto/login.dto";
 import { UsernameOrPasswordIncorrect } from "./exception/username-or-password-incorrect";
 import { JwtToken } from "src/infrastructure/lib/jwt-token";
 import { Roles } from "src/common/database/Enums";
+import { Not } from "typeorm";
 
 @Injectable()
 export class AdminService extends BaseService<CreateAdminDto, UpdateAdminDto, AdminEntity> {
@@ -23,7 +24,10 @@ export class AdminService extends BaseService<CreateAdminDto, UpdateAdminDto, Ad
 		super(adminRepo, "Admin");
 	}
 
-	public async createSuperAdmin(dto: CreateAdminDto, lang: string): Promise<IResponse<AdminEntity>> {
+	public async createSuperAdmin(
+		dto: CreateAdminDto,
+		lang: string,
+	): Promise<IResponse<AdminEntity>> {
 		const admin = await this.adminRepo.findOne({
 			where: { username: dto.username, is_deleted: false },
 		});
@@ -65,7 +69,9 @@ export class AdminService extends BaseService<CreateAdminDto, UpdateAdminDto, Ad
 	/** update admin */
 	public async updateAdmin(id: string, dto: UpdateAdminDto, lang: string, admin: AdminEntity) {
 		if (dto.username) {
-			const admin = await this.adminRepo.findOne({ where: { username: dto.username } });
+			const admin = await this.adminRepo.findOne({
+				where: { username: dto.username, id: Not(id) },
+			});
 			if (admin) {
 				throw new AdminAlreadyExists();
 			}
