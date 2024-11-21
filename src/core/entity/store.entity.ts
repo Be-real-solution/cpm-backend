@@ -8,6 +8,8 @@ import { ContractEntity } from "./contract.entity";
 import { Roles } from "src/common/database/Enums";
 import { StorePaymentEntity } from "./store-payment.entity";
 import { ContractPaymentEntity } from "./contract-payment.entity";
+import { NotificationEntity } from "./notification.entity";
+import { StoreNotificationEntity } from "./store-notification.entity";
 
 @Entity("stores")
 export class StoreEntity extends BaseEntity {
@@ -125,8 +127,11 @@ export class StoreEntity extends BaseEntity {
 	public contracts!: ContractEntity[];
 
 	@OneToMany(() => StorePaymentEntity, (store_payment) => store_payment.store)
-	public payments!: StorePaymentEntity[]
+	public payments!: StorePaymentEntity[];
 
 	@OneToMany(() => ContractPaymentEntity, (contract_payment) => contract_payment.store)
-	public contract_payments!: ContractPaymentEntity[]
+	public contract_payments!: ContractPaymentEntity[];
+
+	@OneToMany(() => StoreNotificationEntity, (store_notification) => store_notification.store)
+	public store_notifications!: StoreNotificationEntity[];
 }

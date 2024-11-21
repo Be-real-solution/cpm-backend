@@ -11,6 +11,7 @@ import { StoreClientModule } from './store-client/store-client.module';
 import { ContractModule } from './contract/contract.module';
 import { StorePaymentModule } from './store-payment/store-payment.module';
 import { ContractPaymentModule } from './contract-payment/contract-payment.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
 	imports: [
@@ -29,6 +30,7 @@ import { ContractPaymentModule } from './contract-payment/contract-payment.modul
 		ContractModule,
 		StorePaymentModule,
 		ContractPaymentModule,
+		NotificationModule,
 	],
 })
 export class AppModule implements NestModule {
