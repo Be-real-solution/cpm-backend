@@ -124,7 +124,10 @@ export class NotificationService extends BaseService<
 		let notification: NotificationEntity;
 		if (user.role == Roles.STORE_ADMIN) {
 			notification = await this.findOneById(id, lang, {
-				where: { store_notifications: { store: user, is_deleted: false } },
+				where: {
+					is_deleted: false,
+					store_notifications: { store: user, is_deleted: false },
+				},
 				relations: { store_notifications: true },
 			}).then((res) => res.data);
 
@@ -140,7 +143,47 @@ export class NotificationService extends BaseService<
 		return { status_code: 200, data: notification, message: responseByLang("get_one", lang) };
 	}
 
-	remove(id: number) {
-		return `This action removes a #${id} notification`;
+	/** update notification api for admins */
+	public async update(
+		id: string,
+		dto: UpdateNotificationDto,
+		lang: string,
+	): Promise<IResponse<{}>> {
+		const { data: notification } = await this.findOneById(id, lang, {
+			relations: { store_notifications: { store: true } },
+		});
+
+		if (dto.stores) {
+			const new_stores = dto.stores.filter(
+				(item) =>
+					!notification.store_notifications.some((value) => value.store.id == item.id),
+			);
+
+			const remove_stores = notification.store_notifications.filter(
+				(item) => !dto.stores?.some((value) => value.id == item.store.id),
+			);
+
+			if (new_stores.length) {
+				new_stores.forEach(async (item) => {
+					await this.storeNotificationRepo.save(
+						this.storeNotificationRepo.create({
+							store: {
+								id: item.id,
+							},
+							notification,
+						}),
+					);
+				});
+			}
+
+			if (remove_stores.length) {
+				remove_stores.forEach(async (item) => {
+					await this.storeNotificationRepo.delete(item.id);
+				});
+			}
+		}
+
+		return super.update(id, { title: dto.title, description: dto.description }, lang);
 	}
+
 }

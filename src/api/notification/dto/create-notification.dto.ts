@@ -30,7 +30,7 @@ export class CreateNotificationDto {
 
 	@ApiPropertyOptional({
 		name: "stores",
-    example: "UUID",
+    example: ObjDto,
     examples: [ObjDto],
 		description: "stores of notification",
 	})

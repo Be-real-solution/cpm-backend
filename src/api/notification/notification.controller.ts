@@ -37,7 +37,7 @@ export class NotificationController {
 		return this.notificationService.create(dto, lang);
 	}
 
-	@ApiOperation({ summary: "find all notification api for admins" })
+	@ApiOperation({ summary: "find all notification api for admins and stores" })
 	@ApiResponse({ status: 200, type: [NotificationEntity], description: "return found data" })
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN, Roles.STORE_ADMIN)
 	@Get()
@@ -70,11 +70,14 @@ export class NotificationController {
 		@Body() dto: UpdateNotificationDto,
 		@CurrentLanguage() lang: string,
 	) {
-		// return this.notificationService.update(id, dto);
+		return this.notificationService.update(id, dto, lang);
 	}
 
+	@ApiOperation({ summary: "remove notification api for admins" })
+	@ApiResponse({ status: 200, description: "return empty data" })
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Delete(":id")
-	remove(@Param("id") id: string) {
-		return this.notificationService.remove(+id);
+	public remove(@Param("id") id: string, @CurrentLanguage() lang: string) {
+		return this.notificationService.delete(id, lang);
 	}
 }
