@@ -1,11 +1,13 @@
 import {
 	Body,
 	Controller,
-	Post
+	Post,
+	Req
 } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
 import { LoginDto } from "./dto/login.dto";
+import { Request } from "express";
 
 @ApiTags("Auth")
 @Controller("auth")
@@ -13,7 +15,9 @@ export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
 	@Post("refresh-token")
-	public refreshToken(@Body("token") token: string) {
+	public refreshToken(@Body("token") token: string, @Req() request: Request) {
+		console.log(request.headers);
+		
 		return this.authService.refreshToken(token);
 	}
 
