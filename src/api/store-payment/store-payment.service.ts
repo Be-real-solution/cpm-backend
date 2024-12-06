@@ -2,13 +2,14 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { StorePaymentStatus } from "src/common/database/Enums";
 import { IResponse } from "src/common/type";
-import { AdminEntity, StorePaymentEntity } from "src/core/entity";
+import { AdminEntity, StoreEntity, StorePaymentEntity } from "src/core/entity";
 import { StorePaymentRepository } from "src/core/repository";
 import { BaseService } from "src/infrastructure/lib/baseService";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
 import { StoreService } from "../store/store.service";
 import { CreateStorePaymentDto } from "./dto/create-store-payment.dto";
 import { UpdateStorePaymentDto } from "./dto/update-store-payment.dto";
+import { Cron } from "@nestjs/schedule";
 
 @Injectable()
 export class StorePaymentService extends BaseService<
@@ -50,5 +51,37 @@ export class StorePaymentService extends BaseService<
 		);
 
 		return { status_code: 201, data: store_payment, message: responseByLang("create", lang) };
+	}
+
+	// @Cron("* * * * * *")
+	private async autoPaymentScheduler() {
+		let today = new Date().getDate();
+
+		const store: StoreEntity[] = await this.storeService.getRepository.find({
+			where: { payment_day: today },
+		});
+
+		let month = new Date("2024-06-12").getUTCMonth();
+		let year = new Date().getUTCFullYear();
+
+		store.forEach(async (item) => {
+			const store_payment: StorePaymentEntity | null = await this.storePaymentRepo.findOne({
+				where: {
+					for_month: new Date(`${year}-${month + 1}-${item.payment_day}`).getTime(),
+				},
+			});
+
+			if (!store_payment) {
+				await this.storePaymentRepo.save(
+					this.storePaymentRepo.create({
+						amount: 0,
+						monthly_payment: item.monthly_payment,
+						for_month: new Date().getTime(),
+						status: StorePaymentStatus.UNPAID,
+						store: item,
+					}),
+				);
+			}
+		});
 	}
 }
