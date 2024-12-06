@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude } from "class-transformer";
 import { IsNotEmpty, IsNumber, IsUUID, Min } from "class-validator";
+import { StorePaymentStatus } from "src/common/database/Enums";
 
 export class CreateStorePaymentDto {
 	@ApiProperty({
@@ -12,6 +13,13 @@ export class CreateStorePaymentDto {
 	@IsNumber()
 	@Min(1)
 	public amount!: number;
+
+	@ApiProperty({
+		name: "status",
+		example: StorePaymentStatus.UNPAID,
+		description: "status of store payment",
+	})
+public status!: StorePaymentStatus;
 
 	@ApiProperty({
 		name: "monthly_payment",

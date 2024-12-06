@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Roles } from "src/common/database/Enums";
 import { CurrentLanguage } from "src/common/decorator/current-language";
@@ -9,6 +9,7 @@ import { RolesDecorator } from "../auth/roles/RolesDecorator";
 import { JwtAuthGuard } from "../auth/user/AuthGuard";
 import { CreateStorePaymentDto } from "./dto/create-store-payment.dto";
 import { StorePaymentService } from "./store-payment.service";
+import { UpdateStorePaymentDto } from "./dto/update-store-payment.dto";
 
 @ApiTags("Store Payments")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -50,10 +51,18 @@ export class StorePaymentController {
 		});
 	}
 
-	// @Patch(":id")
-	// update(@Param("id") id: string, @Body() updateStorePaymentDto: UpdateStorePaymentDto) {
-	// 	return this.storePaymentService.update(+id, updateStorePaymentDto);
-	// }
+	@ApiOperation({ summary: "update store payment api for admins" })
+	@ApiResponse({ status: 200, type: [StorePaymentEntity], description: "return fouund data" })
+	@ApiBearerAuth()
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
+	@Patch(":id")
+	public update(
+		@Param("id") id: string,
+		@Body() dto: UpdateStorePaymentDto,
+		@CurrentLanguage() lang: string,
+	) {
+		return this.storePaymentService.update(id, dto, lang);
+	}
 
 	// @Delete(":id")
 	// remove(@Param("id") id: string) {

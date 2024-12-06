@@ -46,4 +46,5 @@ export enum ContractPaymentMethod {
 export enum StorePaymentStatus {
 	PAID = "paid",
 	UNPAID = "unpaid",
+	PARTLYPAID = "partlypaid"
 }

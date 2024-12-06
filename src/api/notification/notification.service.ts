@@ -185,5 +185,4 @@ export class NotificationService extends BaseService<
 
 		return super.update(id, { title: dto.title, description: dto.description }, lang);
 	}
-
 }

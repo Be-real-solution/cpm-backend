@@ -1,15 +1,16 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/common/database/Enums';
-import { CurrentLanguage } from 'src/common/decorator/current-language';
-import { CurrentUser } from 'src/common/decorator/current-user';
-import { ClientEntity, StoreEntity } from 'src/core/entity';
-import { RolesGuard } from '../auth/roles/RoleGuard';
-import { RolesDecorator } from '../auth/roles/RolesDecorator';
-import { JwtAuthGuard } from '../auth/user/AuthGuard';
-import { ClientService } from './client.service';
-import { CreateClientDto } from './dto/create-client.dto';
-import { UpdateClientDto } from './dto/update-client.dto';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { Roles } from "src/common/database/Enums";
+import { CurrentLanguage } from "src/common/decorator/current-language";
+import { CurrentUser } from "src/common/decorator/current-user";
+import { AdminEntity, ClientEntity, StoreEntity } from "src/core/entity";
+import { RolesGuard } from "../auth/roles/RoleGuard";
+import { RolesDecorator } from "../auth/roles/RolesDecorator";
+import { JwtAuthGuard } from "../auth/user/AuthGuard";
+import { ClientService } from "./client.service";
+import { CreateClientDto } from "./dto/create-client.dto";
+import { UpdateClientDto } from "./dto/update-client.dto";
+import { FilterDto } from "src/common/dto/filter.dto";
 
 @ApiTags("Clients")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -35,8 +36,12 @@ export class ClientController {
 	@ApiBearerAuth()
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN, Roles.STORE_ADMIN)
 	@Get()
-	public findAll(@CurrentLanguage() lang: string) {
-		return this.clientService.findAll(lang, {order: {created_at: "DESC"}});
+	public findAll(
+		@Query() query: FilterDto,
+		@CurrentLanguage() lang: string,
+		@CurrentUser() user: StoreEntity | AdminEntity,
+	) {
+		return this.clientService.findAllClient(query, lang, user);
 	}
 
 	@ApiOperation({ summary: "find one client api for store and admin" })

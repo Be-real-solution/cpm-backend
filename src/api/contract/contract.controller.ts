@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Roles } from "src/common/database/Enums";
 import { CurrentLanguage } from "src/common/decorator/current-language";
@@ -9,6 +9,7 @@ import { RolesDecorator } from "../auth/roles/RolesDecorator";
 import { JwtAuthGuard } from "../auth/user/AuthGuard";
 import { ContractService } from "./contract.service";
 import { CreateContractDto } from "./dto/create-contract.dto";
+import { FilterDto } from "src/common/dto/filter.dto";
 
 @ApiTags("Contracts")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -47,10 +48,11 @@ export class ContractController {
 	@RolesDecorator(Roles.STORE_ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Get()
 	public findAll(
+		@Query() query: FilterDto,
 		@CurrentLanguage() lang: string,
 		@CurrentUser() user: StoreEntity | AdminEntity,
 	) {
-		return this.contractService.findAllContract(lang, user);
+		return this.contractService.findAllContract(query, lang, user);
 	}
 
 	@ApiOperation({ summary: "find one contract api for stores and admins" })

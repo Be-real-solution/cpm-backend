@@ -37,7 +37,7 @@ export class StorePaymentEntity extends BaseEntity {
 
 	@ApiProperty({
 		name: "status",
-		example: 124232,
+		example: StorePaymentStatus.UNPAID,
 		description: "status of store payment",
 	})
 	@Transform(({ value }) => parseFloat(value))

@@ -44,9 +44,11 @@ export class StorePaymentService extends BaseService<
 				created_by: admin,
 				store: store,
 				status:
-					dto.amount >= store.monthly_payment
+					dto.amount == store.monthly_payment
 						? StorePaymentStatus.PAID
-						: StorePaymentStatus.UNPAID,
+						: dto.amount > 0 && dto.amount < store.monthly_payment
+							? StorePaymentStatus.PARTLYPAID
+							: StorePaymentStatus.UNPAID,
 			}),
 		);
 
@@ -61,7 +63,7 @@ export class StorePaymentService extends BaseService<
 			where: { payment_day: today },
 		});
 
-		let month = new Date("2024-06-12").getUTCMonth();
+		let month = new Date().getUTCMonth();
 		let year = new Date().getUTCFullYear();
 
 		store.forEach(async (item) => {

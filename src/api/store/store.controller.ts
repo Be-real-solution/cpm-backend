@@ -18,19 +18,18 @@ import { RolesGuard } from "../auth/roles/RoleGuard";
 import { RolesDecorator } from "../auth/roles/RolesDecorator";
 import { JwtAuthGuard } from "../auth/user/AuthGuard";
 import { BlockingOrUnblockingDto, CreateStoreDto, UpdateStoreDto } from "./dto";
+import { StoreFilterDto } from "./dto/store-filter.dto";
 import { StoreService } from "./store.service";
-import { FilterDto } from "src/common/dto/filter.dto";
-import { FindOptionsWhereProperty, ILike } from "typeorm";
 
 @ApiTags("Store")
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth()
 @Controller("store")
 export class StoreController {
 	constructor(private readonly storeService: StoreService) {}
 
 	@ApiOperation({ summary: "create store api for admins" })
 	@ApiResponse({ status: 201, type: StoreEntity, description: "return created data" })
-	@ApiBearerAuth()
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Post()
 	public create(
@@ -43,26 +42,14 @@ export class StoreController {
 
 	@ApiOperation({ summary: "find all stores api for admins" })
 	@ApiResponse({ status: 200, type: [StoreEntity], description: "return found data" })
-	// @ApiQuery({name: "search", type: String, required: false, description: "for search by store name"})
-	@ApiBearerAuth()
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Get()
-	public findAll(@CurrentLanguage() lang: string, @Query() query: FilterDto) {
-		let where_condition: FindOptionsWhereProperty<StoreEntity> = { is_deleted: false };
-		if (query.search) {
-			where_condition = { name: ILike(`%${query.search}%`), is_deleted: false };
-		}
-		return this.storeService.findAllWithPagination(lang, {
-			where: where_condition,
-			order: { order: "DESC" },
-			take: query.page_size,
-			skip: query.page,
-		});
+	public findAll(@CurrentLanguage() lang: string, @Query() query: StoreFilterDto) {
+		return this.storeService.findAllStore(query, lang);
 	}
 
 	@ApiOperation({ summary: "find self info api for stores" })
 	@ApiResponse({ status: 200, type: StoreEntity, description: "return found data" })
-	@ApiBearerAuth()
 	@RolesDecorator(Roles.STORE_ADMIN)
 	@Get("find-self-info")
 	public findSelfInfo(@CurrentLanguage() lang: string, @CurrentUser() store: StoreEntity) {
@@ -71,7 +58,6 @@ export class StoreController {
 
 	@ApiOperation({ summary: "find one stores api for admins" })
 	@ApiResponse({ status: 200, type: StoreEntity, description: "return found data" })
-	@ApiBearerAuth()
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Get(":id")
 	public findOne(@Param("id") id: string, @CurrentLanguage() lang: string) {
@@ -86,7 +72,6 @@ export class StoreController {
 		example: true,
 		description: "true or false value required",
 	})
-	@ApiBearerAuth()
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Patch("blocking-or-unblocking/:id")
 	public blockingOrUnblocking(
@@ -97,17 +82,17 @@ export class StoreController {
 		return this.storeService.blockingOrUnblocking(id, dto.is_active, lang);
 	}
 
-	@ApiOperation({ summary: "update store api for admins" })
+	@ApiOperation({ summary: "update store api for store and admins" })
 	@ApiResponse({ status: 200, type: StoreEntity, description: "return updated data" })
-	@ApiBearerAuth()
-	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN, Roles.STORE_ADMIN)
 	@Patch(":id")
 	public update(
 		@Param("id") id: string,
 		@Body() dto: UpdateStoreDto,
 		@CurrentLanguage() lang: string,
+		@CurrentUser() user: StoreEntity | AdminEntity,
 	) {
-		return this.storeService.update(id, dto, lang);
+		return this.storeService.updateStore(id, dto, lang, user);
 	}
 
 	@ApiOperation({ summary: "delete store api for admins" })
@@ -115,7 +100,6 @@ export class StoreController {
 		status: 200,
 		description: "return success message and empty data",
 	})
-	@ApiBearerAuth()
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Delete(":id")
 	public remove(@Param("id") id: string, @CurrentLanguage() lang: string) {

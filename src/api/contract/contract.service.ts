@@ -9,7 +9,7 @@ import { SentIncorrectAmount } from "./exception/incorrect-amount";
 import { ClientService } from "../client/client.service";
 import { IResponse } from "src/common/type";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
-import { DataSource } from "typeorm";
+import { DataSource, FindOptionsWhereProperty } from "typeorm";
 import { PaymentDataType } from "./types";
 import {
 	ContractPaymentMethod,
@@ -17,6 +17,7 @@ import {
 	ContractProductUnit,
 	Roles,
 } from "src/common/database/Enums";
+import { FilterDto } from "src/common/dto/filter.dto";
 
 @Injectable()
 export class ContractService extends BaseService<
@@ -153,23 +154,27 @@ export class ContractService extends BaseService<
 
 	/** find all api for store and admin */
 	public async findAllContract(
+		query: FilterDto,
 		lang: string,
 		user: StoreEntity | AdminEntity,
 	): Promise<IResponse<ContractEntity[]>> {
-		let contract: ContractEntity[];
+		let where_condition: FindOptionsWhereProperty<ContractEntity>;
+
 		if (user.role == Roles.STORE_ADMIN) {
-			contract = await this.contractRepo.find({
+			return this.findAllWithPagination(lang, {
 				where: { store: user, is_deleted: false },
 				order: { created_at: "DESC" },
+				take: query.page_size,
+				skip: query.page,
 			});
 		} else {
-			contract = await this.contractRepo.find({
+			return this.findAllWithPagination(lang, {
 				where: { is_deleted: false },
 				order: { created_at: "DESC" },
+				take: query.page_size,
+				skip: query.page,
 			});
 		}
-
-		return { status_code: 200, data: contract, message: responseByLang("get_all", lang) };
 	}
 
 	/** find one contract */
