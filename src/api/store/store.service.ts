@@ -10,7 +10,7 @@ import { StoreAlreadyExists } from "./exception/store-already-exists";
 import { BcryptEncryption } from "src/infrastructure/lib/bcrypt";
 import { Roles, StorePaymentStatus } from "src/common/database/Enums";
 import { StoreFilterDto } from "./dto/store-filter.dto";
-import { FindOptionsWhereProperty, ILike } from "typeorm";
+import { FindOptionsWhereProperty, ILike, Not } from "typeorm";
 
 @Injectable()
 export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, StoreEntity> {
@@ -39,6 +39,8 @@ export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, St
 		} else {
 			store_order = 1;
 		}
+
+		dto.password = await BcryptEncryption.encrypt(dto.password);
 
 		const store: StoreEntity = await this.storeRepo.save(
 			this.storeRepo.create({
@@ -74,6 +76,16 @@ export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, St
 		user: StoreEntity | AdminEntity,
 	): Promise<IResponse<{}>> {
 		const { data: store } = await this.findOneById(id, lang);
+
+		if (dto.username) {
+			const res = await this.storeRepo.findOne({
+				where: { username: dto.username, id: Not(id) },
+			});
+
+			if (res) {
+				throw new StoreAlreadyExists();
+			}
+		}
 
 		if (dto.password) {
 			dto.password = await BcryptEncryption.encrypt(dto.password);
