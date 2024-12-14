@@ -1,28 +1,43 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsNumberString, IsString, IsUUID, MaxLength, Min, ValidateNested } from "class-validator";
-import { ContractInitialPaymentType, ContractProductUnit, ContractStatus } from "src/common/database/Enums";
-
+import {
+	IsArray,
+	IsEnum,
+	IsNotEmpty,
+	IsNumber,
+	IsNumberString,
+	IsString,
+	IsUUID,
+	MaxLength,
+	Min,
+	ValidateNested,
+} from "class-validator";
+import {
+	ContractInitialPaymentType,
+	ContractProductUnit,
+	ContractStatus,
+} from "src/common/database/Enums";
 
 export class CreateContractProductDto {
+	public id!: string;
 
 	@ApiProperty({
 		name: "name",
 		example: "Xolodelnik",
 		description: "name of contract product",
 	})
-  @IsNotEmpty()
-  @IsString()
+	@IsNotEmpty()
+	@IsString()
 	public name!: string;
 
 	@ApiProperty({
 		name: "unit",
 		example: "pcs",
-    examples: ContractProductUnit,
+		examples: ContractProductUnit,
 		description: "unit of contract product",
 	})
-  @IsNotEmpty()
-  @IsEnum(ContractProductUnit)
+	@IsNotEmpty()
+	@IsEnum(ContractProductUnit)
 	public unit!: ContractProductUnit;
 
 	@ApiProperty({
@@ -30,9 +45,9 @@ export class CreateContractProductDto {
 		example: 6,
 		description: "quantity of contract product",
 	})
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(1)
+	@IsNotEmpty()
+	@IsNumber()
+	@Min(1)
 	public quantity!: number;
 
 	@ApiProperty({
@@ -40,16 +55,13 @@ export class CreateContractProductDto {
 		example: 60000,
 		description: "price of contract product",
 	})
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
+	@IsNotEmpty()
+	@IsNumber()
+	@Min(0)
 	public price!: number;
-
 }
 
-
 export class CreateContractDto {
-
 	@ApiProperty({
 		name: "inn",
 		example: "5468713",
@@ -116,14 +128,13 @@ export class CreateContractDto {
 
 	@ApiProperty({
 		name: "contract_product",
-    type: [CreateContractProductDto],
+		type: [CreateContractProductDto],
 		examples: CreateContractProductDto,
 		description: "contract product ",
 	})
 	@IsNotEmpty()
-  @IsArray()
+	@IsArray()
 	@ValidateNested({ each: true })
 	@Type(() => CreateContractProductDto)
 	public contract_product!: CreateContractProductDto[];
 }
-

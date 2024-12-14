@@ -43,7 +43,7 @@ export class CreateClientDto {
 	public passport!: string;
 
 	@ApiProperty({
-		name: "PINFL",
+		name: "pinfl",
 		example: "12547896345784",
 		description: "PINFL of client, max 32 lenth",
 	})
@@ -60,6 +60,15 @@ export class CreateClientDto {
 	@IsNotEmpty()
 	@IsNumber()
 	public birthday!: number;
+
+	@ApiProperty({
+		name: "phone",
+		example: "+998999002559",
+		description: "phone of client",
+	})
+	@IsNotEmpty()
+	@IsString()
+	public phone!: string;
 
 	@ApiProperty({
 		name: "passport_expire_date",

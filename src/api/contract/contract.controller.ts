@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Roles } from "src/common/database/Enums";
 import { CurrentLanguage } from "src/common/decorator/current-language";
@@ -10,6 +10,7 @@ import { JwtAuthGuard } from "../auth/user/AuthGuard";
 import { ContractService } from "./contract.service";
 import { CreateContractDto } from "./dto/create-contract.dto";
 import { FilterDto } from "src/common/dto/filter.dto";
+import { UpdateContractDto } from "./dto/update-contract.dto";
 
 @ApiTags("Contracts")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -67,4 +68,18 @@ export class ContractController {
 	) {
 		return this.contractService.findOneContract(id, lang, user);
 	}
+
+	// @ApiOperation({ summary: "update contract api for stores " })
+	// @ApiResponse({ status: 200, type: ContractEntity, description: "return empty data" })
+	// @ApiBearerAuth()
+	// @RolesDecorator(Roles.ADMIN)
+	// @Patch(":id")
+	// public update(
+	// 	@Param("id") id: string,
+	// 	@Body() dto: UpdateContractDto,
+	// 	@CurrentLanguage() lang: string,
+	// 	@CurrentUser() user: StoreEntity,
+	// ) {
+	// 	return this.contractService.updateContract(id, dto, lang, user);
+	// }
 }

@@ -37,7 +37,7 @@ export class ClientEntity extends BaseEntity {
 		example: "AB5896347",
 		description: "passport of client, max 16 lenth",
 	})
-	@Column({ type: "varchar", length: 16 })
+	@Column({ type: "varchar", length: 16, unique: true })
 	public passport!: string;
 
 	@ApiProperty({
@@ -49,11 +49,11 @@ export class ClientEntity extends BaseEntity {
 	public rating!: number;
 
 	@ApiProperty({
-		name: "PINFL",
+		name: "pinfl",
 		example: "12547896345784",
-		description: "PINFL of client, max 32 lenth",
+		description: "pinfl of client, max 32 lenth",
 	})
-	@Column({ type: "varchar", length: 32 })
+	@Column({ type: "varchar", length: 32, unique: true })
 	public pinfl!: string;
 
 	@ApiProperty({
@@ -63,6 +63,14 @@ export class ClientEntity extends BaseEntity {
 	})
 	@Column({ type: "bigint" })
 	public birthday!: number;
+
+	@ApiProperty({
+		name: "phone",
+		example: "+998999002559",
+		description: "phone of client",
+	})
+	@Column({ type: "bigint" })
+	public phone!: string;
 
 	@ApiProperty({
 		name: "passport_expire_date",

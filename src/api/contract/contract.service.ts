@@ -2,9 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { CreateContractDto } from "./dto/create-contract.dto";
 import { UpdateContractDto } from "./dto/update-contract.dto";
 import { BaseService } from "src/infrastructure/lib/baseService";
-import { AdminEntity, ContractEntity, StoreEntity } from "src/core/entity";
+import { AdminEntity, ContractEntity, ContractProductEntity, StoreEntity } from "src/core/entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ContractRepository } from "src/core/repository";
+import { ContractProductRepository, ContractRepository } from "src/core/repository";
 import { SentIncorrectAmount } from "./exception/incorrect-amount";
 import { ClientService } from "../client/client.service";
 import { IResponse } from "src/common/type";
@@ -27,6 +27,8 @@ export class ContractService extends BaseService<
 > {
 	constructor(
 		@InjectRepository(ContractEntity) private readonly contractRepo: ContractRepository,
+		@InjectRepository(ContractProductEntity)
+		private readonly contractProductRepo: ContractProductRepository,
 		private readonly clientService: ClientService,
 		private readonly datasource: DataSource,
 	) {
@@ -78,15 +80,15 @@ export class ContractService extends BaseService<
 
 			/** contract payment table yaratish */
 			// payment_list.payment_data.forEach(async (item) => {
-				// await transaction.manager.save(
-				// 	"contract_payment_tables",
-				// 	transaction.manager.create("contract_payment_tables", {
-				// 		// date: item.date,
-				// 		// amount: item.price,
-				// 		payment_list: payment_list,
-				// 		contract: contract,
-				// 	}),
-				// );
+			// await transaction.manager.save(
+			// 	"contract_payment_tables",
+			// 	transaction.manager.create("contract_payment_tables", {
+			// 		// date: item.date,
+			// 		// amount: item.price,
+			// 		payment_list: payment_list,
+			// 		contract: contract,
+			// 	}),
+			// );
 			// });
 
 			await transaction.commitTransaction();
@@ -197,6 +199,62 @@ export class ContractService extends BaseService<
 
 		return { status_code: 200, data: contract, message: responseByLang("get_one", lang) };
 	}
+
+	// public async updateContract(
+	// 	id: string,
+	// 	dto: UpdateContractDto,
+	// 	lang: string,
+	// 	store: StoreEntity,
+	// ) {
+	// 	const { data: contract } = await this.findOneById(id, lang, {
+	// 		relations: { contract_products: true },
+	// 	});
+
+	// 	if (dto.contract_product) {
+	// 		const new_products = dto.contract_product.filter(
+	// 			(item) => !contract.contract_products.some((value) => value.id == item.id),
+	// 		);
+
+	// 		const remove_products = contract.contract_products.filter(
+	// 			(item) => !dto.contract_product?.some((value) => value.id == item.id),
+	// 		);
+
+	// 		const updated_products = dto.contract_product.filter((item) =>
+	// 			contract.contract_products.some((value) => value.id == item.id),
+	// 		);
+
+	// 		/** add new contract products */
+	// 		if (new_products.length) {
+	// 			new_products.forEach(async (item) => {
+	// 				await this.contractProductRepo.save(
+	// 					this.contractProductRepo.create({
+	// 						name: item.name,
+	// 						unit: item.unit,
+	// 						price: item.price,
+	// 						quantity: item.quantity,
+	// 						contract: contract,
+	// 					}),
+	// 				);
+	// 			});
+	// 		}
+
+	// 		/** remove contract products */
+	// 		if (remove_products.length) {
+	// 			remove_products.forEach(async (item) => {
+	// 				await this.contractProductRepo.delete(item.id);
+	// 			});
+	// 		}
+
+	// 		if (updated_products.length) {
+	// 			updated_products.forEach(async (item) => {
+	// 				await this.contractProductRepo.update(item.id, item);
+	// 			});
+	// 		}
+
+
+	// 	}
+
+	// }
 
 	remove(id: number) {
 		return `This action removes a #${id} contract`;

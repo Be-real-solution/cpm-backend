@@ -20,6 +20,7 @@ export enum PaymentType {
 export enum ContractStatus {
 	PAID = "paid",
 	UNPAID = "unpaid",
+	ARCHIVED = "archived"
 }
 
 export enum ContractPaymentStatus {

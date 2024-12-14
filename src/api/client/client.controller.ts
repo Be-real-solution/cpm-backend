@@ -53,12 +53,12 @@ export class ClientController {
 		return this.clientService.findOneById(id, lang);
 	}
 
-	@ApiOperation({ summary: "update client api for store and admin. Not complated" })
-	@ApiResponse({ status: 200, type: ClientEntity, description: "return updated data" })
-	@ApiBearerAuth()
-	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN, Roles.STORE_ADMIN)
-	@Patch(":id")
-	public update(@Param("id") id: string, @Body() dto: UpdateClientDto) {
-		// return this.clientService.update(+id, updateClientDto);
-	}
+	// @ApiOperation({ summary: "update client api for store and admin. Not complated" })
+	// @ApiResponse({ status: 200, type: ClientEntity, description: "return updated data" })
+	// @ApiBearerAuth()
+	// @RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN, Roles.STORE_ADMIN)
+	// @Patch(":id")
+	// public update(@Param("id") id: string, @Body() dto: UpdateClientDto) {
+	// 	// return this.clientService.update(+id, updateClientDto);
+	// }
 }
