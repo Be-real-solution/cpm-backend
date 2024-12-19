@@ -40,10 +40,10 @@ export class AuthService {
 		return { status_code: 200, data: { ...admin, token }, message: "success" };
 	}
 
-		/** store login */
+	/** store login */
 	public async storeLogin(dto: LoginDto): Promise<IResponse<any>> {
 		const store: StoreEntity | null = await this.storeRepo.findOne({
-			where: { username: dto.username },
+			where: { username: dto.username, is_active: true, is_deleted: false },
 		});
 
 		if (!store) {

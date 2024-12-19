@@ -18,6 +18,7 @@ import {
 	Roles,
 } from "src/common/database/Enums";
 import { FilterDto } from "src/common/dto/filter.dto";
+import { ContractFilterDto } from "./dto/contract-filter.dto";
 
 @Injectable()
 export class ContractService extends BaseService<
@@ -156,22 +157,29 @@ export class ContractService extends BaseService<
 
 	/** find all api for store and admin */
 	public async findAllContract(
-		query: FilterDto,
+		query: ContractFilterDto,
 		lang: string,
 		user: StoreEntity | AdminEntity,
 	): Promise<IResponse<ContractEntity[]>> {
-		let where_condition: FindOptionsWhereProperty<ContractEntity>;
+		let where_condition: FindOptionsWhereProperty<ContractEntity> = {};
+		if (query.client_id) {
+			where_condition.client = { id: query.client_id };
+		}
 
 		if (user.role == Roles.STORE_ADMIN) {
+			where_condition.store = { id: user.id };
+			where_condition.is_deleted = false;
+
 			return this.findAllWithPagination(lang, {
-				where: { store: user, is_deleted: false },
+				where: where_condition,
 				order: { created_at: "DESC" },
 				take: query.page_size,
 				skip: query.page,
 			});
 		} else {
+			where_condition.is_deleted = false;
 			return this.findAllWithPagination(lang, {
-				where: { is_deleted: false },
+				where: where_condition,
 				order: { created_at: "DESC" },
 				take: query.page_size,
 				skip: query.page,
@@ -200,63 +208,5 @@ export class ContractService extends BaseService<
 		return { status_code: 200, data: contract, message: responseByLang("get_one", lang) };
 	}
 
-	// public async updateContract(
-	// 	id: string,
-	// 	dto: UpdateContractDto,
-	// 	lang: string,
-	// 	store: StoreEntity,
-	// ) {
-	// 	const { data: contract } = await this.findOneById(id, lang, {
-	// 		relations: { contract_products: true },
-	// 	});
 
-	// 	if (dto.contract_product) {
-	// 		const new_products = dto.contract_product.filter(
-	// 			(item) => !contract.contract_products.some((value) => value.id == item.id),
-	// 		);
-
-	// 		const remove_products = contract.contract_products.filter(
-	// 			(item) => !dto.contract_product?.some((value) => value.id == item.id),
-	// 		);
-
-	// 		const updated_products = dto.contract_product.filter((item) =>
-	// 			contract.contract_products.some((value) => value.id == item.id),
-	// 		);
-
-	// 		/** add new contract products */
-	// 		if (new_products.length) {
-	// 			new_products.forEach(async (item) => {
-	// 				await this.contractProductRepo.save(
-	// 					this.contractProductRepo.create({
-	// 						name: item.name,
-	// 						unit: item.unit,
-	// 						price: item.price,
-	// 						quantity: item.quantity,
-	// 						contract: contract,
-	// 					}),
-	// 				);
-	// 			});
-	// 		}
-
-	// 		/** remove contract products */
-	// 		if (remove_products.length) {
-	// 			remove_products.forEach(async (item) => {
-	// 				await this.contractProductRepo.delete(item.id);
-	// 			});
-	// 		}
-
-	// 		if (updated_products.length) {
-	// 			updated_products.forEach(async (item) => {
-	// 				await this.contractProductRepo.update(item.id, item);
-	// 			});
-	// 		}
-
-
-	// 	}
-
-	// }
-
-	remove(id: number) {
-		return `This action removes a #${id} contract`;
-	}
 }

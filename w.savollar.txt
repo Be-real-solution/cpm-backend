@@ -3,3 +3,4 @@
 3. client admin tomonidan polni bloklash mumkinmi.
 4. do'kon clientni qidirganda client qaysidir do'konlarda bloklangan bo'lsa ko'rsatish kerakmi.
 5. clientni qidiruvida do'konni o'zida bo'lgan clientlarni ko'rsatish kerakmi.
+6. client status da nimalar bo'lishi kerak.

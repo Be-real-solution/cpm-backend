@@ -11,6 +11,7 @@ import { ContractService } from "./contract.service";
 import { CreateContractDto } from "./dto/create-contract.dto";
 import { FilterDto } from "src/common/dto/filter.dto";
 import { UpdateContractDto } from "./dto/update-contract.dto";
+import { ContractFilterDto } from "./dto/contract-filter.dto";
 
 @ApiTags("Contracts")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -49,7 +50,7 @@ export class ContractController {
 	@RolesDecorator(Roles.STORE_ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN)
 	@Get()
 	public findAll(
-		@Query() query: FilterDto,
+		@Query() query: ContractFilterDto,
 		@CurrentLanguage() lang: string,
 		@CurrentUser() user: StoreEntity | AdminEntity,
 	) {
@@ -69,17 +70,4 @@ export class ContractController {
 		return this.contractService.findOneContract(id, lang, user);
 	}
 
-	// @ApiOperation({ summary: "update contract api for stores " })
-	// @ApiResponse({ status: 200, type: ContractEntity, description: "return empty data" })
-	// @ApiBearerAuth()
-	// @RolesDecorator(Roles.ADMIN)
-	// @Patch(":id")
-	// public update(
-	// 	@Param("id") id: string,
-	// 	@Body() dto: UpdateContractDto,
-	// 	@CurrentLanguage() lang: string,
-	// 	@CurrentUser() user: StoreEntity,
-	// ) {
-	// 	return this.contractService.updateContract(id, dto, lang, user);
-	// }
 }

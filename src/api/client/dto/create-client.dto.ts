@@ -71,6 +71,15 @@ export class CreateClientDto {
 	public phone!: string;
 
 	@ApiProperty({
+		name: "address",
+		example: "Toshkent Mirobod 75 uy",
+		description: "address of client",
+	})
+	@IsNotEmpty()
+	@IsString()
+	public address!: string;
+
+	@ApiProperty({
 		name: "passport_expire_date",
 		example: 1765894234,
 		description: "passport expire date of client",

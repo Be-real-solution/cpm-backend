@@ -45,7 +45,7 @@ export class ClientEntity extends BaseEntity {
 		example: 2,
 		description: "rating of client",
 	})
-	@Column({ type: "int", default: 0 })
+	@Column({ type: "int", default: null, nullable: true })
 	public rating!: number;
 
 	@ApiProperty({
@@ -69,7 +69,7 @@ export class ClientEntity extends BaseEntity {
 		example: "+998999002559",
 		description: "phone of client",
 	})
-	@Column({ type: "bigint" })
+	@Column({ type: "varchar", nullable: true })
 	public phone!: string;
 
 	@ApiProperty({
@@ -79,6 +79,14 @@ export class ClientEntity extends BaseEntity {
 	})
 	@Column({ type: "bigint" })
 	public passport_expire_date!: number;
+
+	@ApiProperty({
+		name: "address",
+		example: "Toshkent Mirobod 75 uy",
+		description: "address of client",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public address!: string;
 
 	@ManyToOne(() => StoreEntity, (store) => store.clients)
 	@JoinColumn({ name: "created_by" })

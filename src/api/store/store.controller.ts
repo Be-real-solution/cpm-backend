@@ -26,7 +26,7 @@ import { StoreService } from "./store.service";
 @ApiBearerAuth()
 @Controller("store")
 export class StoreController {
-	constructor(private readonly storeService: StoreService) {}
+	constructor(private readonly storeService: StoreService) { }
 
 	@ApiOperation({ summary: "create store api for admins" })
 	@ApiResponse({ status: 201, type: StoreEntity, description: "return created data" })
@@ -53,7 +53,7 @@ export class StoreController {
 	@RolesDecorator(Roles.STORE_ADMIN)
 	@Get("find-self-info")
 	public findSelfInfo(@CurrentLanguage() lang: string, @CurrentUser() store: StoreEntity) {
-		return this.storeService.findOneById(store.id, lang, { where: { is_deleted: false } });
+		return this.storeService.findOneById(store.id, lang, { where: { is_active: true, is_deleted: false }, relations: { payments: true } });
 	}
 
 	@ApiOperation({ summary: "find one stores api for admins" })
