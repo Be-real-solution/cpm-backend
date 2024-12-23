@@ -49,16 +49,30 @@ export class ClientController {
 	@ApiBearerAuth()
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN, Roles.STORE_ADMIN)
 	@Get(":id")
-	public findOne(@Param("id") id: string, @CurrentLanguage() lang: string) {
+	public findOne(
+		@Param("id") id: string,
+		@CurrentLanguage() lang: string,
+		@CurrentUser() user: StoreEntity | AdminEntity,
+	) {
+		if (user.role == Roles.STORE_ADMIN) {
+			return this.clientService.findOneById(id, lang, {
+				where: { store: user, is_deleted: false },
+			});
+		}
 		return this.clientService.findOneById(id, lang);
 	}
 
-	// @ApiOperation({ summary: "update client api for store and admin. Not complated" })
-	// @ApiResponse({ status: 200, type: ClientEntity, description: "return updated data" })
-	// @ApiBearerAuth()
-	// @RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN, Roles.STORE_ADMIN)
-	// @Patch(":id")
-	// public update(@Param("id") id: string, @Body() dto: UpdateClientDto) {
-	// 	// return this.clientService.update(+id, updateClientDto);
-	// }
+	@ApiOperation({ summary: "update client api for store" })
+	@ApiResponse({ status: 200, type: ClientEntity, description: "return empty data" })
+	@ApiBearerAuth()
+	@RolesDecorator(Roles.STORE_ADMIN)
+	@Patch(":id")
+	public update(
+		@Param("id") id: string,
+		@Body() dto: UpdateClientDto,
+		@CurrentLanguage() lang: string,
+		@CurrentUser() store: StoreEntity,
+	) {
+		return this.clientService.updateClient(id, dto, lang, store);
+	}
 }

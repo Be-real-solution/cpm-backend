@@ -2675,6 +2675,16 @@ export const ERROR_PROMPT_MAP = {
 				"To'lov allaqachon to'langan!",
 			],
 		},
+		passport_or_pinfl_already_exists: {
+			id: 10014,
+			status: "BADREQUEST",
+			code: "STORE",
+			labels: [
+				"PINFL or passport already exists!",
+				"PINFL или паспорт уже существует!",
+				"PINFL yoki pasport allaqachon mavjud!",
+			],
+		},
 	},
 };
 

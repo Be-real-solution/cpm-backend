@@ -117,7 +117,7 @@ export class StoreEntity extends BaseEntity {
 	@JoinColumn({ name: "created_by" })
 	public created_by!: AdminEntity;
 
-	@OneToMany(() => ClientEntity, (client) => client.created_by)
+	@OneToMany(() => ClientEntity, (client) => client.store)
 	public clients!: ClientEntity[];
 
 	@OneToMany(() => StoreClientEntity, (store_client) => store_client.store)

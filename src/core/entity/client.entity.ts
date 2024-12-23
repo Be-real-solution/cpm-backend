@@ -37,7 +37,7 @@ export class ClientEntity extends BaseEntity {
 		example: "AB5896347",
 		description: "passport of client, max 16 lenth",
 	})
-	@Column({ type: "varchar", length: 16, unique: true })
+	@Column({ type: "varchar", length: 16 })
 	public passport!: string;
 
 	@ApiProperty({
@@ -53,7 +53,7 @@ export class ClientEntity extends BaseEntity {
 		example: "12547896345784",
 		description: "pinfl of client, max 32 lenth",
 	})
-	@Column({ type: "varchar", length: 32, unique: true })
+	@Column({ type: "varchar", length: 32 })
 	public pinfl!: string;
 
 	@ApiProperty({
@@ -89,8 +89,8 @@ export class ClientEntity extends BaseEntity {
 	public address!: string;
 
 	@ManyToOne(() => StoreEntity, (store) => store.clients)
-	@JoinColumn({ name: "created_by" })
-	public created_by!: StoreEntity;
+	@JoinColumn({ name: "store" })
+	public store!: StoreEntity;
 
 	@OneToMany(() => StoreClientEntity, (store_client) => store_client.client)
 	public store_clients!: StoreClientEntity[];
