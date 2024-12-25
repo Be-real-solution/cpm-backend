@@ -9,7 +9,7 @@ import { SentIncorrectAmount } from "./exception/incorrect-amount";
 import { ClientService } from "../client/client.service";
 import { IResponse } from "src/common/type";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
-import { DataSource, FindOptionsWhereProperty } from "typeorm";
+import { Between, DataSource, FindOptionsWhereProperty, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 import { PaymentDataType } from "./types";
 import {
 	ContractPaymentMethod,
@@ -165,6 +165,15 @@ export class ContractService extends BaseService<
 		if (query.client_id) {
 			where_condition.client = { id: query.client_id };
 		}
+
+		if (query.from && query.to) {
+			where_condition.created_at = Between(query.from, query.to)
+		} else if (query.from) {
+			where_condition.created_at = MoreThanOrEqual(query.from)
+		} else if (query.to) {
+			where_condition.created_at = LessThanOrEqual(query.to)
+		}
+
 
 		if (user.role == Roles.STORE_ADMIN) {
 			where_condition.store = { id: user.id };
