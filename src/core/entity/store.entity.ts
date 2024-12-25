@@ -123,7 +123,7 @@ export class StoreEntity extends BaseEntity {
 	@OneToMany(() => StoreClientEntity, (store_client) => store_client.store)
 	public store_clients!: StoreClientEntity[];
 
-	@OneToMany(() => ContractEntity, (contract) => contract.client)
+	@OneToMany(() => ContractEntity, (contract) => contract.store)
 	public contracts!: ContractEntity[];
 
 	@OneToMany(() => StorePaymentEntity, (store_payment) => store_payment.store)

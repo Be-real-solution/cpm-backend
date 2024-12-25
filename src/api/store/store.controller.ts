@@ -48,6 +48,14 @@ export class StoreController {
 		return this.storeService.findAllStore(query, lang);
 	}
 
+	@ApiOperation({ summary: "find all stores api for admins" })
+	@ApiResponse({ status: 200, type: [StoreEntity], description: "return found data" })
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
+	@Get()
+	public reportStore(@CurrentLanguage() lang: string) {
+		return this.storeService.reportStore(lang);
+	}
+
 	@ApiOperation({ summary: "find self info api for stores" })
 	@ApiResponse({ status: 200, type: StoreEntity, description: "return found data" })
 	@RolesDecorator(Roles.STORE_ADMIN)

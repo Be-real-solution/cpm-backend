@@ -11,6 +11,7 @@ import { BcryptEncryption } from "src/infrastructure/lib/bcrypt";
 import { Roles, StorePaymentStatus } from "src/common/database/Enums";
 import { StoreFilterDto } from "./dto/store-filter.dto";
 import { FindOptionsWhereProperty, ILike, Not } from "typeorm";
+import { Cron } from "@nestjs/schedule";
 
 @Injectable()
 export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, StoreEntity> {
@@ -121,5 +122,22 @@ export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, St
 			take: query.page_size,
 			skip: query.page,
 		});
+	}
+
+	/** report store api for admina */
+	public async reportStore(lang: string): Promise<IResponse<StoreEntity[]>> {
+		let store = await this.storeRepo
+			.createQueryBuilder(`store`)
+			.leftJoinAndSelect("store.contracts", "contract")
+			.select([
+				"store",
+				"count(contract.id) as contract_count",
+				"sum(contract.total_amount) as contract_total_amount",
+				"sum(contract.paid_amount) as contract_paid_amount",
+			])
+			.groupBy("store.id")
+			.getRawMany();
+
+		return { status_code: 200, data: store, message: responseByLang("get_all", lang) };
 	}
 }
