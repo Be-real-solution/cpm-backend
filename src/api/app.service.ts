@@ -8,10 +8,18 @@ import { AllExceptionsFilter } from "../infrastructure/lib/filter/all.exception.
 import { logger } from "../infrastructure/lib/logger";
 import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import * as fs from "fs";
+import * as https from "https";
 
 export default class Application {
 	public static async main(): Promise<void> {
-		let app = await NestFactory.create(AppModule);
+		const httpsOptions = {
+			key: fs.readFileSync("../../../../../private-key.pem"), // maxfiy kalitning to'liq yo'li
+			cert: fs.readFileSync("../../../../../certificate.pem"), // sertifikatning to'liq yo'li
+		};
+		let app = await NestFactory.create(AppModule, {
+			httpsOptions,
+		});
 		app.useGlobalFilters(new AllExceptionsFilter());
 		app.enableCors({
 			origin: "*",
@@ -24,7 +32,6 @@ export default class Application {
 			}),
 		);
 
-		
 		app.setGlobalPrefix("api");
 		app.use("/api/upload", express.static(join(__dirname, "../../../uploads")));
 		app.use(
@@ -44,15 +51,14 @@ export default class Application {
 			}),
 		);
 
-		
-	const swaggerConfig = new DocumentBuilder()
-		.setTitle("CPM backend API")
-		.setDescription("Term payment web site")
-		.setVersion("1.0.0")
-		.addBearerAuth()
-		.build();
-	const document = SwaggerModule.createDocument(app, swaggerConfig);
-	SwaggerModule.setup("docs", app, document);
+		const swaggerConfig = new DocumentBuilder()
+			.setTitle("CPM backend API")
+			.setDescription("Term payment web site")
+			.setVersion("1.0.0")
+			.addBearerAuth()
+			.build();
+		const document = SwaggerModule.createDocument(app, swaggerConfig);
+		SwaggerModule.setup("docs", app, document);
 
 		await app.listen(config.PORT, () => {
 			logger.info(`Server running on  ${config.PORT} port`);
