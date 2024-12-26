@@ -2,7 +2,7 @@ import { HttpStatus, ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import * as express from "express";
 import morgan from "morgan";
-import { join } from "path";
+import { join, resolve } from "path";
 import { config } from "src/config";
 import { AllExceptionsFilter } from "../infrastructure/lib/filter/all.exception.filter";
 import { logger } from "../infrastructure/lib/logger";
@@ -14,9 +14,12 @@ import * as https from "https";
 export default class Application {
 	public static async main(): Promise<void> {
 		const httpsOptions = {
-			key: fs.readFileSync("../../../../../private-key.pem"), // maxfiy kalitning to'liq yo'li
-			cert: fs.readFileSync("../../../../../certificate.pem"), // sertifikatning to'liq yo'li
+			key: fs.readFileSync(resolve("private-key.pem")), // maxfiy kalitning to'liq yo'li
+			cert: fs.readFileSync(resolve("certificate.pem")), // sertifikatning to'liq yo'li
 		};
+
+		console.log(__dirname);
+		
 		let app = await NestFactory.create(AppModule, {
 			httpsOptions,
 		});
