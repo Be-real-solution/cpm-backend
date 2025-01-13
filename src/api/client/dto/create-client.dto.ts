@@ -43,6 +43,15 @@ export class CreateClientDto {
 	public passport!: string;
 
 	@ApiProperty({
+		name: "passport_given_by",
+		example: "Toshkent shahar chilonzor IIB",
+		description: "passport given by of client",
+	})
+	@IsNotEmpty()
+	@IsString()
+	public passport_given_by!: string;
+
+	@ApiProperty({
 		name: "pinfl",
 		example: "12547896345784",
 		description: "PINFL of client, max 32 lenth",

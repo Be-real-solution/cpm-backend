@@ -3,7 +3,6 @@ import { BaseEntity } from "src/common/database/BaseEntity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { AdminEntity } from "./admin.entity";
 import { ClientEntity } from "./client.entity";
-import { StoreClientEntity } from "./store-client.entity";
 import { ContractEntity } from "./contract.entity";
 import { Roles } from "src/common/database/Enums";
 import { StorePaymentEntity } from "./store-payment.entity";
@@ -24,6 +23,14 @@ export class StoreEntity extends BaseEntity {
 	})
 	@Column({ type: "varchar", length: 20 })
 	public phone!: string;
+
+	@ApiProperty({
+		name: "region",
+		example: "Toshkent",
+		description: "region of store",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public region!: string;
 
 	@ApiProperty({
 		name: "address",
@@ -64,6 +71,30 @@ export class StoreEntity extends BaseEntity {
 	})
 	@Column({ type: "varchar" })
 	public password!: string;
+
+	@ApiProperty({
+		name: "bank_account_number",
+		example: "7492384298",
+		description: "bank account number of store",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public bank_account_number!: string;
+
+	@ApiProperty({
+		name: "bank_address",
+		example: "Toshkent shahar",
+		description: "bank address of store",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public bank_address!: string;
+
+	@ApiProperty({
+		name: "mfo",
+		example: "7492384298",
+		description: "mfo of store",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public mfo!: string;
 
 	@ApiProperty({
 		name: "payment_day",
@@ -113,6 +144,16 @@ export class StoreEntity extends BaseEntity {
 	@Column({ type: "enum", enum: Roles, default: Roles.STORE_ADMIN })
 	public role!: Roles;
 
+	@ApiProperty({
+		name: "hashed_token",
+		example: "hashed token",
+		description: "hashed token of store",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public hashed_token!: string
+
+
+	
 	@ManyToOne(() => AdminEntity, (admin) => admin.stores)
 	@JoinColumn({ name: "created_by" })
 	public created_by!: AdminEntity;
@@ -120,8 +161,6 @@ export class StoreEntity extends BaseEntity {
 	@OneToMany(() => ClientEntity, (client) => client.store)
 	public clients!: ClientEntity[];
 
-	@OneToMany(() => StoreClientEntity, (store_client) => store_client.store)
-	public store_clients!: StoreClientEntity[];
 
 	@OneToMany(() => ContractEntity, (contract) => contract.store)
 	public contracts!: ContractEntity[];

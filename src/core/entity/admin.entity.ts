@@ -32,9 +32,17 @@ export class AdminEntity extends BaseEntity {
 	@Column({ type: "enum", enum: [Roles.SUPER_ADMIN, Roles.ADMIN], default: Roles.ADMIN })
 	public role!: Roles;
 
+	@ApiProperty({
+		name: "hashed_token",
+		example: "hashed token",
+		description: "hashed token of admin",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public hashed_token!: string;
+
 	@OneToMany(() => StoreEntity, (store) => store.created_by)
 	public stores!: StoreEntity[];
 
 	@OneToMany(() => StorePaymentEntity, (store_payment) => store_payment.created_by)
-	public store_payments!: StorePaymentEntity[]
+	public store_payments!: StorePaymentEntity[];
 }

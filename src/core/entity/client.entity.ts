@@ -2,7 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 import { BaseEntity } from "src/common/database/BaseEntity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { StoreEntity } from "./store.entity";
-import { StoreClientEntity } from "./store-client.entity";
 import { ContractEntity } from "./contract.entity";
 import { ContractPaymentEntity } from "./contract-payment.entity";
 
@@ -39,6 +38,14 @@ export class ClientEntity extends BaseEntity {
 	})
 	@Column({ type: "varchar", length: 16 })
 	public passport!: string;
+
+	@ApiProperty({
+		name: "passport_given_by",
+		example: "Toshkent shahar chilonzor IIB",
+		description: "passport given by of client",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public passport_given_by!: string;
 
 	@ApiProperty({
 		name: "rating",
@@ -92,8 +99,6 @@ export class ClientEntity extends BaseEntity {
 	@JoinColumn({ name: "store" })
 	public store!: StoreEntity;
 
-	@OneToMany(() => StoreClientEntity, (store_client) => store_client.client)
-	public store_clients!: StoreClientEntity[];
 
 	@OneToMany(() => ContractEntity, (contract) => contract.client)
 	public contracts!: ContractEntity[];

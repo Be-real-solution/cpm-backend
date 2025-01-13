@@ -73,13 +73,13 @@ export class CreateContractDto {
 	public inn!: string;
 
 	@ApiProperty({
-		name: "initial_payment_type",
-		example: "summa",
+		name: "initial_payment_percent",
+		example: 30,
 		description: "initial_payment_type of contract",
 	})
 	@IsNotEmpty()
-	@IsEnum(ContractInitialPaymentType)
-	public initial_payment_type!: ContractInitialPaymentType;
+	@IsNumber()
+	public initial_payment_percent!: number;
 
 	@ApiProperty({
 		name: "initial_payment_amount",

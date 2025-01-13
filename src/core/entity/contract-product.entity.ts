@@ -48,7 +48,9 @@ export class ContractProductEntity {
 	@Column({ type: "bigint", default: Date.now() })
 	public created_at!: number;
 
-	@ManyToOne(() => ContractEntity, (contract) => contract.contract_products)
+	@ManyToOne(() => ContractEntity, (contract) => contract.contract_products, {
+		onDelete: "CASCADE",
+	})
 	@JoinColumn({ name: "contract_id" })
 	public contract!: ContractEntity;
 }

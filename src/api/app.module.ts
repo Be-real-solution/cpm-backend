@@ -7,7 +7,6 @@ import { AdminModule } from "./admin/admin.module";
 import { AuthModule } from "./auth/auth.module";
 import { StoreModule } from './store/store.module';
 import { ClientModule } from './client/client.module';
-import { StoreClientModule } from './store-client/store-client.module';
 import { ContractModule } from './contract/contract.module';
 import { StorePaymentModule } from './store-payment/store-payment.module';
 import { ContractPaymentModule } from './contract-payment/contract-payment.module';
@@ -26,7 +25,6 @@ import { NotificationModule } from './notification/notification.module';
 		AdminModule,
 		StoreModule,
 		ClientModule,
-		StoreClientModule,
 		ContractModule,
 		StorePaymentModule,
 		ContractPaymentModule,

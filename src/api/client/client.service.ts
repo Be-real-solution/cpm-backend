@@ -1,24 +1,21 @@
 import { Injectable } from "@nestjs/common";
-import { CreateClientDto } from "./dto/create-client.dto";
-import { UpdateClientDto } from "./dto/update-client.dto";
-import { BaseService } from "src/infrastructure/lib/baseService";
-import { AdminEntity, ClientEntity, StoreEntity } from "src/core/entity";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Roles } from "src/common/database/Enums";
+import { FilterDto } from "src/common/dto/filter.dto";
+import { AdminEntity, ClientEntity, StoreEntity } from "src/core/entity";
 import { ClientRepository } from "src/core/repository";
+import { BaseService } from "src/infrastructure/lib/baseService";
 import { IResponse } from "src/infrastructure/lib/baseService/interface";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
-import { StoreClientService } from "../store-client/store-client.service";
-import { FilterDto } from "src/common/dto/filter.dto";
-import { Roles } from "src/common/database/Enums";
 import { FindOptionsWhereProperty, Not } from "typeorm";
-import { FindOneByPassportOrPinflDto } from "./dto/findone-by-passport-or-pinfl.dto";
+import { CreateClientDto } from "./dto/create-client.dto";
+import { UpdateClientDto } from "./dto/update-client.dto";
 import { PassportOrPinflAlreadyExists } from "./exception/passport-or-pinfl-already-exists";
 
 @Injectable()
 export class ClientService extends BaseService<CreateClientDto, UpdateClientDto, ClientEntity> {
 	constructor(
 		@InjectRepository(ClientEntity) private readonly clientRepo: ClientRepository,
-		private readonly storeClientService: StoreClientService,
 	) {
 		super(clientRepo, "CLient");
 	}
@@ -44,10 +41,6 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 			this.clientRepo.create({ ...dto, created_at: Date.now(), store: store }),
 		);
 
-		await this.storeClientService.create(
-			{ client: client.id, store: store?.id, status: true },
-			lang,
-		);
 
 		const message = responseByLang("create", lang);
 		return { status_code: 201, data: client, message };

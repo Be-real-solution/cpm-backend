@@ -1,12 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BaseEntity } from "src/common/database/BaseEntity";
-import { ContractInitialPaymentType, ContractPaymentMethod, ContractPaymentStatus, ContractStatus } from "src/common/database/Enums";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
-import { ClientEntity } from "./client.entity";
-import { StoreEntity } from "./store.entity";
-import { ContractProductEntity } from "./contract-product.entity";
 import { Transform } from "class-transformer";
+import { BaseEntity } from "src/common/database/BaseEntity";
+import { ContractPaymentMethod, ContractPaymentStatus, ContractStatus } from "src/common/database/Enums";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
+import { ClientEntity } from "./client.entity";
 import { ContractPaymentEntity } from "./contract-payment.entity";
+import { ContractProductEntity } from "./contract-product.entity";
+import { StoreEntity } from "./store.entity";
 
 export type JsonData = {
 	payment_data: {
@@ -32,6 +32,14 @@ export class ContractEntity extends BaseEntity {
 	public status!: ContractStatus;
 
 	@ApiProperty({
+		name: "contract_number",
+		example: 1892,
+		description: "status of contract",
+	})
+	@Column({ type: "bigint", nullable: true })
+	public contract_number!: number;
+
+	@ApiProperty({
 		name: "inn",
 		example: "5468713",
 		description: "inn of contract, max lenght 16",
@@ -40,12 +48,12 @@ export class ContractEntity extends BaseEntity {
 	public inn!: string;
 
 	@ApiProperty({
-		name: "initial_payment_type",
-		example: "summa",
+		name: "initial_payment_percent",
+		example: 30,
 		description: "initial_payment_type of contract",
 	})
-	@Column({ type: "enum", enum: ContractInitialPaymentType })
-	public initial_payment_type!: ContractInitialPaymentType;
+	@Column({ type: "smallint", nullable: true })
+	public initial_payment_percent!: number;
 
 	@ApiProperty({
 		name: "initial_payment_amount",
@@ -103,6 +111,14 @@ export class ContractEntity extends BaseEntity {
 	})
 	@Column({ type: "decimal", scale: 2 })
 	public total_amount!: number;
+
+	@ApiProperty({
+		name: "contract_file_url",
+		example: "file_url",
+		description: "total amount of contract",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public contract_file_url!: string;
 
 	@ApiProperty({
 		name: "payment_list",

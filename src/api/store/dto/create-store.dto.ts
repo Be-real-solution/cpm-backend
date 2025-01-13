@@ -1,5 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber, IsString, Max, MaxLength, Min } from "class-validator";
+import {
+	IsNotEmpty,
+	IsNumber,
+	IsNumberString,
+	IsString,
+	Max,
+	MaxLength,
+	Min,
+} from "class-validator";
 
 export class CreateStoreDto {
 	@ApiProperty({ name: "name", example: "Idea", description: "name of shop" })
@@ -25,6 +33,15 @@ export class CreateStoreDto {
 	@IsNotEmpty()
 	@IsString()
 	public address!: string;
+
+	@ApiProperty({
+		name: "region",
+		example: "Toshkent",
+		description: "region of store",
+	})
+	@IsNotEmpty()
+	@IsString()
+	public region!: string;
 
 	@ApiProperty({
 		name: "director",
@@ -106,4 +123,30 @@ export class CreateStoreDto {
 	@MaxLength(20)
 	public second_phone!: string;
 
+	@ApiProperty({
+		name: "bank_account_number",
+		example: "7492384298",
+		description: "bank account number of store",
+	})
+	@IsNotEmpty()
+	@IsNumberString()
+	public bank_account_number!: string;
+
+	@ApiProperty({
+		name: "bank_address",
+		example: "Toshkent shahar",
+		description: "bank address of store",
+	})
+	@IsNotEmpty()
+	@IsString()
+	public bank_address!: string;
+
+	@ApiProperty({
+		name: "mfo",
+		example: "7492384298",
+		description: "mfo of store",
+	})
+	@IsNotEmpty()
+	@IsString()
+	public mfo!: string;
 }
