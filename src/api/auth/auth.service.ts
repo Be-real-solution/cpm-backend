@@ -7,9 +7,8 @@ import { AdminRepository, StoreRepository } from "src/core/repository";
 import { BcryptEncryption } from "src/infrastructure/lib/bcrypt";
 import { JwtToken } from "src/infrastructure/lib/jwt-token";
 import { LoginDto } from "./dto/login.dto";
-import {
-	AuthorizationError
-} from "./exception";
+import { AuthorizationError } from "./exception";
+import { RefreshTokenDto } from "./dto/refresh-token.dto";
 
 @Injectable()
 export class AuthService {
@@ -17,8 +16,7 @@ export class AuthService {
 		@InjectRepository(AdminEntity) private readonly adminRepo: AdminRepository,
 		@InjectRepository(StoreEntity) private readonly storeRepo: StoreRepository,
 		private readonly jwtToken: JwtToken,
-	) {
-	}
+	) {}
 
 	/** admin login */
 	public async adminLogin(dto: LoginDto): Promise<IResponse<any>> {
@@ -37,6 +35,8 @@ export class AuthService {
 		}
 
 		const token = await this.jwtToken.generateToken(admin, admin.role);
+		admin.hashed_token = await BcryptEncryption.encrypt(token.refresh_token);
+		await this.adminRepo.save(admin);
 		return { status_code: 200, data: { ...admin, token }, message: "success" };
 	}
 
@@ -57,36 +57,46 @@ export class AuthService {
 		}
 
 		const token = await this.jwtToken.generateToken(store, Roles.STORE_ADMIN);
+		store.hashed_token = await BcryptEncryption.encrypt(token.refresh_token);
+		await this.storeRepo.save(store);
 		return { status_code: 200, data: { ...store, token }, message: "success" };
 	}
 
-
 	// refresh token service
-	public async refreshToken(token: string) {
-		// let data;
-		// try {
-		// 	data = await this.jwtToken.verifyRefresh(token);
-		// } catch (err) {
-		// 	throw new AuthorizationError();
-		// }
+	public async refreshToken(dto: RefreshTokenDto) {
+		const token = dto.token
+		let data: { id: string; role: string };
+		try {
+			data = await this.jwtToken.verifyRefresh(token);
+		} catch (err) {
+			throw new AuthorizationError();
+		}
+		
+		if (data.role == Roles.STORE_ADMIN) {
+			const store = await this.storeRepo.findOne({ where: { id: data.id } });
+			if (!store) throw new AuthorizationError();
+			
+			const check = await BcryptEncryption.compare(token, store.hashed_token);
+			console.log(check);
+			if (!check) throw new AuthorizationError();
 
-		// const { data: user } = await this.findOneById(data.id, "en");
+			const new_token = await this.jwtToken.generateToken(store, Roles.STORE_ADMIN);
+			store.hashed_token = await BcryptEncryption.encrypt(new_token.refresh_token);
+			await this.storeRepo.save(store);
+			return { status_code: 200, data: { ...store, new_token }, message: "success" };
+		} else {
+			const admin = await this.adminRepo.findOne({ where: { id: data.id } });
+			if (!admin) throw new AuthorizationError();
 
-		// const check = await BcryptEncryption.compare(token, user.hashed_token);
+			const check = await BcryptEncryption.compare(token, admin.hashed_token);
+			if (!check) throw new AuthorizationError();
 
-		// if (!check) {
-		// 	throw new InvalidToken();
-		// }
-
-		// const new_token = await this.jwtToken.generateToken(user);
-		// const hashed_token = await BcryptEncryption.encrypt(new_token.refresh_token);
-		// await this.userRepo.update(user.id, { hashed_token });
-
-		// return new_token;
+			const new_token = await this.jwtToken.generateToken(admin, admin.role);
+			admin.hashed_token = await BcryptEncryption.encrypt(new_token.refresh_token);
+			await this.adminRepo.save(admin);
+			return { status_code: 200, data: { ...admin, new_token }, message: "success" };			
+		}
 	}
-
-
-
 }
 
 function AddMinutesToDate(date: Date, minutes: number) {
