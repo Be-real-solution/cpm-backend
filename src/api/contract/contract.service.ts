@@ -356,7 +356,7 @@ export class ContractService extends BaseService<
 	/** number to word */
 	private numToWord(num: number, language: string): Promise<string> {
 		return new Promise((resolve, reject) => {
-			const command = `python src/api/contract/python-script/num_to_word.py ${num} ${language}`;
+			const command = `python3 src/api/contract/python-script/num_to_word.py ${num} ${language}`;
 
 			exec(command, { encoding: "utf-8" }, (error, stdout, stderr) => {
 				if (error) {
