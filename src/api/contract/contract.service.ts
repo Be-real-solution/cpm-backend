@@ -332,7 +332,7 @@ export class ContractService extends BaseService<
 			)
 			.then((res: any) => {
 				console.log("PDF created successfully:", res);
-				const file_name = `contract/${contract.contract_number}_${v4()}.pdf`;
+				const file_name = `${contract.contract_number}_${v4()}.pdf`;
 				const file_path = path.resolve(
 					__dirname,
 					"..",
@@ -340,12 +340,13 @@ export class ContractService extends BaseService<
 					"..",
 					// "..",
 					config.PATH_FOR_FILE_UPLOAD,
+					"contract"
 				);
 				if (!fs.existsSync(file_path)) {
 					fs.mkdirSync(file_path, { recursive: true });
 				}
 				fs.writeFileSync(path.join(file_path, file_name), res);
-				return file_name;
+				return "contract/" + file_name;
 			})
 			.catch((error: any) => {
 				console.error("Error creating PDF:", error);
