@@ -94,7 +94,7 @@ export class AuthService {
 			const new_token = await this.jwtToken.generateToken(admin, admin.role);
 			admin.hashed_token = await BcryptEncryption.encrypt(new_token.refresh_token);
 			await this.adminRepo.save(admin);
-			return { status_code: 200, data: { ...admin, new_token }, message: "success" };			
+			return { status_code: 200, data: { ...admin, token: new_token }, message: "success" };			
 		}
 	}
 }
