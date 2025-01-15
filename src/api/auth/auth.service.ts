@@ -83,7 +83,7 @@ export class AuthService {
 			const new_token = await this.jwtToken.generateToken(store, Roles.STORE_ADMIN);
 			store.hashed_token = await BcryptEncryption.encrypt(new_token.refresh_token);
 			await this.storeRepo.save(store);
-			return { status_code: 200, data: { ...store, new_token }, message: "success" };
+			return { status_code: 200, data: { ...store, token: new_token }, message: "success" };
 		} else {
 			const admin = await this.adminRepo.findOne({ where: { id: data.id } });
 			if (!admin) throw new AuthorizationError();
