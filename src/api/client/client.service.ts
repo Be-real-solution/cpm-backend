@@ -7,16 +7,14 @@ import { ClientRepository } from "src/core/repository";
 import { BaseService } from "src/infrastructure/lib/baseService";
 import { IResponse } from "src/infrastructure/lib/baseService/interface";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
-import { FindOptionsWhereProperty, Not } from "typeorm";
+import { FindOptionsWhereProperty, ILike, Not } from "typeorm";
 import { CreateClientDto } from "./dto/create-client.dto";
 import { UpdateClientDto } from "./dto/update-client.dto";
 import { PassportOrPinflAlreadyExists } from "./exception/passport-or-pinfl-already-exists";
 
 @Injectable()
 export class ClientService extends BaseService<CreateClientDto, UpdateClientDto, ClientEntity> {
-	constructor(
-		@InjectRepository(ClientEntity) private readonly clientRepo: ClientRepository,
-	) {
+	constructor(@InjectRepository(ClientEntity) private readonly clientRepo: ClientRepository) {
 		super(clientRepo, "CLient");
 	}
 
@@ -41,28 +39,32 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 			this.clientRepo.create({ ...dto, created_at: Date.now(), store: store }),
 		);
 
-
 		const message = responseByLang("create", lang);
 		return { status_code: 201, data: client, message };
 	}
 
 	/** find all api for store and admin */
 	public async findAllClient(query: FilterDto, lang: string, user: StoreEntity | AdminEntity) {
-		let where_condition: FindOptionsWhereProperty<ClientEntity> = { is_deleted: false };
+		let where_condition: FindOptionsWhereProperty<ClientEntity> = {
+			store: user,
+			is_deleted: false,
+		};
 
 		if (query.search) {
-			where_condition = { passport: query.search, is_deleted: false };
+			where_condition = [
+				{ store: user, passport: ILike(`%${query.search}%`), is_deleted: false },
+				{ store: user, first_name: ILike(`%${query.search}%`), is_deleted: false },
+				{ store: user, last_name: ILike(`%${query.search}%`), is_deleted: false },
+				{ store: user, second_name: ILike(`%${query.search}%`), is_deleted: false },
+			];
 		}
 
-		if (user.role == Roles.STORE_ADMIN) {
-			where_condition.store = user;
 			return this.findAllWithPagination(lang, {
 				where: where_condition,
 				order: { created_at: "DESC" },
 				take: query.page_size,
 				skip: query.page,
 			});
-		}
 	}
 
 	/** update client */
@@ -95,11 +97,11 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 				});
 			}
 			const check_client = await this.clientRepo.findOne({
-				where: where_condition
+				where: where_condition,
 			});
 
 			if (check_client) {
-			throw new PassportOrPinflAlreadyExists();
+				throw new PassportOrPinflAlreadyExists();
 			}
 		}
 

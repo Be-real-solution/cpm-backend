@@ -31,10 +31,10 @@ export class ClientController {
 		return this.clientService.createClient({ ...dto }, lang, store);
 	}
 
-	@ApiOperation({ summary: "find all client api for store and admin" })
+	@ApiOperation({ summary: "find all client api for store" })
 	@ApiResponse({ status: 200, type: [ClientEntity], description: "return found data" })
 	@ApiBearerAuth()
-	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN, Roles.STORE_ADMIN)
+	@RolesDecorator(Roles.STORE_ADMIN)
 	@Get()
 	public findAll(
 		@Query() query: FilterDto,
@@ -44,10 +44,10 @@ export class ClientController {
 		return this.clientService.findAllClient(query, lang, user);
 	}
 
-	@ApiOperation({ summary: "find one client api for store and admin" })
+	@ApiOperation({ summary: "find one client api for store" })
 	@ApiResponse({ status: 200, type: ClientEntity, description: "return found data" })
 	@ApiBearerAuth()
-	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN, Roles.STORE_ADMIN)
+	@RolesDecorator(Roles.SUPER_ADMIN)
 	@Get(":id")
 	public findOne(
 		@Param("id") id: string,
