@@ -97,6 +97,14 @@ export class StoreEntity extends BaseEntity {
 	public mfo!: string;
 
 	@ApiProperty({
+		name: "stir",
+		example: "7492384298",
+		description: "stir of store",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public stir!: string;
+
+	@ApiProperty({
 		name: "payment_day",
 		example: 12,
 		description: "payment day in the month of store",
@@ -137,6 +145,14 @@ export class StoreEntity extends BaseEntity {
 	public order!: number;
 
 	@ApiProperty({
+		name: "store_contract_file_url",
+		example: "file_url",
+		description: "url of contract file",
+	})
+	@Column({ type: "varchar", nullable: true })
+	public store_contract_file_url!: string;
+
+	@ApiProperty({
 		name: "role",
 		example: "store_admin",
 		description: "role of store auto created",
@@ -150,17 +166,14 @@ export class StoreEntity extends BaseEntity {
 		description: "hashed token of store",
 	})
 	@Column({ type: "varchar", nullable: true })
-	public hashed_token!: string
+	public hashed_token!: string;
 
-
-	
 	@ManyToOne(() => AdminEntity, (admin) => admin.stores)
 	@JoinColumn({ name: "created_by" })
 	public created_by!: AdminEntity;
 
 	@OneToMany(() => ClientEntity, (client) => client.store)
 	public clients!: ClientEntity[];
-
 
 	@OneToMany(() => ContractEntity, (contract) => contract.store)
 	public contracts!: ContractEntity[];

@@ -147,6 +147,15 @@ export class CreateStoreDto {
 		description: "mfo of store",
 	})
 	@IsNotEmpty()
-	@IsString()
+	@IsNumberString()
 	public mfo!: string;
+
+	@ApiProperty({
+		name: "stir",
+		example: "7492384298",
+		description: "stir of store",
+	})
+	@IsNotEmpty()
+	@IsNumberString()
+	public stir!: string;
 }

@@ -12,9 +12,21 @@ import { Roles, StorePaymentStatus } from "src/common/database/Enums";
 import { StoreFilterDto } from "./dto/store-filter.dto";
 import { FindOptionsWhereProperty, ILike, Not } from "typeorm";
 import { Cron } from "@nestjs/schedule";
+import * as fs from "fs";
+import * as path from "path";
+import { config } from "src/config";
+import { v4 } from "uuid";
+import { CreateStoreContractPDFDto } from "./dto/create-store-contract-pdf.dto";
+import { deleteFile } from "src/infrastructure/lib/fileService";
+const pdf_creator = require("pdf-creator-node");
 
 @Injectable()
 export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, StoreEntity> {
+	private readonly formatter = new Intl.NumberFormat("ru-RU", {
+		style: "decimal", // yoki 'currency' valyuta uchun
+		minimumFractionDigits: 0, // kasr son qismi kerak bo‘lmasa
+	});
+
 	constructor(@InjectRepository(StoreEntity) private readonly storeRepo: StoreRepository) {
 		super(storeRepo, "Store");
 	}
@@ -139,5 +151,126 @@ export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, St
 			.getRawMany();
 
 		return { status_code: 200, data: store, message: responseByLang("get_all", lang) };
+	}
+
+	/** generate store contract pdf file */
+	public async createStoreContractPdf(
+		dto: CreateStoreContractPDFDto,
+		lang: string,
+	): Promise<IResponse<StoreEntity>> {
+		const { data: store } = await this.findOneById(dto.store, lang);
+
+		let html: string = "";
+		let date: string = "";
+		if (dto.language == "uz") {
+			date = this.formatDateToday(new Date(Date.now()), "uz");
+			html = fs.readFileSync(
+				path.join(__dirname, "../../../src/api/store/template", "store-contract-uz.hbs"),
+				"utf-8",
+			);
+		} else {
+			html = fs.readFileSync(
+				path.join(__dirname, "../../../src/api/store/template", "store-contract-ru.hbs"),
+				"utf-8",
+			);
+			date = this.formatDateToday(new Date(Date.now()), "ru");
+		}
+
+		return await pdf_creator
+			.create(
+				{
+					html: html,
+					data: {
+						city: store.region,
+						date: date,
+						store_contract_number: store.order + 999,
+						store_name: store.name,
+						store_address: store.address,
+						store_bank_number: store.bank_account_number,
+						store_bank_address: store.bank_address,
+						store_mfo: store.mfo,
+						store_phone: store.phone,
+						store_director: store.director,
+						store_manager: store.manager,
+						store_stir: store.stir,
+					},
+					// path: path.join(__dirname, "output.pdf"),
+					type: "buffer",
+				},
+				{
+					format: "A4",
+					orientation: "portrait",
+					border: "10mm",
+				},
+			)
+			.then(async (res: any) => {
+				console.log("PDF created successfully:", res);
+				const file_name = `${store.order + 999}_${v4()}_${
+					dto.language == "uz" ? "uz" : "ru"
+				}.pdf`;
+				const file_path = path.resolve(
+					__dirname,
+					"..",
+					"..",
+					"..",
+					// "..",
+					config.PATH_FOR_FILE_UPLOAD,
+					"store-contract",
+				);
+				if (!fs.existsSync(file_path)) {
+					fs.mkdirSync(file_path, { recursive: true });
+				}
+				fs.writeFileSync(path.join(file_path, file_name), res);
+
+				if (store.store_contract_file_url) {
+					await deleteFile(store.store_contract_file_url);
+				}
+
+				store.store_contract_file_url = "store-contract/" + file_name;
+				await this.storeRepo.save(store);
+
+				return { status_code: 200, data: store, message: responseByLang("update", lang) };
+			})
+			.catch((error: any) => {
+				console.error("Error creating PDF:", error);
+				throw error;
+			});
+	}
+
+	/** formatted date for today */
+	private formatDateToday(date: Date, lang: string): string {
+		const months_uz = [
+			"yanvar",
+			"fevral",
+			"mart",
+			"aprel",
+			"may",
+			"iyun",
+			"iyul",
+			"avgust",
+			"sentyabr",
+			"oktyabr",
+			"noyabr",
+			"dekabr",
+		];
+		const months_ru = [
+			"января",
+			"февраля",
+			"марта",
+			"апреля",
+			"мая",
+			"июня",
+			"июля",
+			"августа",
+			"сентября",
+			"октября",
+			"ноября",
+			"декабря",
+		];
+		let month_number = date.getMonth();
+		const day = date.getDate();
+		const month = lang == "uz" ? months_uz[month_number] : months_ru[month_number];
+		const year = date.getFullYear();
+		return `${day} ${month} ${year}`;
 	}
 }

@@ -20,6 +20,7 @@ import { JwtAuthGuard } from "../auth/user/AuthGuard";
 import { BlockingOrUnblockingDto, CreateStoreDto, UpdateStoreDto } from "./dto";
 import { StoreFilterDto } from "./dto/store-filter.dto";
 import { StoreService } from "./store.service";
+import { CreateStoreContractPDFDto } from "./dto/create-store-contract-pdf.dto";
 
 @ApiTags("Store")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -39,6 +40,18 @@ export class StoreController {
 	) {
 		return this.storeService.createStore(dto, lang, admin);
 	}
+	
+	@ApiOperation({ summary: "create store contract pdf api for admins" })
+	@ApiResponse({ status: 200, type: StoreEntity, description: "return store data" })
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
+	@Post('/create-contract-pdf')
+	public createStoreContractPdf(
+		@Body() dto: CreateStoreContractPDFDto,
+		@CurrentLanguage() lang: string,
+	) {
+		return this.storeService.createStoreContractPdf(dto, lang);
+	}
+
 
 	@ApiOperation({ summary: "find all stores api for admins" })
 	@ApiResponse({ status: 200, type: [StoreEntity], description: "return found data" })
