@@ -13,15 +13,15 @@ import * as https from "https";
 
 export default class Application {
 	public static async main(): Promise<void> {
-		const httpsOptions = {
-			key: fs.readFileSync("/home/ubuntu/private-key.pem"), // maxfiy kalitning to'liq yo'li
-			cert: fs.readFileSync("/home/ubuntu/certificate.pem"), // sertifikatning to'liq yo'li
-		};
+		// const httpsOptions = {
+		// 	key: fs.readFileSync("/home/ubuntu/private-key.pem"), // maxfiy kalitning to'liq yo'li
+		// 	cert: fs.readFileSync("/home/ubuntu/certificate.pem"), // sertifikatning to'liq yo'li
+		// };
 
 		console.log(__dirname);
 		
 		let app = await NestFactory.create(AppModule, {
-			httpsOptions,
+			// httpsOptions,
 		});
 		app.useGlobalFilters(new AllExceptionsFilter());
 		app.enableCors({
