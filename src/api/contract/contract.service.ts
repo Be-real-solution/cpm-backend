@@ -11,7 +11,13 @@ import { ContractProductRepository, ContractRepository } from "src/core/reposito
 import { BaseService } from "src/infrastructure/lib/baseService";
 import { deleteFile } from "src/infrastructure/lib/fileService";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
-import { Between, FindOptionsWhereProperty, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
+import {
+	Between,
+	FindOptionsWhereProperty,
+	ILike,
+	LessThanOrEqual,
+	MoreThanOrEqual,
+} from "typeorm";
 import { v4 } from "uuid";
 import { ClientService } from "../client/client.service";
 import { ContractFilterDto } from "./dto/contract-filter.dto";
@@ -162,7 +168,7 @@ export class ContractService extends BaseService<
 		lang: string,
 		user: StoreEntity | AdminEntity,
 	): Promise<IResponse<ContractEntity[]>> {
-		let where_condition: FindOptionsWhereProperty<ContractEntity> = {};
+		let where_condition: FindOptionsWhereProperty<ContractEntity> = { is_deleted: false };
 		if (query.client_id) {
 			where_condition.client = { id: query.client_id };
 		}
@@ -181,23 +187,21 @@ export class ContractService extends BaseService<
 
 		if (user.role == Roles.STORE_ADMIN) {
 			where_condition.store = { id: user.id };
-			where_condition.is_deleted = false;
-
-			return this.findAllWithPagination(lang, {
-				where: where_condition,
-				order: { created_at: "DESC" },
-				take: query.page_size,
-				skip: query.page,
-			});
-		} else {
-			where_condition.is_deleted = false;
-			return this.findAllWithPagination(lang, {
-				where: where_condition,
-				order: { created_at: "DESC" },
-				take: query.page_size,
-				skip: query.page,
-			});
 		}
+
+		if (query.search) {
+			where_condition = [
+				{ ...where_condition, client: { phone: ILike(`%${query.search}%`) } },
+				{ ...where_condition, contract_number: Number(query.search) },
+			];
+		}
+
+		return this.findAllWithPagination(lang, {
+			where: where_condition,
+			order: { created_at: "DESC" },
+			take: query.page_size,
+			skip: query.page,
+		});
 	}
 
 	/** find one contract */
