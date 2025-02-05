@@ -167,6 +167,10 @@ export class ContractService extends BaseService<
 			where_condition.client = { id: query.client_id };
 		}
 
+		if (query.store_id && user.role != Roles.STORE_ADMIN) {
+			where_condition.store = { id: query.store_id };
+		}
+
 		if (query.from && query.to) {
 			where_condition.created_at = Between(query.from, query.to);
 		} else if (query.from) {
@@ -340,7 +344,7 @@ export class ContractService extends BaseService<
 					"..",
 					// "..",
 					config.PATH_FOR_FILE_UPLOAD,
-					"contract"
+					"contract",
 				);
 				if (!fs.existsSync(file_path)) {
 					fs.mkdirSync(file_path, { recursive: true });

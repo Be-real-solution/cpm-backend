@@ -8,6 +8,11 @@ export class ContractFilterDto extends FilterDto {
 	@IsString()
 	public client_id?: string;
 
+	@ApiPropertyOptional({ name: "store_id", example: "ah4ys9ik32bdjb" })
+	@IsOptional()
+	@IsString()
+	public store_id?: string;
+
 	@ApiPropertyOptional({ name: "from", example: "261517327" })
 	@IsOptional()
 	@IsNumberString()
