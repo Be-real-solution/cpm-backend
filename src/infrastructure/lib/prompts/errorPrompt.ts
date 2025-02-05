@@ -2685,6 +2685,16 @@ export const ERROR_PROMPT_MAP = {
 				"PINFL yoki pasport allaqachon mavjud!",
 			],
 		},
+		incorrect_payment_date: {
+			id: 10015,
+			status: "BADREQUEST",
+			code: "STORE",
+			labels: [
+				"Incorrect payment date!",
+				"Неправильная дата платежа!",
+				"To'lov sanasi noto'g'ri",
+			],
+		},
 	},
 };
 
