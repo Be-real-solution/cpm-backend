@@ -9,10 +9,14 @@ import { config } from "src/config";
 import { AdminEntity, StoreEntity } from "src/core/entity";
 import { AuthorizationError } from "../exception";
 import { StoreService } from "src/api/store/store.service";
+import { StoreBlocked } from "../exception/store-blocked";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
-	constructor(private adminService: AdminService, private storeService: StoreService) {
+	constructor(
+		private adminService: AdminService,
+		private storeService: StoreService,
+	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			secretOrKey: config.ACCESS_SECRET_KEY,
@@ -24,16 +28,15 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
 	async validate(req: Request, payload: AuthPayload) {
 		let user: AdminEntity | StoreEntity | null = null;
 
-    console.log(1, payload);
-    
+		console.log(1, payload);
 
 		try {
 			if (payload.role === Roles.STORE_ADMIN) {
 				user = await this.storeService
-				.findOneBy("en", {
-					where: { id: payload.id },
-				})
-				.then((res) => res.data);
+					.findOneBy("en", {
+						where: { id: payload.id },
+					})
+					.then((res) => res.data);
 			} else {
 				user = await this.adminService
 					.findOneBy("en", {
@@ -42,10 +45,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
 					.then((res) => res.data);
 			}
 
-			if (!user || !user?.is_active) {
-				console.log(4);
-				
+			if (!user) {
 				throw new AuthorizationError();
+			} else if (!user.is_active && user.role == Roles.STORE_ADMIN) {
+				throw new StoreBlocked();
 			}
 		} catch (error) {}
 

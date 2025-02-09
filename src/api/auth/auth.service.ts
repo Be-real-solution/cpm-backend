@@ -9,6 +9,7 @@ import { JwtToken } from "src/infrastructure/lib/jwt-token";
 import { LoginDto } from "./dto/login.dto";
 import { AuthorizationError } from "./exception";
 import { RefreshTokenDto } from "./dto/refresh-token.dto";
+import { StoreBlocked } from "./exception/store-blocked";
 
 @Injectable()
 export class AuthService {
@@ -43,11 +44,15 @@ export class AuthService {
 	/** store login */
 	public async storeLogin(dto: LoginDto): Promise<IResponse<any>> {
 		const store: StoreEntity | null = await this.storeRepo.findOne({
-			where: { username: dto.username, is_active: true, is_deleted: false },
+			where: { username: dto.username, is_deleted: false },
 		});
 
 		if (!store) {
 			throw new AuthorizationError();
+		}
+
+		if (!store.is_active) {
+			throw new StoreBlocked()
 		}
 
 		const check_pass: Boolean = await BcryptEncryption.compare(dto.password, store.password);

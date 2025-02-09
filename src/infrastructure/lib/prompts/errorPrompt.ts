@@ -2695,6 +2695,12 @@ export const ERROR_PROMPT_MAP = {
 				"To'lov sanasi noto'g'ri",
 			],
 		},
+		store_blocked: {
+			id: 10016,
+			status: "BADREQUEST",
+			code: "STORE",
+			labels: ["Store is blocked!", "Магазин заблокирован!", "Do'kon blocklangan!"],
+		},
 	},
 };
 
