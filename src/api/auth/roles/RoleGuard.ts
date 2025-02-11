@@ -25,7 +25,6 @@ export class RolesGuard implements CanActivate {
 
     const request: Express.Request = context.switchToHttp().getRequest();
     const user = request.user as AuthPayload;
-    console.log(user);
     
     return roles.includes(user.role);
   }

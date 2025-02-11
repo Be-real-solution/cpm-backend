@@ -28,7 +28,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
 	async validate(req: Request, payload: AuthPayload) {
 		let user: AdminEntity | StoreEntity | null = null;
 
-		console.log(1, payload);
 
 		try {
 			if (payload.role === Roles.STORE_ADMIN) {
@@ -50,7 +49,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
 			} else if (!user.is_active && user.role == Roles.STORE_ADMIN) {
 				throw new StoreBlocked();
 			}
-		} catch (error) {}
+		} catch (error) {
+			throw error
+		}
 
 		return user;
 	}
