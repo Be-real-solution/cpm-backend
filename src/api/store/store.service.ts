@@ -18,6 +18,7 @@ import { config } from "src/config";
 import { v4 } from "uuid";
 import { CreateStoreContractPDFDto } from "./dto/create-store-contract-pdf.dto";
 import { deleteFile } from "src/infrastructure/lib/fileService";
+import { Pager } from "src/infrastructure/lib/pagination";
 const pdf_creator = require("pdf-creator-node");
 
 @Injectable()
@@ -136,21 +137,61 @@ export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, St
 		});
 	}
 
-	/** report store api for admina */
-	public async reportStore(lang: string): Promise<IResponse<StoreEntity[]>> {
+	/** report store api for admin */
+	public async reportStore(
+		query: StoreFilterDto,
+		lang: string,
+	): Promise<IResponse<StoreEntity[]>> {
 		let store = await this.storeRepo
 			.createQueryBuilder(`store`)
 			.leftJoinAndSelect("store.contracts", "contract")
 			.select([
-				"store",
+				"store.id as id",
+				"store.is_active as is_active",
+				"store.is_deleted as is_deleted",
+				"store.created_at as created_at",
+				"store.updated_at as updated_at",
+				"store.deleted_at as deleted_at",
+				"store.name as name",
+				"store.phone as phone",
+				"store.region as region",
+				"store.address as address",
+				"store.director as director",
+				"store.manager as manager",
+				"store.username as username",
+				"store.password as password",
+				"store.bank_account_number as bank_account_number",
+				"store.bank_address as bank_address",
+				"store.mfo as mfo",
+				"store.stir as stir",
+				"store.payment_day as payment_day",
+				"store.monthly_payment as monthly_payment",
+				"store.responsible_person as responsible_person",
+				"store.second_phone as second_phone",
+				"store.order as order",
+				"store.store_contract_file_url as store_contract_file_url",
+				"store.role as role",
+				"store.hashed_token as hashed_token",
+				"store.created_by ascreated_by",
 				"count(contract.id) as contract_count",
 				"sum(contract.total_amount) as contract_total_amount",
 				"sum(contract.paid_amount) as contract_paid_amount",
 			])
+			.offset((query.page - 1) * query.page_size)
+			.limit(query.page_size)
 			.groupBy("store.id")
 			.getRawMany();
 
-		return { status_code: 200, data: store, message: responseByLang("get_all", lang) };
+		const count = await this.storeRepo.count();
+
+		return Pager.of(
+			store,
+			count,
+			query.page_size,
+			query.page,
+			200,
+			responseByLang("get_all", lang),
+		);
 	}
 
 	/** generate store contract pdf file */

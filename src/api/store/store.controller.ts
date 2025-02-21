@@ -23,11 +23,11 @@ import { StoreService } from "./store.service";
 import { CreateStoreContractPDFDto } from "./dto/create-store-contract-pdf.dto";
 
 @ApiTags("Store")
-@UseGuards(JwtAuthGuard, RolesGuard)
-@ApiBearerAuth()
+// @UseGuards(JwtAuthGuard, RolesGuard)
+// @ApiBearerAuth()
 @Controller("store")
 export class StoreController {
-	constructor(private readonly storeService: StoreService) { }
+	constructor(private readonly storeService: StoreService) {}
 
 	@ApiOperation({ summary: "create store api for admins" })
 	@ApiResponse({ status: 201, type: StoreEntity, description: "return created data" })
@@ -40,18 +40,17 @@ export class StoreController {
 	) {
 		return this.storeService.createStore(dto, lang, admin);
 	}
-	
+
 	@ApiOperation({ summary: "create store contract pdf api for admins" })
 	@ApiResponse({ status: 200, type: StoreEntity, description: "return store data" })
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
-	@Post('/create-contract-pdf')
+	@Post("/create-contract-pdf")
 	public createStoreContractPdf(
 		@Body() dto: CreateStoreContractPDFDto,
 		@CurrentLanguage() lang: string,
 	) {
 		return this.storeService.createStoreContractPdf(dto, lang);
 	}
-
 
 	@ApiOperation({ summary: "find all stores api for admins" })
 	@ApiResponse({ status: 200, type: [StoreEntity], description: "return found data" })
@@ -64,9 +63,9 @@ export class StoreController {
 	@ApiOperation({ summary: "find all stores api for admins" })
 	@ApiResponse({ status: 200, type: [StoreEntity], description: "return found data" })
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
-	@Get()
-	public reportStore(@CurrentLanguage() lang: string) {
-		return this.storeService.reportStore(lang);
+	@Get('report-store')
+	public reportStore(@Query() query: StoreFilterDto, @CurrentLanguage() lang: string) {
+		return this.storeService.reportStore(query, lang);
 	}
 
 	@ApiOperation({ summary: "find self info api for stores" })
@@ -74,7 +73,10 @@ export class StoreController {
 	@RolesDecorator(Roles.STORE_ADMIN)
 	@Get("find-self-info")
 	public findSelfInfo(@CurrentLanguage() lang: string, @CurrentUser() store: StoreEntity) {
-		return this.storeService.findOneById(store.id, lang, { where: { is_active: true, is_deleted: false }, relations: { payments: true } });
+		return this.storeService.findOneById(store.id, lang, {
+			where: { is_active: true, is_deleted: false },
+			relations: { payments: true },
+		});
 	}
 
 	@ApiOperation({ summary: "find one stores api for admins" })
