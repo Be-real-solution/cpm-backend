@@ -23,8 +23,8 @@ import { StoreService } from "./store.service";
 import { CreateStoreContractPDFDto } from "./dto/create-store-contract-pdf.dto";
 
 @ApiTags("Store")
-// @UseGuards(JwtAuthGuard, RolesGuard)
-// @ApiBearerAuth()
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth()
 @Controller("store")
 export class StoreController {
 	constructor(private readonly storeService: StoreService) {}
