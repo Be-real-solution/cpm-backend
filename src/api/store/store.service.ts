@@ -8,7 +8,7 @@ import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePr
 import { IResponse } from "src/common/type";
 import { StoreAlreadyExists } from "./exception/store-already-exists";
 import { BcryptEncryption } from "src/infrastructure/lib/bcrypt";
-import { Roles, StorePaymentStatus } from "src/common/database/Enums";
+import { ContractStatus, Roles, StorePaymentStatus } from "src/common/database/Enums";
 import { StoreFilterDto } from "./dto/store-filter.dto";
 import { FindOptionsWhereProperty, ILike, Not } from "typeorm";
 import { Cron } from "@nestjs/schedule";
@@ -192,6 +192,38 @@ export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, St
 			200,
 			responseByLang("get_all", lang),
 		);
+	}
+
+	/** find one report store */
+	public async findOnereportStore(
+		id: string,
+		lang: string,
+	): Promise<IResponse<StoreEntity | null>> {
+		await this.findOneById(id, lang, {
+			where: { is_deleted: false },
+		});
+
+		const store: StoreEntity | null = await this.storeRepo
+			.createQueryBuilder("store")
+			.where("store.id = :id and store.is_deleted = false", {
+				id,
+			})
+			.loadRelationCountAndMap("store.contract_count", "store.contracts")
+			.loadRelationCountAndMap("store.client_count", "store.clients", "clients", (qb) =>
+				qb.where("clients.is_deleted = false"),
+			)
+			.loadRelationCountAndMap("store.block_client_count", "store.clients", "clients", (qb) =>
+				qb.where("clients.is_active = false"),
+			)
+			.loadRelationCountAndMap(
+				"store.finished_contract_count",
+				"store.contracts",
+				"contracts",
+				(qb) => qb.where("contracts.status = :status", { status: ContractStatus.PAID }),
+			)
+			.getOne();
+
+		return { status_code: 200, data: store || null, message: responseByLang("get_one", lang) };
 	}
 
 	/** generate store contract pdf file */

@@ -63,9 +63,17 @@ export class StoreController {
 	@ApiOperation({ summary: "find all stores api for admins" })
 	@ApiResponse({ status: 200, type: [StoreEntity], description: "return found data" })
 	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
-	@Get('report-store')
+	@Get("report-store")
 	public reportStore(@Query() query: StoreFilterDto, @CurrentLanguage() lang: string) {
 		return this.storeService.reportStore(query, lang);
+	}
+
+	@ApiOperation({ summary: "find one report store api for admins" })
+	@ApiResponse({ status: 200, type: [StoreEntity], description: "return found data" })
+	@RolesDecorator(Roles.SUPER_ADMIN, Roles.ADMIN)
+	@Get("find-one-report-store/:id")
+	public findOneReportStore(@Param("id") id: string, @CurrentLanguage() lang: string) {
+		return this.storeService.findOnereportStore(id, lang);
 	}
 
 	@ApiOperation({ summary: "find self info api for stores" })
