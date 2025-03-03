@@ -138,7 +138,7 @@ export class NotificationService extends BaseService<
 			}
 		} else {
 			notification = await this.findOneById(id, lang, {
-				relations: { store_notifications: true },
+				relations: { store_notifications: { store: true } },
 			}).then((res) => res.data);
 		}
 
