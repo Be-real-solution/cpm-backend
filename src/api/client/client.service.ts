@@ -11,6 +11,7 @@ import { FindOptionsWhereProperty, ILike, Not } from "typeorm";
 import { CreateClientDto } from "./dto/create-client.dto";
 import { UpdateClientDto } from "./dto/update-client.dto";
 import { PassportOrPinflAlreadyExists } from "./exception/passport-or-pinfl-already-exists";
+import { FindByClientDetailDto } from "./dto/find-by-client-details.dto";
 
 @Injectable()
 export class ClientService extends BaseService<CreateClientDto, UpdateClientDto, ClientEntity> {
@@ -59,12 +60,32 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 			];
 		}
 
-			return this.findAllWithPagination(lang, {
-				where: where_condition,
-				order: { created_at: "DESC" },
-				take: query.page_size,
-				skip: query.page,
-			});
+		return this.findAllWithPagination(lang, {
+			where: where_condition,
+			order: { created_at: "DESC" },
+			take: query.page_size,
+			skip: query.page,
+		});
+	}
+
+	/** find one by client detail */
+	public async findOneClientDetail(
+		dto: FindByClientDetailDto,
+		lang: string,
+	): Promise<IResponse<ClientEntity>> {
+		let where_condition: FindOptionsWhereProperty<ClientEntity> = {
+			first_name: dto.first_name,
+			last_name: dto.last_name,
+			passport: dto.passport,
+			pinfl: dto.pinfl,
+			is_deleted: false,
+		};
+
+		if (dto.second_name) {
+			where_condition.second_name = dto.second_name;
+		}
+
+		return this.findOneBy(lang, { where: where_condition });
 	}
 
 	/** update client */

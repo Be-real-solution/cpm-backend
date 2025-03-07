@@ -11,6 +11,7 @@ import { ClientService } from "./client.service";
 import { CreateClientDto } from "./dto/create-client.dto";
 import { UpdateClientDto } from "./dto/update-client.dto";
 import { FilterDto } from "src/common/dto/filter.dto";
+import { FindByClientDetailDto } from "./dto/find-by-client-details.dto";
 
 @ApiTags("Clients")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -42,6 +43,18 @@ export class ClientController {
 		@CurrentUser() user: StoreEntity | AdminEntity,
 	) {
 		return this.clientService.findAllClient(query, lang, user);
+	}
+
+	@ApiOperation({ summary: "find one by client details api for store" })
+	@ApiResponse({ status: 200, type: ClientEntity, description: "return found data" })
+	@ApiBearerAuth()
+	@RolesDecorator(Roles.STORE_ADMIN)
+	@Get("find-one-client-detail")
+	public findOneByClientDetail(
+		@Query() query: FindByClientDetailDto,
+		@CurrentLanguage() lang: string,
+	) {
+		return this.clientService.findOneClientDetail(query, lang);
 	}
 
 	@ApiOperation({ summary: "find one client api for store" })

@@ -19,7 +19,7 @@ export class CreateStorePaymentDto {
 		example: StorePaymentStatus.UNPAID,
 		description: "status of store payment",
 	})
-public status!: StorePaymentStatus;
+	public status!: StorePaymentStatus;
 
 	@ApiProperty({
 		name: "monthly_payment",
