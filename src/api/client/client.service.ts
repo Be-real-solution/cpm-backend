@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Roles } from "src/common/database/Enums";
+import { ContractStatus, Roles } from "src/common/database/Enums";
 import { FilterDto } from "src/common/dto/filter.dto";
 import { AdminEntity, ClientEntity, StoreEntity } from "src/core/entity";
 import { ClientRepository } from "src/core/repository";
@@ -69,15 +69,16 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 	}
 
 	/** find one by client detail */
-	public async findOneClientDetail(
+	public async findClientDetail(
 		dto: FindByClientDetailDto,
 		lang: string,
-	): Promise<IResponse<ClientEntity>> {
+	): Promise<IResponse<ClientEntity[]>> {
 		let where_condition: FindOptionsWhereProperty<ClientEntity> = {
 			first_name: dto.first_name,
 			last_name: dto.last_name,
 			passport: dto.passport,
 			pinfl: dto.pinfl,
+			contracts: { status: ContractStatus.UNPAID, is_deleted: false },
 			is_deleted: false,
 		};
 
@@ -85,7 +86,7 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 			where_condition.second_name = dto.second_name;
 		}
 
-		return this.findOneBy(lang, { where: where_condition });
+		return this.findAll(lang, { where: where_condition, relations: {contracts: true} });
 	}
 
 	/** update client */

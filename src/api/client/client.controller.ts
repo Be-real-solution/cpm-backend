@@ -49,12 +49,12 @@ export class ClientController {
 	@ApiResponse({ status: 200, type: ClientEntity, description: "return found data" })
 	@ApiBearerAuth()
 	@RolesDecorator(Roles.STORE_ADMIN)
-	@Get("find-one-client-detail")
-	public findOneByClientDetail(
+	@Get("find-client-detail")
+	public findClientDetail(
 		@Query() query: FindByClientDetailDto,
 		@CurrentLanguage() lang: string,
 	) {
-		return this.clientService.findOneClientDetail(query, lang);
+		return this.clientService.findClientDetail(query, lang);
 	}
 
 	@ApiOperation({ summary: "find one client api for store" })
