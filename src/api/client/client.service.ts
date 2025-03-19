@@ -86,7 +86,7 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 			where_condition.second_name = dto.second_name;
 		}
 
-		return this.findAll(lang, { where: where_condition, relations: {contracts: true} });
+		return this.findAll(lang, { where: where_condition, relations: {contracts: true, store: true} });
 	}
 
 	/** update client */
