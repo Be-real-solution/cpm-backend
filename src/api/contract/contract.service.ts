@@ -97,9 +97,9 @@ export class ContractService extends BaseService<
 				relations: { store: true, client: true, contract_products: true },
 			});
 
-			const contract_pdf = await this.generatePdf(con.data, products);
+			// const contract_pdf = await this.generatePdf(con.data, products);
 
-			contract.contract_file_url = contract_pdf;
+			// contract.contract_file_url = contract_pdf;
 			await this.contractRepo.save(contract);
 		} catch (err) {
 			if (contract.contract_file_url) await deleteFile(contract.contract_file_url);
