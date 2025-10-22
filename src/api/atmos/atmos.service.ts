@@ -13,7 +13,11 @@ export class AtmosService {
 		const text = "kSfO0x9dVURzWD18f4Ch9MuMzUoa" + ":42cOiZrgWwPUGqIE9A8dQ0_Ju0Aa";
 		const key = Buffer.from(text).toString("base64");
 
-		const token = await axios.post("https://apigw.atmos.uz/token", {
+		console.log(key);
+
+		const token = await axios({
+			url: "https://apigw.atmos.uz/token",
+			method: "POST",
 			data: {
 				grant_type: "client_credentials",
 			},
@@ -29,7 +33,9 @@ export class AtmosService {
 	async bindCard(cardNumber: string, expireDate: string) {
 		const token = await this.getToken();
 
-		const bindCard = await axios.post("https://apigw.atmos.uz/partner/bind-card/init", {
+		const bindCard = await axios({
+      url: "https://apigw.atmos.uz/partner/bind-card/init",
+      method: "POST",
 			data: {
 				card_number: cardNumber,
 				expiry: expireDate,
@@ -46,7 +52,9 @@ export class AtmosService {
 	async confirmCard(transactionId: number, otp: string) {
 		const token = await this.getToken();
 
-		const bindCard = await axios.post("https://apigw.atmos.uz/partner/bind-card/confirm", {
+		const bindCard = await axios({
+      url: "https://apigw.atmos.uz/partner/bind-card/confirm",
+      method: "POST",
 			data: {
 				transaction_id: transactionId,
 				otp: otp,
@@ -57,7 +65,7 @@ export class AtmosService {
 			},
 		});
 
-    return bindCard.data
+		return bindCard.data;
 	}
 
 	private async getToken(): Promise<string> {
