@@ -4,6 +4,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { StoreEntity } from "./store.entity";
 import { ContractEntity } from "./contract.entity";
 import { ContractPaymentEntity } from "./contract-payment.entity";
+import { ClientCardEntity } from "./client-card.entity";
 
 @Entity("clients")
 export class ClientEntity extends BaseEntity {
@@ -105,4 +106,7 @@ export class ClientEntity extends BaseEntity {
 
 	@OneToMany(() => ContractPaymentEntity, (contract_payment) => contract_payment.client)
 	public contract_payments!: ContractPaymentEntity[];
+
+	@OneToMany(() => ClientCardEntity, (client_card) => client_card.client)
+	public cards!: ClientCardEntity[];
 }

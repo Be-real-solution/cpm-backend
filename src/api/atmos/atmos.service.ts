@@ -4,6 +4,7 @@ import axios from "axios";
 import { AtmosEntity } from "src/core/entity";
 import { AtmosRepository } from "src/core/repository/atmos.repository";
 import { LessThan } from "typeorm";
+import { BindCardDto } from "./dto/bind-card.dto";
 
 @Injectable()
 export class AtmosService {
@@ -30,21 +31,23 @@ export class AtmosService {
 		return token.data;
 	}
 
-	async bindCard(cardNumber: string, expireDate: string) {
+	async bindCard(dto: BindCardDto) {
 		const token = await this.getToken();
 
 		const bindCard = await axios({
       url: "https://apigw.atmos.uz/partner/bind-card/init",
       method: "POST",
 			data: {
-				card_number: cardNumber,
-				expiry: expireDate,
+				card_number: dto.card_number,
+				expiry: dto.expire,
 			},
 			headers: {
 				Authorization: `Bearer ${token}`,
 				"Content-Type": "application/json",
 			},
 		});
+
+		await this
 
 		return bindCard.data;
 	}

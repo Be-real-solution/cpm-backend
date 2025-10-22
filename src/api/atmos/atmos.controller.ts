@@ -18,7 +18,7 @@ export class AtmosController {
 
   @Post('bind-card')
   bindCard(@Body() body: BindCardDto) {
-    return this.atmosService.bindCard(body.cardNumber, body.expire);
+    return this.atmosService.bindCard(body);
   }
 
   @Post('confirm-card')

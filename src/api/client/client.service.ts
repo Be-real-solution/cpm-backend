@@ -12,10 +12,17 @@ import { CreateClientDto } from "./dto/create-client.dto";
 import { UpdateClientDto } from "./dto/update-client.dto";
 import { PassportOrPinflAlreadyExists } from "./exception/passport-or-pinfl-already-exists";
 import { FindByClientDetailDto } from "./dto/find-by-client-details.dto";
+import { BindCardDto } from "../atmos/dto/bind-card.dto";
+import { ClientCardEntity } from "src/core/entity";
+import { ClientCardRepository } from "src/core/repository";
+import { BindClientCardDto } from "./dto/bind-client-card.dto";
 
 @Injectable()
 export class ClientService extends BaseService<CreateClientDto, UpdateClientDto, ClientEntity> {
-	constructor(@InjectRepository(ClientEntity) private readonly clientRepo: ClientRepository) {
+	constructor(
+		@InjectRepository(ClientEntity) private readonly clientRepo: ClientRepository,
+		@InjectRepository(ClientCardEntity) private readonly clientCardRepo: ClientCardRepository,
+	) {
 		super(clientRepo, "CLient");
 	}
 
@@ -86,7 +93,10 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 			where_condition.second_name = dto.second_name;
 		}
 
-		return this.findAll(lang, { where: where_condition, relations: {contracts: true, store: true} });
+		return this.findAll(lang, {
+			where: where_condition,
+			relations: { contracts: true, store: true },
+		});
 	}
 
 	/** update client */
@@ -130,5 +140,22 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 		await this.clientRepo.update(id, dto);
 
 		return { status_code: 200, data: [], message: responseByLang("update", lang) };
+	}
+
+	public async bindCard(dto: BindClientCardDto) {
+		const client = await this.findOneById(dto.client_id, "uz", { where: { is_active: true } });
+
+		const client_card = await this.clientCardRepo.save({
+			client: client.data,
+			card_id: dto.data.card_id,
+			card_token: dto.data.card_token,
+			card_holder: dto.data.card_holder,
+			card_number: dto.data.pan,
+			expiry: dto.data.expiry,
+			balance: dto.data.balance,
+			phone: dto.data.phone,
+		});
+
+		return { status_code: 200, data: client_card, message: responseByLang("create", "uz") };
 	}
 }
