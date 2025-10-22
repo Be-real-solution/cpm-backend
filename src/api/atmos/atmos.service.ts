@@ -1,0 +1,82 @@
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import axios from "axios";
+import { AtmosEntity } from "src/core/entity";
+import { AtmosRepository } from "src/core/repository/atmos.repository";
+import { LessThan } from "typeorm";
+
+@Injectable()
+export class AtmosService {
+	constructor(@InjectRepository(AtmosEntity) private readonly atmosRepository: AtmosRepository) {}
+
+	async generateToken() {
+		const text = "kSfO0x9dVURzWD18f4Ch9MuMzUoa" + ":42cOiZrgWwPUGqIE9A8dQ0_Ju0Aa";
+		const key = Buffer.from(text).toString("base64");
+
+		const token = await axios.post("https://apigw.atmos.uz/token", {
+			data: {
+				grant_type: "client_credentials",
+			},
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded",
+				Authorization: "Basic " + key,
+			},
+		});
+
+		return token.data;
+	}
+
+	async bindCard(cardNumber: string, expireDate: string) {
+		const token = await this.getToken();
+
+		const bindCard = await axios.post("https://apigw.atmos.uz/partner/bind-card/init", {
+			data: {
+				card_number: cardNumber,
+				expiry: expireDate,
+			},
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		return bindCard.data;
+	}
+
+	async confirmCard(transactionId: number, otp: string) {
+		const token = await this.getToken();
+
+		const bindCard = await axios.post("https://apigw.atmos.uz/partner/bind-card/confirm", {
+			data: {
+				transaction_id: transactionId,
+				otp: otp,
+			},
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+    return bindCard.data
+	}
+
+	private async getToken(): Promise<string> {
+		const token = await this.atmosRepository.findOne({
+			where: {
+				expire: LessThan(Date.now()),
+			},
+		});
+
+		if (token) {
+			return token.token;
+		}
+
+		const newToken = await this.generateToken();
+		await this.atmosRepository.save({
+			token: newToken.access_token,
+			expire: Date.now() + newToken.expires_in * 1000 - 1000,
+		});
+
+		return newToken.access_token;
+	}
+}
