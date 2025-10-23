@@ -20,11 +20,13 @@ import {
 } from "typeorm";
 import { v4 } from "uuid";
 import { ClientService } from "../client/client.service";
+import { ClientCardService } from "../client-card/client-card.service";
 import { ContractFilterDto } from "./dto/contract-filter.dto";
 import { CreateContractDto } from "./dto/create-contract.dto";
 import { UpdateContractDto } from "./dto/update-contract.dto";
 import { SentIncorrectAmount } from "./exception/incorrect-amount";
 import { PaymentDataType } from "./types";
+import { BindCardToContractDto } from "./dto/bind-card-contract.dto";
 const pdf_creator = require("pdf-creator-node");
 
 @Injectable()
@@ -43,6 +45,7 @@ export class ContractService extends BaseService<
 		@InjectRepository(ContractProductEntity)
 		private readonly contractProductRepo: ContractProductRepository,
 		private readonly clientService: ClientService,
+		private readonly clientCardService: ClientCardService,
 	) {
 		super(contractRepo, "Contract");
 	}
@@ -108,6 +111,22 @@ export class ContractService extends BaseService<
 		}
 
 		return { status_code: 201, data: contract, message: responseByLang("create", lang) };
+	}
+
+	/** bind card to contract */
+	public async bindCardToContract(dto: BindCardToContractDto, lang: string, user: StoreEntity) {
+		const { data: contract } = await this.findOneById(dto.contract_id, lang, {
+			where: { store: user },
+			relations: { client: true },
+		});
+
+		const { data: card } = await this.clientCardService.findOneById(dto.card_id, lang, {
+			where: { client: { store: user, id: contract.client.id } },
+		});
+
+		contract.client_card = card;
+		await this.contractRepo.save(contract);
+		return { status_code: 200, data: contract, message: responseByLang("update", lang) };
 	}
 
 	/** calculate contract payment table */

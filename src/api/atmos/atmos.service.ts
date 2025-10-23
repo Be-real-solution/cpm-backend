@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import axios from "axios";
 import { AtmosEntity } from "src/core/entity";
 import { AtmosRepository } from "src/core/repository/atmos.repository";
-import { LessThan } from "typeorm";
+import { MoreThan } from "typeorm";
 import { BindCardDto } from "./dto/bind-card.dto";
 
 @Injectable()
@@ -47,7 +47,6 @@ export class AtmosService {
 			},
 		});
 
-		await this
 
 		return bindCard.data;
 	}
@@ -74,7 +73,7 @@ export class AtmosService {
 	private async getToken(): Promise<string> {
 		const token = await this.atmosRepository.findOne({
 			where: {
-				expire: LessThan(Date.now()),
+				expire: MoreThan(Date.now()),
 			},
 		});
 

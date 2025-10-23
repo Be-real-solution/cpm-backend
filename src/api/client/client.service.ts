@@ -142,8 +142,11 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 		return { status_code: 200, data: [], message: responseByLang("update", lang) };
 	}
 
-	public async bindCard(dto: BindClientCardDto) {
-		const client = await this.findOneById(dto.client_id, "uz", { where: { is_active: true } });
+	/** bind client card */
+	public async bindClientCard(dto: BindClientCardDto) {
+		const client = await this.findOneById(dto.client_id, "uz", {
+			where: { is_active: true, store: { id: dto.store_id } },
+		});
 
 		const client_card = await this.clientCardRepo.save({
 			client: client.data,

@@ -13,6 +13,7 @@ import { ContractPaymentModule } from './contract-payment/contract-payment.modul
 import { NotificationModule } from './notification/notification.module';
 import { PaymentModule } from './payment/payment.module';
 import { AtmosModule } from './atmos/atmos.module';
+import { ClientCardModule } from './client-card/client-card.module';
 
 @Module({
 	imports: [
@@ -33,6 +34,7 @@ import { AtmosModule } from './atmos/atmos.module';
 		NotificationModule,
 		PaymentModule,
 		AtmosModule,
+		ClientCardModule,
 	],
 })
 export class AppModule implements NestModule {

@@ -12,6 +12,7 @@ import { CreateContractDto } from "./dto/create-contract.dto";
 import { FilterDto } from "src/common/dto/filter.dto";
 import { UpdateContractDto } from "./dto/update-contract.dto";
 import { ContractFilterDto } from "./dto/contract-filter.dto";
+import { BindCardToContractDto } from "./dto/bind-card-contract.dto";
 
 @ApiTags("Contracts")
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -30,6 +31,19 @@ export class ContractController {
 		@CurrentUser() store: StoreEntity,
 	) {
 		return this.contractService.createContract(dto, lang, store);
+	}
+
+	@ApiOperation({ summary: "Bind card to contract api for stores" })
+	@ApiResponse({ status: 201, description: "return empty data" })
+	@ApiBearerAuth()
+	@RolesDecorator(Roles.STORE_ADMIN)
+	@Post("bind-card")
+	public bindCardToContract(
+		@Body() dto: BindCardToContractDto,
+		@CurrentLanguage() lang: string,
+		@CurrentUser() store: StoreEntity,
+	) {
+		return this.contractService.bindCardToContract(dto, lang, store);
 	}
 
 	@ApiOperation({ summary: "Calculate contract payment api for stores" })

@@ -14,6 +14,7 @@ class Data {
 }
 
 export class BindClientCardDto {
+	store_id!: string;
 	client_id!: string;
 	result!: Result;
 	data!: Data;

@@ -1,12 +1,17 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 import { BaseEntity } from "src/common/database/BaseEntity";
-import { ContractPaymentMethod, ContractPaymentStatus, ContractStatus } from "src/common/database/Enums";
+import {
+	ContractPaymentMethod,
+	ContractPaymentStatus,
+	ContractStatus,
+} from "src/common/database/Enums";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { ClientEntity } from "./client.entity";
 import { ContractPaymentEntity } from "./contract-payment.entity";
 import { ContractProductEntity } from "./contract-product.entity";
 import { StoreEntity } from "./store.entity";
+import { ClientCardEntity } from "./client-card.entity";
 
 export type JsonData = {
 	payment_data: {
@@ -135,6 +140,10 @@ export class ContractEntity extends BaseEntity {
 	@ManyToOne(() => StoreEntity, (store) => store.contracts)
 	@JoinColumn({ name: "store_id" })
 	public store!: StoreEntity;
+
+	@ManyToOne(() => ClientCardEntity, (client_card) => client_card.client)
+	@JoinColumn({ name: "client_card_id" })
+	public client_card!: ClientCardEntity;
 
 	@OneToMany(() => ContractProductEntity, (contract_product) => contract_product.contract)
 	public contract_products!: ContractProductEntity[];
