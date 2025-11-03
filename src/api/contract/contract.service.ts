@@ -6,8 +6,8 @@ import * as path from "path";
 import { ContractPaymentMethod, ContractPaymentStatus, Roles } from "src/common/database/Enums";
 import { IResponse } from "src/common/type";
 import { config } from "src/config";
-import { AdminEntity, ContractEntity, ContractProductEntity, StoreEntity } from "src/core/entity";
-import { ContractProductRepository, ContractRepository } from "src/core/repository";
+import { AdminEntity, ContractEntity, ContractPaymentEntity, ContractProductEntity, StoreEntity } from "src/core/entity";
+import { ContractPaymentRepository, ContractProductRepository, ContractRepository } from "src/core/repository";
 import { BaseService } from "src/infrastructure/lib/baseService";
 import { deleteFile } from "src/infrastructure/lib/fileService";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
@@ -46,6 +46,8 @@ export class ContractService extends BaseService<
 		private readonly contractProductRepo: ContractProductRepository,
 		private readonly clientService: ClientService,
 		private readonly clientCardService: ClientCardService,
+		@InjectRepository(ContractPaymentEntity)
+		private readonly contractPaymentRepo: ContractPaymentRepository,
 	) {
 		super(contractRepo, "Contract");
 	}
@@ -104,6 +106,7 @@ export class ContractService extends BaseService<
 
 			// contract.contract_file_url = contract_pdf;
 			await this.contractRepo.save(contract);
+			await this.createPaymentList(contract);
 		} catch (err) {
 			if (contract.contract_file_url) await deleteFile(contract.contract_file_url);
 			await this.contractRepo.delete({ id: contract.id });
@@ -111,6 +114,24 @@ export class ContractService extends BaseService<
 		}
 
 		return { status_code: 201, data: contract, message: responseByLang("create", lang) };
+	}
+
+	async createPaymentList (contract: ContractEntity) {
+		contract.payment_list.payment_data.forEach(async (item) => {
+			this.contractRepo
+			await this.contractPaymentRepo.save(
+				this.contractPaymentRepo.create({
+					amount: item.price,
+					amount_tiyn: item.price * 100,
+					method: ContractPaymentMethod.NOT_SELECTED,
+					client: { id: contract.client.id },
+					store: { id: contract.store.id },
+					contract: { id: contract.id },
+					status: ContractPaymentStatus.UNPAID,
+					payment_date: new Date(item.date),
+				}),
+			);
+		});
 	}
 
 	/** bind card to contract */

@@ -10,6 +10,8 @@ import { MoreThan } from "typeorm";
 import { BindCardDto } from "./dto/bind-card.dto";
 import { ConfirmCardDto } from "./dto/confirm-card.dto";
 import { ClientService } from "../client/client.service";
+import { CreatePayDto } from "./dto/create-pay.dto";
+import { ConfirmPayDto } from "./dto/confirm-pay.dto";
 
 @Injectable()
 export class PaymentService {
@@ -100,6 +102,50 @@ export class PaymentService {
 		return { status_code: 200, data: {}, message: "Card binded successfully" };
 	}
 
+	async createPay(dto: CreatePayDto, user: StoreEntity) {
+		const token = await this.getToken();
+
+		dto.amount = this.convertSomToTiyn(dto.amount)
+
+		const pay = await axios({
+			url: "https://apigw.atmos.uz/merchant/pay/create",
+			method: "POST",
+			data: {
+				amount: dto.amount,
+				// account: dto.account,
+				// terminal_id: dto.terminal_id,
+				store_id: dto.store_id,
+				lang: "uz",
+			},
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		return pay.data;
+	}
+
+	async confirmPay(dto: ConfirmPayDto) {
+		const token = await this.getToken();
+
+		const confirmPay = await axios({
+			url: "https://apigw.atmos.uz/merchant/pay/pre-apply",
+			method: "POST",
+			data: {
+				card_token: dto.card_token,
+				store_id: dto.store_id,
+				transaction_id: dto.transaction_id,
+			},
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		return confirmPay.data;
+	}
+
 	private async getToken(): Promise<string> {
 		const token = await this.atmosRepository.findOne({
 			where: {
@@ -118,5 +164,9 @@ export class PaymentService {
 		});
 
 		return newToken.access_token;
+	}
+
+	private convertSomToTiyn(amount: number) {
+		return amount * 100;
 	}
 }

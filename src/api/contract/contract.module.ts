@@ -2,12 +2,12 @@ import { Module } from "@nestjs/common";
 import { ContractService } from "./contract.service";
 import { ContractController } from "./contract.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { ContractEntity, ContractProductEntity } from "src/core/entity";
+import { ContractEntity, ContractPaymentEntity, ContractProductEntity } from "src/core/entity";
 import { ClientModule } from "../client/client.module";
 import { ClientCardModule } from "../client-card/client-card.module";
 
 @Module({
-	imports: [TypeOrmModule.forFeature([ContractEntity, ContractProductEntity]), ClientModule, ClientCardModule],
+	imports: [TypeOrmModule.forFeature([ContractEntity, ContractProductEntity, ContractPaymentEntity]), ClientModule, ClientCardModule],
 	controllers: [ContractController],
 	providers: [ContractService],
 	exports: [ContractService],

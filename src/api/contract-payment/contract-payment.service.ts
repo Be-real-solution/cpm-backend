@@ -118,4 +118,36 @@ export class ContractPaymentService extends BaseService<
 		};
 	}
 
+	private async createPaymentSchedule() {
+		const contract = await this.contractService.getRepository
+			.createQueryBuilder("contract")
+			.leftJoinAndSelect("contract.client", "client")
+			.leftJoinAndSelect("contract.store", "store")
+			.where(
+				`
+      	EXISTS (
+        	SELECT 1 
+        	FROM jsonb_array_elements(contract.payment_list->'payment_data') AS pd
+        	WHERE (pd->>'date')::bigint <= :date
+      	)
+    	`,
+				{ date: Date.now() },
+			)
+			.getOne();
+
+			if (!contract) return;
+
+			await this.contractPaymentRepo.save(
+				this.contractPaymentRepo.create({
+					amount: contract.payment_list.payment_data[0].price,
+					amount_tiyn: contract.payment_list.payment_data[0].price * 100,
+					method: contract.payment_list.payment_data[0].method,
+					client: { id: contract.client.id },
+					store: { id: contract.store.id },
+					contract: { id: contract.id },
+					status: ContractPaymentStatus.UNPAID,
+					payment_date: new Date(contract.payment_list.payment_data[0].date),
+				}),
+			);
+	}
 }

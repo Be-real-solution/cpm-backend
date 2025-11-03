@@ -26,6 +26,7 @@ export enum ContractStatus {
 export enum ContractPaymentStatus {
 	PAID = "paid",
 	UNPAID = "unpaid",
+	PARTLYPAID = "partlypaid"
 }
 
 export enum ContractInitialPaymentType {
@@ -41,6 +42,7 @@ export enum ContractPaymentMethod {
 	CASH = "cash",
 	CARD = "card",
 	BANK = "bank",
+	ATMOS = "atmos",
 	NOT_SELECTED = "not_selected",
 }
 
