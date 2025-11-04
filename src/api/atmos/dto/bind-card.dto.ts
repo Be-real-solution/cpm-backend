@@ -1,11 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsUUID } from "class-validator";
+import { IsString } from "class-validator";
 
-export class BindCardDto {
-	@ApiProperty({ name: "client_id", example: "" })
-	@IsUUID()
-	client_id!: string;
-
+export class BindCardAtmosDto {
 	@ApiProperty({ example: "123456789012" })
 	@IsString()
 	card_number!: string;

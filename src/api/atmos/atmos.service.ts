@@ -4,7 +4,7 @@ import axios from "axios";
 import { AtmosEntity } from "src/core/entity";
 import { AtmosRepository } from "src/core/repository/atmos.repository";
 import { MoreThan } from "typeorm";
-import { BindCardDto } from "./dto/bind-card.dto";
+import { BindCardAtmosDto } from "./dto/bind-card.dto";
 
 @Injectable()
 export class AtmosService {
@@ -31,7 +31,7 @@ export class AtmosService {
 		return token.data;
 	}
 
-	async bindCard(dto: BindCardDto) {
+	async bindCard(dto: BindCardAtmosDto) {
 		const token = await this.getToken();
 
 		const bindCard = await axios({

@@ -1,4 +1,3 @@
-import { ApiProperty } from "@nestjs/swagger";
 import { BaseEntity } from "src/common/database/BaseEntity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { StoreEntity } from "./store.entity";

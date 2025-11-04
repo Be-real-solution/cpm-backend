@@ -57,7 +57,7 @@ export default class Application {
 		const swaggerConfig = new DocumentBuilder()
 			.setTitle("CPM backend API")
 			.setDescription("Term payment web site")
-			.setVersion("1.0.0")
+			.setVersion("2.0.0")
 			.addBearerAuth()
 			.build();
 		const document = SwaggerModule.createDocument(app, swaggerConfig);

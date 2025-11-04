@@ -12,7 +12,6 @@ import { CreateClientDto } from "./dto/create-client.dto";
 import { UpdateClientDto } from "./dto/update-client.dto";
 import { PassportOrPinflAlreadyExists } from "./exception/passport-or-pinfl-already-exists";
 import { FindByClientDetailDto } from "./dto/find-by-client-details.dto";
-import { BindCardDto } from "../atmos/dto/bind-card.dto";
 import { ClientCardEntity } from "src/core/entity";
 import { ClientCardRepository } from "src/core/repository";
 import { BindClientCardDto } from "./dto/bind-client-card.dto";
