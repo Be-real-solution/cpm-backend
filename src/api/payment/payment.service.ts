@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, Injectable } from "@nestjs/common";
 import { CreatePaymentDto } from "./dto/create-payment.dto";
 import { UpdatePaymentDto } from "./dto/update-payment.dto";
 import { PaymentLoginDto } from "./dto/login.dto";
@@ -73,6 +73,10 @@ export class PaymentService {
 			},
 		});
 
+		if (bindCard.data?.result?.code === "OK") {
+			throw new HttpException(bindCard.data.result.message, 400);
+		}
+
 		return bindCard.data;
 	}
 
@@ -91,6 +95,10 @@ export class PaymentService {
 				"Content-Type": "application/json",
 			},
 		});
+
+		if (bindCard.data?.result?.code === "OK") {
+			throw new HttpException(bindCard.data.result.message, 400);
+		}
 
 		await this.clientService.bindClientCard({
 			store_id: user.id,
