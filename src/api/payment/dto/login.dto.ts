@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from "class-validator";
 
-export class LoginDto {
+export class PaymentLoginDto {
     @IsString()
     url!: string;
     @IsOptional()

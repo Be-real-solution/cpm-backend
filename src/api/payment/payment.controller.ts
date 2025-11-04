@@ -2,30 +2,32 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from "@nestjs/
 import { PaymentService } from "./payment.service";
 import { CreatePaymentDto } from "./dto/create-payment.dto";
 import { UpdatePaymentDto } from "./dto/update-payment.dto";
-import { LoginDto } from "./dto/login.dto";
+import { PaymentLoginDto } from "./dto/login.dto";
 import { BindCardDto } from "./dto/bind-card.dto";
 import { ConfirmCardDto } from "./dto/confirm-card.dto";
 import { CurrentUser } from "src/common/decorator/current-user";
 import { StoreEntity } from "src/core/entity";
-import { RolesDecorator } from "../auth/roles/RolesDecorator";
+import { Public, RolesDecorator } from "../auth/roles/RolesDecorator";
 import { Roles } from "src/common/database/Enums";
 import { JwtAuthGuard } from "../auth/user/AuthGuard";
 import { UseGuards } from "@nestjs/common";
 import { RolesGuard } from "../auth/roles/RoleGuard";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 
 @ApiTags("Payment")
 @Controller("payment")
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth()
 export class PaymentController {
 	constructor(private readonly paymentService: PaymentService) {}
 
 	@Post("login")
-	login(@Body() dto: LoginDto) {
+	login(@Body() dto: PaymentLoginDto) {
 		return this.paymentService.login(dto);
 	}
 
 	@Post("callback")
+	@Public()
 	callback(@Req() req: Request) {
 		console.log(req);
 		return {

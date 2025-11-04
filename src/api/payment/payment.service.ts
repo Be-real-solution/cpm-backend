@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { CreatePaymentDto } from "./dto/create-payment.dto";
 import { UpdatePaymentDto } from "./dto/update-payment.dto";
-import { LoginDto } from "./dto/login.dto";
+import { PaymentLoginDto } from "./dto/login.dto";
 import axios from "axios";
 import { AtmosEntity, StoreEntity } from "src/core/entity";
 import { AtmosRepository } from "src/core/repository/atmos.repository";
@@ -20,7 +20,7 @@ export class PaymentService {
 		private readonly clientService: ClientService,
 	) {}
 
-	async login(dto: LoginDto) {
+	async login(dto: PaymentLoginDto) {
 		const text = "kSfO0x9dVURzWD18f4Ch9MuMzUoa" + ":42cOiZrgWwPUGqIE9A8dQ0_Ju0Aa";
 		const base64 = Buffer.from(text).toString("base64");
 		console.log(base64); // U2Fsb20gRHVueW8h

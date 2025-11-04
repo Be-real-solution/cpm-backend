@@ -9,8 +9,6 @@ import { AdminAlreadyExists } from "./exception/admin-already-exists";
 import { BcryptEncryption } from "src/infrastructure/lib/bcrypt";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
 import { IResponse } from "src/common/type";
-import { LoginDto } from "./dto/login.dto";
-import { UsernameOrPasswordIncorrect } from "./exception/username-or-password-incorrect";
 import { JwtToken } from "src/infrastructure/lib/jwt-token";
 import { Roles } from "src/common/database/Enums";
 import { Not } from "typeorm";
