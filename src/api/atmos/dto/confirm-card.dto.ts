@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty } from "class-validator";
 
-export class ConfirmCardDto {
+export class AtmosConfirmCardDto {
 	@ApiProperty({ example: 1 })
 	@IsNotEmpty()
 	public transactionId!: number;

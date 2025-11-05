@@ -10,24 +10,36 @@ import { RolesGuard } from "../auth/roles/RoleGuard";
 import { CurrentLanguage } from "src/common/decorator/current-language";
 import { CurrentUser } from "src/common/decorator/current-user";
 import { AdminEntity, ContractPaymentEntity, StoreEntity } from "src/core/entity";
+import { CreatePaymentDto } from "./dto/create-payment.dto";
 
 @ApiTags("Contract payments")
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth()
 @Controller("contract-payment")
 export class ContractPaymentController {
 	constructor(private readonly contractPaymentService: ContractPaymentService) {}
 
+	// @Post()
+	// @ApiOperation({ summary: "Create contract payment api for stores" })
+	// @ApiResponse({ status: 201, type: ContractPaymentEntity, description: "return created data" })
+	// @RolesDecorator(Roles.STORE_ADMIN)
+	// public create(
+	// 	@Body() dto: CreateContractPaymentDto,
+	// 	@CurrentLanguage() lang: string,
+	// 	@CurrentUser() store: StoreEntity,
+	// ) {
+	// 	return this.contractPaymentService.createContractPayment(dto, lang, store);
+	// }
+
+	@Post("create-payment")
 	@ApiOperation({ summary: "Create contract payment api for stores" })
-	@ApiResponse({ status: 201, type: ContractPaymentEntity, description: "return created data" })
-	@ApiBearerAuth()
 	@RolesDecorator(Roles.STORE_ADMIN)
-	@Post()
-	public create(
-		@Body() dto: CreateContractPaymentDto,
+	public createPayment(
+		@Body() dto: CreatePaymentDto,
 		@CurrentLanguage() lang: string,
 		@CurrentUser() store: StoreEntity,
 	) {
-		return this.contractPaymentService.createContractPayment(dto, lang, store);
+		return this.contractPaymentService.createPayment(dto, lang, store);
 	}
 
 	@ApiOperation({ summary: "find all contract payment api for stores" })

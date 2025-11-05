@@ -1,6 +1,4 @@
 import { HttpException, Injectable } from "@nestjs/common";
-import { CreatePaymentDto } from "./dto/create-payment.dto";
-import { UpdatePaymentDto } from "./dto/update-payment.dto";
 import { PaymentLoginDto } from "./dto/login.dto";
 import axios from "axios";
 import { AtmosEntity, StoreEntity } from "src/core/entity";
@@ -120,8 +118,6 @@ export class PaymentService {
 			method: "POST",
 			data: {
 				amount: dto.amount,
-				// account: dto.account,
-				// terminal_id: dto.terminal_id,
 				store_id: dto.store_id,
 				lang: "uz",
 			},

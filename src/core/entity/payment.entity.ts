@@ -1,5 +1,6 @@
 import { BaseEntity } from "src/common/database/BaseEntity";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { ContractPaymentEntity } from "./contract-payment.entity";
 
 @Entity("payments")
 export class PaymentEntity extends BaseEntity {
@@ -26,4 +27,11 @@ export class PaymentEntity extends BaseEntity {
 
   @Column()
   public data!: string;
+
+  @Column()
+  public contract_payment_id!: string;
+
+  @ManyToOne(() => ContractPaymentEntity, (contract_payment) => contract_payment.payments)
+  @JoinColumn({ name: "contract_payment_id" })
+  public contract_payment!: ContractPaymentEntity;
 }

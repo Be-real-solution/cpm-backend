@@ -1,7 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from "@nestjs/common";
 import { PaymentService } from "./payment.service";
-import { CreatePaymentDto } from "./dto/create-payment.dto";
-import { UpdatePaymentDto } from "./dto/update-payment.dto";
 import { PaymentLoginDto } from "./dto/login.dto";
 import { BindCardDto } from "./dto/bind-card.dto";
 import { ConfirmCardDto } from "./dto/confirm-card.dto";

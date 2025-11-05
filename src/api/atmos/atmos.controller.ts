@@ -4,7 +4,7 @@ import { CreateAtmoDto } from './dto/create-atmo.dto';
 import { UpdateAtmoDto } from './dto/update-atmo.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { BindCardAtmosDto } from './dto/bind-card.dto';
-import { ConfirmCardDto } from './dto/confirm-card.dto';
+import { AtmosConfirmCardDto } from './dto/confirm-card.dto';
 
 @ApiTags('Atmos')
 @Controller('atmos')
@@ -22,7 +22,7 @@ export class AtmosController {
   }
 
   @Post('confirm-card')
-  confirmCard(@Body() body: ConfirmCardDto) {
+  confirmCard(@Body() body: AtmosConfirmCardDto) {
     return this.atmosService.confirmCard(body.transactionId, body.otp);
   }
 }

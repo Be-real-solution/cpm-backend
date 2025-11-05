@@ -259,7 +259,7 @@ export class ContractService extends BaseService<
 
 		const { data: contract } = await this.findOneById(id, lang, {
 			where,
-			relations: { client: true, contract_products: true },
+			relations: { client: true, contract_products: true, contract_payments: true },
 		});
 
 		return { status_code: 200, data: contract, message: responseByLang("get_one", lang) };

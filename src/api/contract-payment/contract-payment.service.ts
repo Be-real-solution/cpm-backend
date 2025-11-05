@@ -14,6 +14,7 @@ import { ContractPaymentStatus, Roles } from "src/common/database/Enums";
 import { PaymentAlreadyPaid } from "./exception/payment-already-paid";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
 import { IResponse } from "src/common/type";
+import { CreatePaymentDto } from "./dto/create-payment.dto";
 
 @Injectable()
 export class ContractPaymentService extends BaseService<
@@ -94,6 +95,37 @@ export class ContractPaymentService extends BaseService<
 		};
 	}
 
+	public async createPayment(
+		dto: CreatePaymentDto,
+		lang: string,
+		store: StoreEntity,
+	): Promise<IResponse<ContractPaymentEntity>> {
+		const [{data: contract_payment}] = await Promise.all([
+			this.findOneById(dto.contract_payment_id, lang, {
+				where: { store },
+				relations: { payments: true },
+			}),
+			this.contractService.findOneById(dto.contract_id, lang, {
+				where: { store },
+			}),
+		]);
+
+		const total = contract_payment.payments.reduce((acc, payment) => acc + payment.amount, 0);
+
+		if (dto.amount != contract_payment.amount) {
+			throw new SentIncorrectAmount();
+		}
+
+		contract_payment.status = ContractPaymentStatus.PAID;
+		await this.contractPaymentRepo.save(contract_payment);
+
+		return {
+			status_code: 201,
+			data: contract_payment,
+			message: responseByLang("update", lang),
+		};
+	}
+
 	/** find all contract payment api */
 	public async findAllContractPayment(
 		lang: string,
@@ -135,19 +167,19 @@ export class ContractPaymentService extends BaseService<
 			)
 			.getOne();
 
-			if (!contract) return;
+		if (!contract) return;
 
-			await this.contractPaymentRepo.save(
-				this.contractPaymentRepo.create({
-					amount: contract.payment_list.payment_data[0].price,
-					amount_tiyn: contract.payment_list.payment_data[0].price * 100,
-					method: contract.payment_list.payment_data[0].method,
-					client: { id: contract.client.id },
-					store: { id: contract.store.id },
-					contract: { id: contract.id },
-					status: ContractPaymentStatus.UNPAID,
-					payment_date: new Date(contract.payment_list.payment_data[0].date),
-				}),
-			);
+		await this.contractPaymentRepo.save(
+			this.contractPaymentRepo.create({
+				amount: contract.payment_list.payment_data[0].price,
+				amount_tiyn: contract.payment_list.payment_data[0].price * 100,
+				method: contract.payment_list.payment_data[0].method,
+				client: { id: contract.client.id },
+				store: { id: contract.store.id },
+				contract: { id: contract.id },
+				status: ContractPaymentStatus.UNPAID,
+				payment_date: new Date(contract.payment_list.payment_data[0].date),
+			}),
+		);
 	}
 }

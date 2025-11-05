@@ -1,9 +1,10 @@
 import { BaseEntity } from "src/common/database/BaseEntity";
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { StoreEntity } from "./store.entity";
 import { ClientEntity } from "./client.entity";
 import { ContractEntity } from "./contract.entity";
 import { ContractPaymentMethod, ContractPaymentStatus } from "src/common/database/Enums";
+import { PaymentEntity } from "./payment.entity";
 
 @Entity("contract_payments")
 export class ContractPaymentEntity extends BaseEntity {
@@ -33,4 +34,7 @@ export class ContractPaymentEntity extends BaseEntity {
 	@ManyToOne(() => ContractEntity, (contract) => contract.contract_payments)
 	@JoinColumn({ name: "contract_id" })
 	public contract!: ContractEntity;
+
+	@OneToMany(() => PaymentEntity, (payment) => payment.contract_payment)
+	public payments!: PaymentEntity[];
 }
