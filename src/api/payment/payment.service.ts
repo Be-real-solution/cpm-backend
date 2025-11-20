@@ -52,11 +52,14 @@ export class PaymentService {
 			},
 		});
 
+		console.log("Generate token", token.data);
+
 		return token.data;
 	}
 
 	async bindCard(dto: BindCardDto) {
 		const token = await this.getToken();
+		console.log("Bind token", token);
 
 		const bindCard = await axios({
 			url: "https://apigw.atmos.uz/partner/bind-card/init",
@@ -71,6 +74,8 @@ export class PaymentService {
 			},
 		});
 
+		console.log("Bind card", bindCard.data);
+
 		if (bindCard.data?.result?.code === "OK") {
 			throw new HttpException(bindCard.data.result.message, 400);
 		}
@@ -80,6 +85,8 @@ export class PaymentService {
 
 	async confirmCard(dto: ConfirmCardDto, user: StoreEntity) {
 		const token = await this.getToken();
+		console.log("Confirm token", token);
+		
 
 		const bindCard = await axios({
 			url: "https://apigw.atmos.uz/partner/bind-card/confirm",
@@ -93,6 +100,8 @@ export class PaymentService {
 				"Content-Type": "application/json",
 			},
 		});
+
+		console.log("Confirm bind card", bindCard.data);
 
 		if (bindCard.data?.result?.code === "OK") {
 			throw new HttpException(bindCard.data.result.message, 400);
