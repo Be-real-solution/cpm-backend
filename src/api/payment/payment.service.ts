@@ -75,6 +75,8 @@ export class PaymentService {
 		});
 
 		console.log("Bind card", bindCard.data);
+		console.log(bindCard.data?.result?.code === "OK", bindCard.data?.result);
+		
 
 		if (bindCard.data?.result?.code === "OK") {
 			throw new HttpException(bindCard.data.result.message, 400);
