@@ -155,7 +155,7 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 			card_holder: dto.data.card_holder,
 			card_number: dto.data.pan,
 			expiry: dto.data.expiry,
-			balance: dto.data.balance,
+			balance: dto.data.balance || 0,
 			phone: dto.data.phone,
 		});
 
