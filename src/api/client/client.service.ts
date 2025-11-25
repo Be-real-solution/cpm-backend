@@ -146,18 +146,20 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 		const client = await this.findOneById(dto.client_id, "uz", {
 			where: { is_active: true, store: { id: dto.store_id } },
 		});
-	console.log("dto confirm card",dto);
-	
-		const client_card = await this.clientCardRepo.save({
-			client: client.data,
-			card_id: dto.data.card_id,
-			card_token: dto.data.card_token,
-			card_holder: dto.data.card_holder,
-			card_number: dto.data.pan,
-			expiry: dto.data.expiry,
-			balance: dto.data.balance || 0,
-			phone: dto.data.phone,
-		});
+		console.log("dto confirm card", dto);
+
+		const client_card: ClientCardEntity = await this.clientCardRepo.save(
+			this.clientCardRepo.create({
+				client: client.data,
+				card_id: dto.data.card_id,
+				card_token: dto.data.card_token,
+				card_holder: dto.data.card_holder,
+				pan: dto.data.pan,
+				expiry: dto.data.expiry,
+				balance: dto.data.balance || 0,
+				phone: dto.data.phone,
+			}),
+		);
 
 		return { status_code: 200, data: client_card, message: responseByLang("create", "uz") };
 	}
