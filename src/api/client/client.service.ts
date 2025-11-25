@@ -146,7 +146,8 @@ export class ClientService extends BaseService<CreateClientDto, UpdateClientDto,
 		const client = await this.findOneById(dto.client_id, "uz", {
 			where: { is_active: true, store: { id: dto.store_id } },
 		});
-
+	console.log("dto confirm card",dto);
+	
 		const client_card = await this.clientCardRepo.save({
 			client: client.data,
 			card_id: dto.data.card_id,
