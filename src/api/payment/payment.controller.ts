@@ -11,6 +11,9 @@ import { JwtAuthGuard } from "../auth/user/AuthGuard";
 import { UseGuards } from "@nestjs/common";
 import { RolesGuard } from "../auth/roles/RoleGuard";
 import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
+import axios from "axios";
+import { CreatePayDto } from "./dto/create-pay.dto";
+import { ConfirmPayDto } from "./dto/confirm-pay.dto";
 
 @ApiTags("Payment")
 @Controller("payment")
@@ -26,12 +29,14 @@ export class PaymentController {
 
 	@Post("callback")
 	@Public()
-	callback(@Req() req: Request) {
-		console.log(req);
-		return {
-			status: 1,
-			message: "Успешно",
-		};
+	async callback(@Req() req: Request) {
+		console.log(req.body);
+		console.log(req.headers);
+		const url = `https://api.telegram.org/bot6243405014:AAEUzdM3WhJ-KQe1T1gz5UG5msLQhShYqQ4/sendMessage?chat_id=784562004&text=${JSON.stringify(
+			req.body,
+		)}`;
+		await axios.post(url);
+		return { status_code: 200, data: {}, message: "Callback received" };
 	}
 
 	@Post("bind-card")
@@ -45,5 +50,13 @@ export class PaymentController {
 		return this.paymentService.confirmCard(dto, user);
 	}
 
+	@Post("create-pay")
+	createPay(@Body() dto: CreatePayDto, @CurrentUser() user: StoreEntity) {
+		return this.paymentService.createPay(dto, user);
+	}
 
+	@Post("confirm-pay")
+	confirmPay(@Body() dto: ConfirmPayDto) {
+		return this.paymentService.confirmPay(dto);
+	}
 }

@@ -6,8 +6,18 @@ import * as path from "path";
 import { ContractPaymentMethod, ContractPaymentStatus, Roles } from "src/common/database/Enums";
 import { IResponse } from "src/common/type";
 import { config } from "src/config";
-import { AdminEntity, ContractEntity, ContractPaymentEntity, ContractProductEntity, StoreEntity } from "src/core/entity";
-import { ContractPaymentRepository, ContractProductRepository, ContractRepository } from "src/core/repository";
+import {
+	AdminEntity,
+	ContractEntity,
+	ContractPaymentEntity,
+	ContractProductEntity,
+	StoreEntity,
+} from "src/core/entity";
+import {
+	ContractPaymentRepository,
+	ContractProductRepository,
+	ContractRepository,
+} from "src/core/repository";
 import { BaseService } from "src/infrastructure/lib/baseService";
 import { deleteFile } from "src/infrastructure/lib/fileService";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
@@ -71,7 +81,7 @@ export class ContractService extends BaseService<
 				duty_amount: dto.total_amount - dto.initial_payment_amount,
 				total_amount: dto.total_amount,
 				contract_number: contract_number ? contract_number + 1 : 1000,
-				payment_list: payment_list,
+				// payment_list: payment_list,
 				client: client,
 				store: store,
 			}),
@@ -106,7 +116,7 @@ export class ContractService extends BaseService<
 
 			// contract.contract_file_url = contract_pdf;
 			await this.contractRepo.save(contract);
-			await this.createPaymentList(contract);
+			await this.createPaymentList(contract, payment_list);
 		} catch (err) {
 			if (contract.contract_file_url) await deleteFile(contract.contract_file_url);
 			await this.contractRepo.delete({ id: contract.id });
@@ -116,9 +126,9 @@ export class ContractService extends BaseService<
 		return { status_code: 201, data: contract, message: responseByLang("create", lang) };
 	}
 
-	async createPaymentList (contract: ContractEntity) {
-		contract.payment_list.payment_data.forEach(async (item) => {
-			this.contractRepo
+	async createPaymentList(contract: ContractEntity, payment_list: PaymentDataType) {
+		payment_list.payment_data.forEach(async (item) => {
+			this.contractRepo;
 			await this.contractPaymentRepo.save(
 				this.contractPaymentRepo.create({
 					amount: item.price,
@@ -260,6 +270,7 @@ export class ContractService extends BaseService<
 		const { data: contract } = await this.findOneById(id, lang, {
 			where,
 			relations: { client: true, contract_products: true, contract_payments: true },
+			order: { contract_payments: { payment_date: "DESC" } },
 		});
 
 		return { status_code: 200, data: contract, message: responseByLang("get_one", lang) };

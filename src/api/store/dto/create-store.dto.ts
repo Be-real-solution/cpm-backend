@@ -1,8 +1,9 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
 	IsNotEmpty,
 	IsNumber,
 	IsNumberString,
+	IsOptional,
 	IsString,
 	Max,
 	MaxLength,
@@ -158,4 +159,13 @@ export class CreateStoreDto {
 	@IsNotEmpty()
 	@IsNumberString()
 	public stir!: string;
+
+	@ApiPropertyOptional({
+		name: "atmos_id",
+		example: "7492384298",
+		description: "atmos_id of store",
+	})
+	@IsOptional()
+	@IsString()
+	public atmos_id?: string;
 }
