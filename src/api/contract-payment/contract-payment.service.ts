@@ -15,6 +15,7 @@ import { PaymentAlreadyPaid } from "./exception/payment-already-paid";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
 import { IResponse } from "src/common/type";
 import { CreatePaymentDto } from "./dto/create-payment.dto";
+import { LessThanOrEqual } from "typeorm";
 
 @Injectable()
 export class ContractPaymentService extends BaseService<
@@ -110,8 +111,6 @@ export class ContractPaymentService extends BaseService<
 			}),
 		]);
 
-		const total = contract_payment.payments.reduce((acc, payment) => acc + payment.amount, 0);
-
 		if (dto.amount != contract_payment.amount) {
 			throw new SentIncorrectAmount();
 		}
@@ -150,36 +149,27 @@ export class ContractPaymentService extends BaseService<
 		};
 	}
 
+	/** create payment schedule */
+	@Cron("* * * * * *")
 	private async createPaymentSchedule() {
-		const contract = await this.contractService.getRepository
-			.createQueryBuilder("contract")
-			.leftJoinAndSelect("contract.client", "client")
-			.leftJoinAndSelect("contract.store", "store")
-			.where(
-				`
-      	EXISTS (
-        	SELECT 1 
-        	FROM jsonb_array_elements(contract.payment_list->'payment_data') AS pd
-        	WHERE (pd->>'date')::bigint <= :date
-      	)
-    	`,
-				{ date: Date.now() },
-			)
-			.getOne();
 
-		if (!contract) return;
+		const todayStart = new Date();
+		todayStart.setHours(0, 0, 0, 0);
 
-		await this.contractPaymentRepo.save(
-			this.contractPaymentRepo.create({
-				amount: contract.payment_list.payment_data[0].price,
-				amount_tiyn: contract.payment_list.payment_data[0].price * 100,
-				method: contract.payment_list.payment_data[0].method,
-				client: { id: contract.client.id },
-				store: { id: contract.store.id },
-				contract: { id: contract.id },
+		console.log(todayStart);
+
+		const contractPayment = await this.contractPaymentRepo.find({
+			where: {
 				status: ContractPaymentStatus.UNPAID,
-				payment_date: new Date(contract.payment_list.payment_data[0].date),
-			}),
-		);
+				payment_date: LessThanOrEqual(todayStart),
+			}
+		})
+
+		
+		contractPayment.forEach(async (item) => {
+			
+		})
+
 	}
 }
+

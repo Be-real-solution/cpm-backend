@@ -47,6 +47,9 @@ export class StoreEntity extends BaseEntity {
 	@Column({ type: "varchar", nullable: true })
 	public stir!: string;
 
+	@Column({ type: "varchar", nullable: true })
+	public atmos_id!: string;
+
 	@Column({ type: "smallint" })
 	public payment_day!: number;
 
