@@ -23,6 +23,9 @@ export class ContractPaymentEntity extends BaseEntity {
 	@Column({ type: "date" })
 	public payment_date!: Date;
 
+	@Column({ type: "varchar", nullable: true })
+	public transaction_id!: string;
+
 	@ManyToOne(() => StoreEntity, (store) => store.contract_payments)
 	@JoinColumn({ name: "store_id" })
 	public store!: StoreEntity;
