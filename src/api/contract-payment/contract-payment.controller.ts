@@ -54,6 +54,15 @@ export class ContractPaymentController {
 		return this.contractPaymentService.findAllContractPayment(lang, user);
 	}
 
+	@ApiOperation({ summary: "find all contract payment api for stores" })
+	@ApiResponse({ status: 200, type: [ContractPaymentEntity], description: "return found data" })
+	@ApiBearerAuth()
+	@RolesDecorator(Roles.STORE_ADMIN, Roles.SUPER_ADMIN, Roles.ADMIN)
+	@Post("manual-payment-schedule")
+	manualPaymentSchedule() {
+		return this.contractPaymentService.manualPaymentSchedule();
+	}
+
 	@ApiOperation({ summary: "find one contract payment api for stores" })
 	@ApiResponse({ status: 200, type: ContractPaymentEntity, description: "return found data" })
 	@ApiBearerAuth()

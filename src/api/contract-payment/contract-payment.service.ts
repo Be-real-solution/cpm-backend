@@ -5,17 +5,18 @@ import { BaseService } from "src/infrastructure/lib/baseService";
 import { ContractPaymentEntity } from "src/core/entity/contract-payment.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ContractPaymentRepository } from "src/core/repository";
-import { AdminEntity, StoreEntity } from "src/core/entity";
+import { AdminEntity, PaymentEntity, StoreEntity } from "src/core/entity";
 import { ContractService } from "../contract/contract.service";
 import { Cron } from "@nestjs/schedule";
 import { SentIncorrectPaymentId } from "./exception/sent-incorrect-payment-id";
 import { SentIncorrectAmount } from "./exception/incorrect-amount";
-import { ContractPaymentStatus, Roles } from "src/common/database/Enums";
+import { ContractPaymentMethod, ContractPaymentStatus, Roles } from "src/common/database/Enums";
 import { PaymentAlreadyPaid } from "./exception/payment-already-paid";
 import { responseByLang } from "src/infrastructure/lib/prompts/successResponsePrompt";
 import { IResponse } from "src/common/type";
 import { CreatePaymentDto } from "./dto/create-payment.dto";
-import { LessThanOrEqual } from "typeorm";
+import { LessThanOrEqual, Repository } from "typeorm";
+import { PaymentService } from "../payment/payment.service";
 
 @Injectable()
 export class ContractPaymentService extends BaseService<
@@ -27,6 +28,10 @@ export class ContractPaymentService extends BaseService<
 		@InjectRepository(ContractPaymentEntity)
 		private readonly contractPaymentRepo: ContractPaymentRepository,
 		private readonly contractService: ContractService,
+		private readonly paymentService: PaymentService,
+
+		@InjectRepository(PaymentEntity)
+		private readonly paymentRepo: Repository<PaymentEntity>,
 	) {
 		super(contractPaymentRepo, "Contract payment");
 	}
@@ -101,7 +106,7 @@ export class ContractPaymentService extends BaseService<
 		lang: string,
 		store: StoreEntity,
 	): Promise<IResponse<ContractPaymentEntity>> {
-		const [{data: contract_payment}] = await Promise.all([
+		const [{ data: contract_payment }] = await Promise.all([
 			this.findOneById(dto.contract_payment_id, lang, {
 				where: { store },
 				relations: { payments: true },
@@ -150,26 +155,62 @@ export class ContractPaymentService extends BaseService<
 	}
 
 	/** create payment schedule */
-	@Cron("* * * * * *")
+	// @Cron("*/5 * * * *")
 	private async createPaymentSchedule() {
-
 		const todayStart = new Date();
 		todayStart.setHours(0, 0, 0, 0);
-
-		console.log(todayStart);
 
 		const contractPayment = await this.contractPaymentRepo.find({
 			where: {
 				status: ContractPaymentStatus.UNPAID,
 				payment_date: LessThanOrEqual(todayStart),
+			},
+			relations: { contract: { client_card: true }, client: true },
+		});
+
+		for (const item of contractPayment) {
+			const response = await this.paymentService.createPay(
+				{
+					amount: item.amount,
+					store_id: item.store?.atmos_id,
+					card_id: item.contract?.client_card?.id,
+					client_id: item.client?.id,
+				},
+				item.store,
+			);
+
+			if (response.result.code !== "OK") {
+				continue;
 			}
-		})
 
-		
-		contractPayment.forEach(async (item) => {
+			const result = await this.paymentService.confirmPay({
+				transaction_id: response.data.transaction_id,
+				store_id: item.store?.atmos_id,
+				card_token: item.contract?.client_card?.card_token,
+			});
+
+			if (result.result.code !== "OK") {
+				continue;
+			}
+
+			item.method = ContractPaymentMethod.ATMOS;
+			item.status = ContractPaymentStatus.PAID;
+			item.transaction_id = response.data?.transaction_id;
+
 			
-		})
 
+			const payment = await this.paymentRepo.save(this.paymentRepo.create({
+				amount: result.amount,
+				store_id: item.store?.atmos_id,
+				contract_payment_id: item.id,
+			}));
+
+			await this.contractPaymentRepo.save(item);
+		}
+	}
+
+	public async manualPaymentSchedule() {
+		await this.createPaymentSchedule();
+		return { message: "Payment schedule executed manually" };
 	}
 }
-
