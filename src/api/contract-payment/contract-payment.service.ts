@@ -165,7 +165,7 @@ export class ContractPaymentService extends BaseService<
 				status: ContractPaymentStatus.UNPAID,
 				payment_date: LessThanOrEqual(todayStart),
 			},
-			relations: { contract: { client_card: true }, client: true },
+			relations: { contract: { client_card: true }, client: true, store: true },
 		});
 
 		console.log("contractPayment", contractPayment);
@@ -178,6 +178,7 @@ export class ContractPaymentService extends BaseService<
 				},
 				item.store,
 			);
+
 			console.log("response", response);
 
 			if (response.result.code !== "OK") {
