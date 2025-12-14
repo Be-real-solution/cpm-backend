@@ -186,7 +186,7 @@ export class ContractPaymentService extends BaseService<
 			}
 
 			const result = await this.paymentService.confirmPay({
-				transaction_id: response.data.transaction_id,
+				transaction_id: response.transaction_id,
 				store_id: item.store?.atmos_id,
 				card_token: item.contract?.client_card?.card_token,
 			});
@@ -198,7 +198,7 @@ export class ContractPaymentService extends BaseService<
 			}
 
 			const applyPay = await this.paymentService.applyPay({
-				transaction_id: response.data.transaction_id,
+				transaction_id: response.transaction_id,
 				store_id: item.store?.atmos_id,
 				otp: 11111,
 			});
@@ -209,7 +209,7 @@ export class ContractPaymentService extends BaseService<
 
 			item.method = ContractPaymentMethod.ATMOS;
 			item.status = ContractPaymentStatus.PAID;
-			item.transaction_id = response.data?.transaction_id;
+			item.transaction_id = response?.transaction_id;
 
 			const payment = await this.paymentRepo.save(
 				this.paymentRepo.create({
