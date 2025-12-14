@@ -175,8 +175,6 @@ export class ContractPaymentService extends BaseService<
 				{
 					amount: item.amount,
 					store_id: item.store?.atmos_id,
-					card_id: item.contract?.client_card?.id,
-					client_id: item.client?.id,
 				},
 				item.store,
 			);
