@@ -120,6 +120,7 @@ export class PaymentService {
 
 	async createPay(dto: CreatePayDto, user: StoreEntity) {
 		const token = await this.getToken();
+		console.log("create pay", dto);
 
 		dto.amount = this.convertSomToTiyn(dto.amount);
 
@@ -142,6 +143,7 @@ export class PaymentService {
 
 	async confirmPay(dto: ConfirmPayDto) {
 		const token = await this.getToken();
+		console.log("confirm pay", dto);
 
 		const confirmPay = await axios({
 			url: "https://apigw.atmos.uz/merchant/pay/pre-apply",
@@ -162,6 +164,7 @@ export class PaymentService {
 
 	async applyPay(dto: ApplyPayDto) {
 		const token = await this.getToken();
+		console.log("apply pay", dto);
 
 		const applyPay = await axios({
 			url: "https://apigw.atmos.uz/merchant/pay/apply",
