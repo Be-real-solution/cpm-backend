@@ -168,6 +168,8 @@ export class ContractPaymentService extends BaseService<
 			relations: { contract: { client_card: true }, client: true },
 		});
 
+		console.log("contractPayment", contractPayment);
+
 		for (const item of contractPayment) {
 			const response = await this.paymentService.createPay(
 				{
@@ -178,6 +180,7 @@ export class ContractPaymentService extends BaseService<
 				},
 				item.store,
 			);
+			console.log("response", response);
 
 			if (response.result.code !== "OK") {
 				continue;
@@ -188,6 +191,7 @@ export class ContractPaymentService extends BaseService<
 				store_id: item.store?.atmos_id,
 				card_token: item.contract?.client_card?.card_token,
 			});
+			console.log("result", result);
 
 			if (result.result.code !== "OK") {
 				continue;
@@ -197,13 +201,13 @@ export class ContractPaymentService extends BaseService<
 			item.status = ContractPaymentStatus.PAID;
 			item.transaction_id = response.data?.transaction_id;
 
-			
-
-			const payment = await this.paymentRepo.save(this.paymentRepo.create({
-				amount: result.amount,
-				store_id: item.store?.atmos_id,
-				contract_payment_id: item.id,
-			}));
+			const payment = await this.paymentRepo.save(
+				this.paymentRepo.create({
+					amount: result.amount,
+					store_id: item.store?.atmos_id,
+					contract_payment_id: item.id,
+				}),
+			);
 
 			await this.contractPaymentRepo.save(item);
 		}
