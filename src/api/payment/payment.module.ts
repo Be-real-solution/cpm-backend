@@ -9,5 +9,6 @@ import { ClientModule } from '../client/client.module';
   imports: [TypeOrmModule.forFeature([AtmosEntity]), ClientModule],
   controllers: [PaymentController],
   providers: [PaymentService],
+  exports: [PaymentService],
 })
 export class PaymentModule {}
