@@ -203,6 +203,8 @@ export class ContractPaymentService extends BaseService<
 				otp: 11111,
 			});
 
+			console.log("applyPay", applyPay);
+
 			if (applyPay.result.code !== "OK") {
 				continue;
 			}
@@ -228,3 +230,4 @@ export class ContractPaymentService extends BaseService<
 		return { message: "Payment schedule executed manually" };
 	}
 }
+
