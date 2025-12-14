@@ -189,9 +189,20 @@ export class ContractPaymentService extends BaseService<
 				store_id: item.store?.atmos_id,
 				card_token: item.contract?.client_card?.card_token,
 			});
+
 			console.log("result", result);
 
 			if (result.result.code !== "OK") {
+				continue;
+			}
+
+			const applyPay = await this.paymentService.applyPay({
+				transaction_id: response.data.transaction_id,
+				store_id: item.store?.atmos_id,
+				otp: 11111,
+			});
+
+			if (applyPay.result.code !== "OK") {
 				continue;
 			}
 

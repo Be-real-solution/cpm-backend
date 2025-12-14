@@ -10,6 +10,7 @@ import { ConfirmCardDto } from "./dto/confirm-card.dto";
 import { ClientService } from "../client/client.service";
 import { CreatePayDto } from "./dto/create-pay.dto";
 import { ConfirmPayDto } from "./dto/confirm-pay.dto";
+import { ApplyPayDto } from "./dto/apply-pay.dto";
 
 @Injectable()
 export class PaymentService {
@@ -76,7 +77,6 @@ export class PaymentService {
 
 		console.log("Bind card", bindCard.data);
 		console.log(bindCard.data?.result?.code === "OK", bindCard.data?.result);
-		
 
 		if (bindCard.data?.result?.code !== "OK") {
 			throw new HttpException(bindCard.data.result.message, 400);
@@ -88,7 +88,6 @@ export class PaymentService {
 	async confirmCard(dto: ConfirmCardDto, user: StoreEntity) {
 		const token = await this.getToken();
 		console.log("Confirm token", token);
-		
 
 		const bindCard = await axios({
 			url: "https://apigw.atmos.uz/partner/bind-card/confirm",
@@ -122,7 +121,7 @@ export class PaymentService {
 	async createPay(dto: CreatePayDto, user: StoreEntity) {
 		const token = await this.getToken();
 
-		dto.amount = this.convertSomToTiyn(dto.amount)
+		dto.amount = this.convertSomToTiyn(dto.amount);
 
 		const pay = await axios({
 			url: "https://apigw.atmos.uz/merchant/pay/create",
@@ -159,6 +158,26 @@ export class PaymentService {
 		});
 
 		return confirmPay.data;
+	}
+
+	async applyPay(dto: ApplyPayDto) {
+		const token = await this.getToken();
+
+		const applyPay = await axios({
+			url: "https://apigw.atmos.uz/merchant/pay/apply",
+			method: "POST",
+			data: {
+				transaction_id: dto.transaction_id,
+				otp: dto.otp,
+				store_id: dto.store_id,
+			},
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		return applyPay.data;
 	}
 
 	private async getToken(): Promise<string> {

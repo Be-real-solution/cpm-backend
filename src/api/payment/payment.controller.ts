@@ -14,6 +14,7 @@ import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import axios from "axios";
 import { CreatePayDto } from "./dto/create-pay.dto";
 import { ConfirmPayDto } from "./dto/confirm-pay.dto";
+import { ApplyPayDto } from "./dto/apply-pay.dto";
 
 @ApiTags("Payment")
 @Controller("payment")
@@ -58,5 +59,10 @@ export class PaymentController {
 	@Post("confirm-pay")
 	confirmPay(@Body() dto: ConfirmPayDto) {
 		return this.paymentService.confirmPay(dto);
+	}
+
+	@Post("apply-pay")
+	applyPay(@Body() dto: ApplyPayDto) {
+		return this.paymentService.applyPay(dto);
 	}
 }
