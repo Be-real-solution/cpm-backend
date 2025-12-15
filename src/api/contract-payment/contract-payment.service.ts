@@ -200,7 +200,7 @@ export class ContractPaymentService extends BaseService<
 			const applyPay = await this.paymentService.applyPay({
 				transaction_id: response.transaction_id,
 				store_id: item.store?.atmos_id,
-				otp: 11111,
+				otp: 111111,
 			});
 
 			console.log("applyPay", applyPay);
