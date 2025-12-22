@@ -41,8 +41,8 @@ export class PaymentController {
 		)}`;
 		await axios.post(url);
 		return {
-			status: 1,
-			message: "Успешно",
+			status: "OK",
+			message: "Callback received successfully",
 		};
 	}
 
