@@ -379,12 +379,24 @@ export class ContractService extends BaseService<
 		});
 
 		// Generate PDF with Puppeteer
+		// Try to find Chrome/Chromium executable in order of preference
 		let executablePath: string | undefined = process.env.PUPPETEER_EXECUTABLE_PATH;
+
 		if (!executablePath) {
-			try {
-				executablePath = puppeteer.executablePath();
-			} catch (error) {
+			// Check if chromium-browser exists
+			if (fs.existsSync("/usr/bin/chromium-browser")) {
 				executablePath = "/usr/bin/chromium-browser";
+			} else if (fs.existsSync("/usr/bin/chromium")) {
+				executablePath = "/usr/bin/chromium";
+			} else if (fs.existsSync("/usr/bin/google-chrome")) {
+				executablePath = "/usr/bin/google-chrome";
+			} else {
+				// Fallback to Puppeteer's bundled Chrome
+				try {
+					executablePath = puppeteer.executablePath();
+				} catch (error) {
+					throw new Error("No Chrome/Chromium executable found. Please install chromium-browser.");
+				}
 			}
 		}
 
