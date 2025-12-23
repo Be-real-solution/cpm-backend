@@ -19,7 +19,8 @@ import { v4 } from "uuid";
 import { CreateStoreContractPDFDto } from "./dto/create-store-contract-pdf.dto";
 import { deleteFile } from "src/infrastructure/lib/fileService";
 import { Pager } from "src/infrastructure/lib/pagination";
-const pdf_creator = require("pdf-creator-node");
+import * as Handlebars from "handlebars";
+import * as puppeteer from "puppeteer";
 
 @Injectable()
 export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, StoreEntity> {
@@ -249,65 +250,75 @@ export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, St
 			date = this.formatDateToday(new Date(Date.now()), "ru");
 		}
 
-		return await pdf_creator
-			.create(
-				{
-					html: html,
-					data: {
-						city: store.region,
-						date: date,
-						store_contract_number: store.order + 999,
-						store_name: store.name,
-						store_address: store.address,
-						store_bank_number: store.bank_account_number,
-						store_bank_address: store.bank_address,
-						store_mfo: store.mfo,
-						store_phone: store.phone,
-						store_director: store.director,
-						store_manager: store.manager,
-						store_stir: store.stir,
-					},
-					// path: path.join(__dirname, "output.pdf"),
-					type: "buffer",
+		// Compile Handlebars template
+		const template = Handlebars.compile(html);
+		const htmlContent = template({
+			city: store.region,
+			date: date,
+			store_contract_number: store.order + 999,
+			store_name: store.name,
+			store_address: store.address,
+			store_bank_number: store.bank_account_number,
+			store_bank_address: store.bank_address,
+			store_mfo: store.mfo,
+			store_phone: store.phone,
+			store_director: store.director,
+			store_manager: store.manager,
+			store_stir: store.stir,
+		});
+
+		// Generate PDF with Puppeteer
+		const browser = await puppeteer.launch({
+			headless: true,
+			args: ["--no-sandbox", "--disable-setuid-sandbox"],
+		});
+
+		try {
+			const page = await browser.newPage();
+			await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+			const pdfBuffer = await page.pdf({
+				format: "A4",
+				printBackground: true,
+				margin: {
+					top: "10mm",
+					right: "10mm",
+					bottom: "10mm",
+					left: "10mm",
 				},
-				{
-					format: "A4",
-					orientation: "portrait",
-					border: "10mm",
-				},
-			)
-			.then(async (res: any) => {
-				console.log("PDF created successfully:", res);
-				const file_name = `${store.order + 999}_${v4()}_${
-					dto.language == "uz" ? "uz" : "ru"
-				}.pdf`;
-				const file_path = path.resolve(
-					__dirname,
-					"..",
-					"..",
-					"..",
-					// "..",
-					config.PATH_FOR_FILE_UPLOAD,
-					"store-contract",
-				);
-				if (!fs.existsSync(file_path)) {
-					fs.mkdirSync(file_path, { recursive: true });
-				}
-				fs.writeFileSync(path.join(file_path, file_name), res);
-
-				if (store.store_contract_file_url) {
-					await deleteFile(store.store_contract_file_url);
-				}
-
-				store.store_contract_file_url = "store-contract/" + file_name;
-				await this.storeRepo.save(store);
-
-				return { status_code: 200, data: store, message: responseByLang("update", lang) };
-			})
-			.catch((error: any) => {
-				console.error("Error creating PDF:", error);
-				throw error;
 			});
+
+			await browser.close();
+
+			console.log("PDF created successfully");
+			const file_name = `${store.order + 999}_${v4()}_${
+				dto.language == "uz" ? "uz" : "ru"
+			}.pdf`;
+			const file_path = path.resolve(
+				__dirname,
+				"..",
+				"..",
+				"..",
+				config.PATH_FOR_FILE_UPLOAD,
+				"store-contract",
+			);
+			if (!fs.existsSync(file_path)) {
+				fs.mkdirSync(file_path, { recursive: true });
+			}
+			fs.writeFileSync(path.join(file_path, file_name), pdfBuffer);
+
+			if (store.store_contract_file_url) {
+				await deleteFile(store.store_contract_file_url);
+			}
+
+			store.store_contract_file_url = "store-contract/" + file_name;
+			await this.storeRepo.save(store);
+
+			return { status_code: 200, data: store, message: responseByLang("update", lang) };
+		} catch (error) {
+			await browser.close();
+			console.error("Error creating PDF:", error);
+			throw error;
+		}
 	}
 
 	/** formatted date for today */

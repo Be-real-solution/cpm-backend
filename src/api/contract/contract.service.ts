@@ -37,7 +37,8 @@ import { UpdateContractDto } from "./dto/update-contract.dto";
 import { SentIncorrectAmount } from "./exception/incorrect-amount";
 import { PaymentDataType } from "./types";
 import { BindCardToContractDto } from "./dto/bind-card-contract.dto";
-const pdf_creator = require("pdf-creator-node");
+import * as Handlebars from "handlebars";
+import * as puppeteer from "puppeteer";
 
 @Injectable()
 export class ContractService extends BaseService<
@@ -332,85 +333,93 @@ export class ContractService extends BaseService<
 		const date_uz = this.formatDateToday(new Date(Date.now()), "uz");
 		const date_ru = this.formatDateToday(new Date(Date.now()), "ru");
 
-		return await pdf_creator
-			.create(
-				{
-					html: html,
-					data: {
-						city: contract.store.region,
-						date_uz: date_uz,
-						date_ru: date_ru,
-						contract_number: contract.contract_number,
-						store_director: contract.store.director,
-						store_manager: contract.store.manager,
-						store_bank_account_number: contract.store.bank_account_number,
-						store_bank_address: contract.store.bank_address,
-						store_mfo: contract.store.mfo,
-						store_phone: contract.store.phone,
-						store_address: contract.store.address,
-						client_first_name: contract.client.first_name,
-						client_last_name: contract.client.last_name,
-						client_second_name: contract.client.second_name,
-						client_address: contract.client.address,
-						client_inn: contract.inn,
-						client_phone: contract.client.phone,
-						passport_given_by: contract.client.passport_given_by,
+		// Compile Handlebars template
+		const template = Handlebars.compile(html);
+		const htmlContent = template({
+			city: contract.store.region,
+			date_uz: date_uz,
+			date_ru: date_ru,
+			contract_number: contract.contract_number,
+			store_director: contract.store.director,
+			store_manager: contract.store.manager,
+			store_bank_account_number: contract.store.bank_account_number,
+			store_bank_address: contract.store.bank_address,
+			store_mfo: contract.store.mfo,
+			store_phone: contract.store.phone,
+			store_address: contract.store.address,
+			client_first_name: contract.client.first_name,
+			client_last_name: contract.client.last_name,
+			client_second_name: contract.client.second_name,
+			client_address: contract.client.address,
+			client_inn: contract.inn,
+			client_phone: contract.client.phone,
+			passport_given_by: contract.client.passport_given_by,
 
-						payment_percent: 30,
-						payment_percent_amount: this.formatter.format(
-							contract.initial_payment_amount,
-						),
-						duty_payment_price_amount: this.formatter.format(contract.duty_amount),
-						payment_month: contract.unpaid_month,
-						payment_month_amount: this.formatter.format(payment_month_price),
+			payment_percent: 30,
+			payment_percent_amount: this.formatter.format(contract.initial_payment_amount),
+			duty_payment_price_amount: this.formatter.format(contract.duty_amount),
+			payment_month: contract.unpaid_month,
+			payment_month_amount: this.formatter.format(payment_month_price),
 
-						//ru
-						contract_total_amount_text,
-						payment_percent_amount_text,
-						duty_payment_price_amount_text,
-						payment_month_amount_text,
+			//ru
+			contract_total_amount_text,
+			payment_percent_amount_text,
+			duty_payment_price_amount_text,
+			payment_month_amount_text,
 
-						//uz
-						contract_total_amount_text_uz,
-						payment_percent_amount_text_uz,
-						duty_payment_price_amount_text_uz,
-						payment_month_amount_text_uz,
+			//uz
+			contract_total_amount_text_uz,
+			payment_percent_amount_text_uz,
+			duty_payment_price_amount_text_uz,
+			payment_month_amount_text_uz,
 
-						payment_list: payment_list,
-						contract_total_amount: this.formatter.format(contract.total_amount),
-						products: contract_products,
-					},
-					path: path.join(__dirname, "output.pdf"),
-					type: "buffer",
+			payment_list: payment_list,
+			contract_total_amount: this.formatter.format(contract.total_amount),
+			products: contract_products,
+		});
+
+		// Generate PDF with Puppeteer
+		const browser = await puppeteer.launch({
+			headless: true,
+			args: ["--no-sandbox", "--disable-setuid-sandbox"],
+		});
+
+		try {
+			const page = await browser.newPage();
+			await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+			const pdfBuffer = await page.pdf({
+				format: "A4",
+				printBackground: true,
+				margin: {
+					top: "10mm",
+					right: "10mm",
+					bottom: "10mm",
+					left: "10mm",
 				},
-				{
-					format: "A4",
-					orientation: "portrait",
-					border: "10mm",
-				},
-			)
-			.then((res: any) => {
-				console.log("PDF created successfully:", res);
-				const file_name = `${contract.contract_number}_${v4()}.pdf`;
-				const file_path = path.resolve(
-					__dirname,
-					"..",
-					"..",
-					"..",
-					// "..",
-					config.PATH_FOR_FILE_UPLOAD,
-					"contract",
-				);
-				if (!fs.existsSync(file_path)) {
-					fs.mkdirSync(file_path, { recursive: true });
-				}
-				fs.writeFileSync(path.join(file_path, file_name), res);
-				return "contract/" + file_name;
-			})
-			.catch((error: any) => {
-				console.error("Error creating PDF:", error);
-				throw error;
 			});
+
+			await browser.close();
+
+			console.log("PDF created successfully");
+			const file_name = `${contract.contract_number}_${v4()}.pdf`;
+			const file_path = path.resolve(
+				__dirname,
+				"..",
+				"..",
+				"..",
+				config.PATH_FOR_FILE_UPLOAD,
+				"contract",
+			);
+			if (!fs.existsSync(file_path)) {
+				fs.mkdirSync(file_path, { recursive: true });
+			}
+			fs.writeFileSync(path.join(file_path, file_name), pdfBuffer);
+			return "contract/" + file_name;
+		} catch (error) {
+			await browser.close();
+			console.error("Error creating PDF:", error);
+			throw error;
+		}
 	}
 
 	/** number to word */
