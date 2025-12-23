@@ -112,7 +112,7 @@ export class ContractService extends BaseService<
 				relations: { store: true, client: true, contract_products: true },
 			});
 
-			const contract_pdf = await this.generatePdf(con.data, products);
+			const contract_pdf = await this.generatePdf(con.data, products, payment_list);
 
 			contract.contract_file_url = contract_pdf;
 			await this.contractRepo.save(contract);
@@ -279,6 +279,7 @@ export class ContractService extends BaseService<
 	private async generatePdf(
 		contract: ContractEntity,
 		contract_products: ContractProductEntity[],
+		payment_list_data: PaymentDataType,
 	) {
 		const html = fs.readFileSync(
 			path.join(__dirname, "../../../src/api/contract/template", "contract_pdf_template.hbs"),
@@ -288,7 +289,7 @@ export class ContractService extends BaseService<
 		const payment_list: any[] = [];
 		let payment_month_price: number = 0;
 
-		contract.payment_list.payment_data.forEach((item) => {
+		payment_list_data.payment_data.forEach((item) => {
 			let date = new Date(item.date);
 			let year = date.getFullYear();
 			let month = date.getMonth() + 1;
