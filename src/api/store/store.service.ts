@@ -268,9 +268,24 @@ export class StoreService extends BaseService<CreateStoreDto, UpdateStoreDto, St
 		});
 
 		// Generate PDF with Puppeteer
+		let executablePath: string | undefined = process.env.PUPPETEER_EXECUTABLE_PATH;
+		if (!executablePath) {
+			try {
+				executablePath = puppeteer.executablePath();
+			} catch (error) {
+				executablePath = "/usr/bin/chromium-browser";
+			}
+		}
+
 		const browser = await puppeteer.launch({
 			headless: true,
-			args: ["--no-sandbox", "--disable-setuid-sandbox"],
+			args: [
+				"--no-sandbox",
+				"--disable-setuid-sandbox",
+				"--disable-dev-shm-usage",
+				"--disable-gpu",
+			],
+			executablePath: executablePath,
 		});
 
 		try {
