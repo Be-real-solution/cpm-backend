@@ -89,7 +89,7 @@ export class ContractService extends BaseService<
 
 		try {
 			/** contract product yaratish */
-			dto.contract_product.forEach(async (item) => {
+			for (const item of dto.contract_product) {
 				let product = await this.contractProductRepo.save(
 					this.contractProductRepo.create({
 						name: item.name,
@@ -106,7 +106,7 @@ export class ContractService extends BaseService<
 					quantity: item.quantity,
 					total: this.formatter.format(item.quantity * item.price),
 				});
-			});
+			}
 
 			const con = await this.findOneById(contract.id, lang, {
 				relations: { store: true, client: true, contract_products: true },
@@ -127,8 +127,7 @@ export class ContractService extends BaseService<
 	}
 
 	async createPaymentList(contract: ContractEntity, payment_list: PaymentDataType) {
-		payment_list.payment_data.forEach(async (item) => {
-			this.contractRepo;
+		for (const item of payment_list.payment_data) {
 			await this.contractPaymentRepo.save(
 				this.contractPaymentRepo.create({
 					amount: item.price,
@@ -141,7 +140,7 @@ export class ContractService extends BaseService<
 					payment_date: new Date(item.date),
 				}),
 			);
-		});
+		}
 	}
 
 	/** bind card to contract */
