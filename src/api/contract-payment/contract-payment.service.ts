@@ -215,7 +215,7 @@ export class ContractPaymentService extends BaseService<
 
 			const payment = await this.paymentRepo.save(
 				this.paymentRepo.create({
-					amount: result.amount,
+					amount: applyPay.amount,
 					store_id: item.store?.atmos_id,
 					contract_payment_id: item.id,
 				}),
