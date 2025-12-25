@@ -34,15 +34,19 @@ export class PaymentController {
 		console.log("Callback received:", req.body);
 		console.log("Headers:", req.headers);
 		const url = `https://api.telegram.org/bot6243405014:AAEUzdM3WhJ-KQe1T1gz5UG5msLQhShYqQ4/sendMessage?chat_id=784562004&text=${encodeURIComponent(
-			JSON.stringify({
-				body: req.body,
-				headers: req.headers,
-			}, null, 2),
+			JSON.stringify(
+				{
+					body: req.body,
+					headers: req.headers,
+				},
+				null,
+				2,
+			),
 		)}`;
 		await axios.post(url);
 		return {
-			status: "OK",
-			message: "Callback received successfully",
+			status: 1,
+			message: "Успешно",
 		};
 	}
 
