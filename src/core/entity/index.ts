@@ -10,3 +10,4 @@ export { StoreNotificationEntity } from "./store-notification.entity";
 export { AtmosEntity } from "./atmos.entity";
 export { ClientCardEntity } from "./client-card.entity";
 export { PaymentEntity } from "./payment.entity";
+export { TransactionEntity } from "./transaction.entity";

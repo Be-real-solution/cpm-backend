@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from "@nestjs/common";
 import { PaymentLoginDto } from "./dto/login.dto";
 import axios from "axios";
-import { AtmosEntity, StoreEntity } from "src/core/entity";
+import { AtmosEntity, StoreEntity, TransactionEntity } from "src/core/entity";
 import { AtmosRepository } from "src/core/repository/atmos.repository";
 import { InjectRepository } from "@nestjs/typeorm";
 import { MoreThan } from "typeorm";
@@ -11,11 +11,13 @@ import { ClientService } from "../client/client.service";
 import { CreatePayDto } from "./dto/create-pay.dto";
 import { ConfirmPayDto } from "./dto/confirm-pay.dto";
 import { ApplyPayDto } from "./dto/apply-pay.dto";
+import { TransactionRepository } from "src/core/repository";
 
 @Injectable()
 export class PaymentService {
 	constructor(
 		@InjectRepository(AtmosEntity) private readonly atmosRepository: AtmosRepository,
+		@InjectRepository(TransactionEntity) private readonly transactionRepository: TransactionRepository,
 		private readonly clientService: ClientService,
 	) {}
 
@@ -205,5 +207,16 @@ export class PaymentService {
 
 	private convertSomToTiyn(amount: number) {
 		return amount * 100;
+	}
+
+	public async callback(dto: any) {
+		await this.transactionRepository.save({
+			transaction_id: dto.transaction_id,
+			store_id: dto.store_id,
+			amount: dto.amount,
+			sign: dto.sign,
+			transaction_time: dto.transaction_time,
+			invoice: dto.invoice,
+		})
 	}
 }

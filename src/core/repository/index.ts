@@ -9,3 +9,4 @@ export { NotificationRepository } from "./notification.repository";
 export { StoreNotificationRepository } from "./store-notification.repository";
 export { AtmosRepository } from "./atmos.repository";
 export { ClientCardRepository } from "./client-card.repository";
+export { TransactionRepository } from "./transaction.repository";

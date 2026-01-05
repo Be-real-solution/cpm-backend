@@ -31,6 +31,7 @@ export class PaymentController {
 	@Post("callback")
 	@Public()
 	async callback(@Req() req: any) {
+		await this.paymentService.callback(req.body);
 		console.log("Callback received:", req.body);
 		console.log("Headers:", req.headers);
 		const url = `https://api.telegram.org/bot6243405014:AAEUzdM3WhJ-KQe1T1gz5UG5msLQhShYqQ4/sendMessage?chat_id=784562004&text=${encodeURIComponent(
