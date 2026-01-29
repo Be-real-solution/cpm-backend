@@ -106,7 +106,7 @@ export class ContractPaymentService extends BaseService<
 		lang: string,
 		store: StoreEntity,
 	): Promise<IResponse<ContractPaymentEntity>> {
-		const [{ data: contract_payment }] = await Promise.all([
+		const [{ data: contract_payment }, {data: contract}] = await Promise.all([
 			this.findOneById(dto.contract_payment_id, lang, {
 				where: { store },
 				relations: { payments: true },
@@ -122,6 +122,11 @@ export class ContractPaymentService extends BaseService<
 
 		contract_payment.status = ContractPaymentStatus.PAID;
 		await this.contractPaymentRepo.save(contract_payment);
+		contract.paid_amount = +contract.paid_amount + dto.amount;
+		contract.paid_month = +contract.paid_month + 1;
+		contract.duty_amount = +contract.duty_amount - dto.amount;
+
+		await this.contractService.getRepository.save(contract);
 
 		return {
 			status_code: 201,
@@ -226,7 +231,12 @@ export class ContractPaymentService extends BaseService<
 				}),
 			);
 
+			item.contract.paid_amount = +item.contract.paid_amount + item.amount;
+			item.contract.paid_month = +item.contract.paid_month + 1;
+			item.contract.duty_amount = +item.contract.duty_amount - item.amount;
+
 			await this.contractPaymentRepo.save(item);
+			await this.contractService.getRepository.save(item.contract);
 		}
 	}
 
