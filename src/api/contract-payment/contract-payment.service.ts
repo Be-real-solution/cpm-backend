@@ -121,6 +121,9 @@ export class ContractPaymentService extends BaseService<
 		}
 
 		contract_payment.status = ContractPaymentStatus.PAID;
+		contract_payment.payment_date = new Date();
+		contract_payment.method = dto.method;
+
 		await this.contractPaymentRepo.save(contract_payment);
 		contract.paid_amount = +contract.paid_amount + dto.amount;
 		contract.paid_month = +contract.paid_month + 1;
